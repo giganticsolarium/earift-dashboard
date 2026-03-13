@@ -1,284 +1,525 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이어리프트 상세 성과 데이터</title>
-<style>
-  :root {
-    --bg:#0f1117; --card:#1a1d2e; --card2:#222538;
-    --accent:#6c63ff; --green:#00d97e; --red:#ff4d6d;
-    --yellow:#ffd60a; --text:#e8eaf0; --muted:#6b7280; --border:#2d3148;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이어리프트 AD · 상세 데이터</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --surface3: #2a2f47;
+      --border: #2e3250;
+      --accent: #4f6ef7;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --cyan: #06b6d4;
+      --purple: #7c3aed;
+      --pink: #f472b6;
+      --text: #e2e8f0;
+      --muted: #8892b0;
+      --card-radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI','Apple SD Gothic Neo',sans-serif; min-height: 100vh; }
 
-  header { display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid var(--border); }
-  .logo  { font-size:18px; font-weight:700; }
-  .logo span { color:var(--accent); }
-  .header-right { display:flex; align-items:center; gap:14px; }
-  #last-updated { font-size:12px; color:var(--muted); }
-  .nav-btn { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; }
-  .nav-btn:hover { background:var(--accent); border-color:var(--accent); }
+    /* ── NAV ── */
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 28px; background: var(--surface);
+      border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 16px; }
+    .logo { font-size: 18px; font-weight: 700; color: var(--accent); letter-spacing: -.5px; }
+    .page-tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: 10px; padding: 4px; }
+    .page-tab {
+      padding: 6px 16px; border-radius: 7px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all .2s;
+    }
+    .page-tab.active { background: var(--accent); color: #fff; }
+    .platform-tabs { display: flex; gap: 6px; }
+    .ptab {
+      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--border); background: transparent; color: var(--muted); transition: all .2s;
+    }
+    .ptab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .ptab.soon { opacity: .4; cursor: not-allowed; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nbadge {
+      background: var(--surface2); border: 1px solid var(--border);
+      padding: 5px 12px; border-radius: 8px; font-size: 12px; color: var(--muted);
+    }
+    .nbadge span { color: var(--text); font-weight: 600; }
+    .pulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-  main { max-width:1300px; margin:0 auto; padding:28px 20px; }
+    /* ── DATE BAR ── */
+    .date-bar {
+      display: flex; align-items: center; gap: 8px; padding: 12px 28px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+    }
+    .dbtn {
+      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--border); background: transparent;
+      color: var(--muted); transition: all .2s;
+    }
+    .dbtn.active { background: var(--surface2); color: var(--text); border-color: var(--accent); }
+    .dsep { color: var(--border); }
 
-  /* ─── 기간 탭 ──────────────────────────────── */
-  .period-tabs { display:flex; gap:8px; margin-bottom:24px; }
-  .period-tab { background:var(--card2); border:1px solid var(--border); color:var(--muted); padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; }
-  .period-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+    /* ── MAIN ── */
+    .main { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
 
-  /* ─── KPI 그리드 ──────────────────────────── */
-  .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:28px; }
-  .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; }
-  .kpi-label { font-size:11px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
-  .kpi-value { font-size:20px; font-weight:700; }
-  .kpi-sub   { font-size:11px; color:var(--muted); margin-top:4px; }
+    /* ── LOADING ── */
+    .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; font-size: 15px; color: var(--muted); flex-direction: column; gap: 12px; }
 
-  /* ─── 섹션 카드 ──────────────────────────── */
-  .section-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:24px; }
-  .section-title { font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:16px; }
+    /* ── KPI ── */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+    .kpi-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--card-radius); padding: 20px;
+      position: relative; overflow: hidden; cursor: pointer; transition: border-color .2s;
+    }
+    .kpi-card:hover { border-color: var(--accent); }
+    .kpi-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(79,110,247,.22); }
+    .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: var(--ca, var(--accent)); }
+    .kpi-card:nth-child(1){--ca:#4f6ef7} .kpi-card:nth-child(2){--ca:#7c3aed}
+    .kpi-card:nth-child(3){--ca:#f59e0b} .kpi-card:nth-child(4){--ca:#22c55e}
+    .kpi-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+    .kpi-value { font-size: 28px; font-weight: 700; margin: 8px 0 4px; }
+    .kpi-sub { font-size: 12px; display: flex; align-items: center; gap: 4px; }
+    .up{color:var(--green)} .dn{color:var(--red)} .nt{color:var(--muted)}
+    .sel-dot { position:absolute; top:14px; right:14px; width:8px; height:8px; border-radius:50%; background:var(--ca,var(--accent)); display:none; }
+    .kpi-card.selected .sel-dot { display:block; }
 
-  /* ─── 테이블 ─────────────────────────────── */
-  .data-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .data-table th { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; padding:8px 12px; text-align:right; border-bottom:1px solid var(--border); }
-  .data-table th:first-child { text-align:left; }
-  .data-table td { padding:11px 12px; text-align:right; border-bottom:1px solid var(--border); }
-  .data-table td:first-child { text-align:left; font-weight:500; }
-  .data-table tr:last-child td { border-bottom:none; }
-  .data-table tr:hover td { background:var(--card2); }
-  .roas-badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:12px; font-weight:600; }
-  .roas-good { background:rgba(0,217,126,.15);  color:var(--green); }
-  .roas-mid  { background:rgba(255,214,10,.12); color:var(--yellow); }
-  .roas-bad  { background:rgba(255,77,109,.12); color:var(--red); }
+    /* ── CHART ── */
+    .chart-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--card-radius); padding:22px; }
+    .sec-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px; }
+    .sec-title { font-size:15px; font-weight:700; }
+    .metric-toggles { display:flex; gap:8px; flex-wrap:wrap; }
+    .mtog {
+      padding:4px 12px; border-radius:20px; font-size:11px; font-weight:600;
+      cursor:pointer; border:1px solid var(--border); background:transparent; color:var(--muted); transition:all .2s;
+    }
+    .mtog.on { color:#fff; }
+    .mtog[data-m="roas"].on{background:#4f6ef7;border-color:#4f6ef7}
+    .mtog[data-m="cpa"].on{background:#7c3aed;border-color:#7c3aed}
+    .mtog[data-m="spend"].on{background:#f59e0b;border-color:#f59e0b}
+    .mtog[data-m="ctr"].on{background:#22c55e;border-color:#22c55e}
+    .mtog[data-m="imp"].on{background:#06b6d4;border-color:#06b6d4}
+    .mtog[data-m="click"].on{background:#f472b6;border-color:#f472b6}
+    .chart-wrap { position:relative; height:260px; }
 
-  /* ─── 소재 TOP ───────────────────────────── */
-  .ad-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-  .ad-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:16px; }
-  .ad-rank { font-size:11px; color:var(--muted); margin-bottom:8px; }
-  .ad-name { font-size:13px; font-weight:600; margin-bottom:10px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
-  .ad-stats { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
-  .ad-stat-label { font-size:10px; color:var(--muted); }
-  .ad-stat-value { font-size:13px; font-weight:600; }
-  .ad-empty { text-align:center; color:var(--muted); padding:32px; font-size:14px; }
+    /* ── TIME SPEND ── */
+    .time-spend-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .slot-labels { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px; }
+    .slot-lbl {
+      text-align:center; font-size:10px; font-weight:700; padding:5px 4px;
+      border-radius:6px; border:1px solid var(--border); color:var(--muted);
+      background: var(--surface2);
+    }
+    .slot-lbl.current { border-color:var(--accent); color:var(--accent); background:rgba(79,110,247,.12); }
+    .ts-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--card-radius); padding:22px; }
+    .ts-table { width:100%; border-collapse:collapse; margin-top:14px; font-size:12px; }
+    .ts-table th {
+      padding:8px 10px; color:var(--muted); font-size:10px; font-weight:700;
+      text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); text-align:center;
+    }
+    .ts-table th.name-col { text-align:left; min-width:130px; }
+    .ts-table td { padding:10px 10px; border-bottom:1px solid rgba(46,50,80,.4); text-align:center; vertical-align:middle; }
+    .ts-table td.name-col { text-align:left; }
+    .ts-table tr:last-child td { border-bottom:none; }
+    .ts-table tr:hover td { background:var(--surface2); }
+    .camp-name { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; display:block; }
+    .camp-total { font-size:10px; color:var(--muted); margin-top:2px; }
+    .spend-cell { position:relative; }
+    .spend-cell .cell-bar {
+      position:absolute; bottom:0; left:50%; transform:translateX(-50%);
+      width:36px; border-radius:4px 4px 0 0; opacity:.35;
+    }
+    .spend-cell .cell-val { position:relative; z-index:1; font-size:12px; font-weight:700; color:var(--text); }
+    .spend-cell .cell-sub { font-size:10px; color:var(--muted); position:relative; z-index:1; }
+    .spend-cell .cell-sub2 { font-size:10px; color:var(--muted); position:relative; z-index:1; margin-top:1px; }
+    .spend-cell .cell-sub2 .rg { color:#22c55e; } .spend-cell .cell-sub2 .ry { color:#f59e0b; } .spend-cell .cell-sub2 .rr { color:#ef4444; }
+    .spend-cell.current-slot { background:rgba(79,110,247,.07); }
+    .spend-cell.current-slot .cell-val { color:var(--accent); }
 
-  /* ─── 로딩 ──────────────────────────────── */
-  .loading { text-align:center; padding:60px; color:var(--muted); font-size:14px; }
-  .spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin-right:10px; }
-  @keyframes spin { to { transform:rotate(360deg); } }
+    /* ── TABLE ── */
+    .table-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--card-radius); padding:22px; }
+    .table-wrap { overflow-x:auto; margin-top:14px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th { text-align:left; padding:8px 12px; color:var(--muted); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--border); }
+    td { padding:12px 12px; border-bottom:1px solid rgba(46,50,80,.5); }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:var(--surface2); }
+    .sdot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; }
+    .son{background:var(--green)} .soff{background:var(--muted)}
+    .rg{color:var(--green);font-weight:700} .ry{color:var(--yellow);font-weight:700} .rr{color:var(--red);font-weight:700}
 
-  @media (max-width:768px) {
-    .kpi-grid { grid-template-columns:repeat(2,1fr); }
-    .ad-grid  { grid-template-columns:1fr; }
-  }
-</style>
+    /* ── PLATFORM SOON ── */
+    .soon-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .soon-banner {
+      background:var(--surface); border:1px dashed var(--border);
+      border-radius:var(--card-radius); padding:16px 20px;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      color:var(--muted); font-size:13px;
+    }
+    .badge-soon { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; font-weight:700; color:var(--yellow); }
+  </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">이어리프트 <span>AD</span> · 상세 데이터</div>
-  <div class="header-right">
-    <span id="last-updated">로딩 중...</span>
-    <a href="main.html" class="nav-btn">← 목표 대시보드</a>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-left">
+    <div class="logo">이어리프트 AD</div>
+    <div class="page-tabs">
+      <button class="page-tab" onclick="location.href='main.html'">🎯 목표 현황</button>
+      <button class="page-tab active">📈 상세 데이터</button>
+    </div>
+    <div class="platform-tabs">
+      <button class="ptab active">Meta</button>
+      <button class="ptab soon">카카오 (준비중)</button>
+      <button class="ptab soon">TikTok (준비중)</button>
+    </div>
   </div>
-</header>
+  <div class="nav-right">
+    <div class="nbadge">광고 계정 <span>이어리프트</span></div>
+    <div class="nbadge" id="last-updated"><span class="pulse"></span>로딩 중...</div>
+  </div>
+</nav>
 
-<main>
-  <div class="period-tabs">
-    <button class="period-tab active" onclick="switchPeriod('monthly',this)">이번 달</button>
-    <button class="period-tab" onclick="switchPeriod('last_7d',this)">최근 7일</button>
-    <button class="period-tab" onclick="switchPeriod('yesterday',this)">어제</button>
-    <button class="period-tab" onclick="switchPeriod('today',this)">오늘</button>
-  </div>
+<!-- DATE BAR -->
+<div class="date-bar">
+  <button class="dbtn active">오늘</button>
+  <button class="dbtn">어제</button>
+  <button class="dbtn">최근 7일</button>
+  <button class="dbtn">최근 30일</button>
+  <button class="dbtn">이번 달</button>
+  <span class="dsep">|</span>
+  <button class="dbtn">일별</button>
+  <button class="dbtn">주별</button>
+</div>
 
-  <div id="main-content" class="loading">
-    <span class="spinner"></span> 광고 데이터를 불러오는 중...
-  </div>
-</main>
+<div id="main-content" class="main">
+  <div class="loading">⏳ 데이터 불러오는 중...</div>
+</div>
 
 <script>
 const REPO = 'giganticsolarium/earift-dashboard';
 const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
+const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e','#06b6d4','#f472b6'];
 
-const won  = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : n.toLocaleString();
-const num  = n => Number(n).toLocaleString('ko-KR');
-const pct  = n => Number(n).toFixed(2) + '%';
+let mainChart = null;
+let activeMetrics = ['roas','cpa','spend'];
 
-let _summary = null, _daily = null, _campaigns = null, _ads = null;
-let _period = 'monthly';
-
-function switchPeriod(p, btn) {
-  _period = p;
-  document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (_summary) renderAll();
+function wFmt(n) {
+  n = Math.round(+n || 0);
+  if (n >= 100000000) { const v = n/100000000; return (v%1===0?v:v.toFixed(1))+'억원'; }
+  if (n >= 10000)     return Math.round(n/10000).toLocaleString()+'만원';
+  return n.toLocaleString()+'원';
 }
 
-function renderKPI(d) {
-  return `
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">광고비 지출</div>
-      <div class="kpi-value">${won(d.spend||0)}원</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">ROAS</div>
-      <div class="kpi-value" style="color:${(d.roas||0)>=3?'var(--green)':'var(--text)'}">${d.roas||0}x</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">구매건수</div>
-      <div class="kpi-value">${num(d.purchases||0)}건</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">구매금액</div>
-      <div class="kpi-value">${won(d.purchase_value||0)}원</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">CPA</div>
-      <div class="kpi-value">${d.cpa > 0 ? won(d.cpa)+'원' : '—'}</div>
-    </div>
-  </div>
-  <div class="kpi-grid" style="margin-top:-16px">
-    <div class="kpi-card">
-      <div class="kpi-label">노출</div>
-      <div class="kpi-value">${won(d.impressions||0)}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">클릭</div>
-      <div class="kpi-value">${num(d.clicks||0)}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">CTR</div>
-      <div class="kpi-value">${pct(d.ctr||0)}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">CPC</div>
-      <div class="kpi-value">${d.cpc > 0 ? won(d.cpc)+'원' : '—'}</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">CPM</div>
-      <div class="kpi-value">${d.cpm > 0 ? won(d.cpm)+'원' : '—'}</div>
-    </div>
-  </div>`;
-}
+function render(s, d, c) {
+  const today     = s.today     || {};
+  const yesterday = s.yesterday || {};
+  const camps     = s.campaigns || [];
+  const goals     = s.goals     || { roas: 2.5 };
 
-function renderDailyTable(data) {
-  if (!data || !data.length) {
-    return `<p style="text-align:center;color:var(--muted);padding:24px">일별 데이터가 없습니다. GitHub Actions 실행 후 채워집니다.</p>`;
+  // KPI 델타
+  function delta(cur, prev, isRoas) {
+    const diff = (cur||0) - (prev||0);
+    if (diff === 0) return '';
+    const sign  = diff > 0 ? '▲' : '▼';
+    const cls   = diff > 0 ? 'up' : 'dn';
+    const val   = isRoas ? Math.abs(diff).toFixed(2) : wFmt(Math.abs(diff));
+    return `<span class="${cls}">${sign} ${val}</span>`;
   }
-  const rows = [...data].reverse().slice(0, 30).map(d => {
-    const rc = (d.roas||0) >= 3 ? 'roas-good' : (d.roas||0) >= 2 ? 'roas-mid' : 'roas-bad';
-    return `<tr>
-      <td>${d.date||'—'}</td>
-      <td>${won(d.spend||0)}원</td>
-      <td>${won(d.impressions||0)}</td>
-      <td>${num(d.clicks||0)}</td>
-      <td>${pct(d.ctr||0)}</td>
-      <td>${num(d.purchases||0)}</td>
-      <td><span class="roas-badge ${rc}">${d.roas||0}x</span></td>
-      <td>${won(d.purchase_value||0)}원</td>
-      <td>${d.cpa > 0 ? won(d.cpa)+'원' : '—'}</td>
-    </tr>`;
-  }).join('');
-  return `<table class="data-table">
-    <thead><tr>
-      <th style="text-align:left">날짜</th>
-      <th>지출</th><th>노출</th><th>클릭</th><th>CTR</th>
-      <th>구매</th><th>ROAS</th><th>구매금액</th><th>CPA</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
-}
 
-function renderCampaigns(data) {
-  if (!data || !data.length) {
-    return `<p style="text-align:center;color:var(--muted);padding:24px">캠페인 데이터가 없습니다.</p>`;
-  }
-  const rows = data.map(c => {
-    const rc = (c.roas||0) >= 3 ? 'roas-good' : (c.roas||0) >= 2 ? 'roas-mid' : 'roas-bad';
-    return `<tr>
-      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.campaign_name||'—'}</td>
-      <td>${won(c.spend||0)}원</td>
-      <td>${won(c.impressions||0)}</td>
-      <td>${num(c.clicks||0)}</td>
-      <td>${pct(c.ctr||0)}</td>
-      <td>${num(c.purchases||0)}</td>
-      <td><span class="roas-badge ${rc}">${c.roas||0}x</span></td>
-      <td>${won(c.purchase_value||0)}원</td>
-      <td>${c.cpa > 0 ? won(c.cpa)+'원' : '—'}</td>
-    </tr>`;
-  }).join('');
-  return `<table class="data-table">
-    <thead><tr>
-      <th style="text-align:left">캠페인</th>
-      <th>지출</th><th>노출</th><th>클릭</th><th>CTR</th>
-      <th>구매</th><th>ROAS</th><th>구매금액</th><th>CPA</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
-}
+  // 현재 시간 슬롯 (0=00~06, 1=06~12, 2=12~18, 3=18~24)
+  const hour = new Date().getHours();
+  const currentSlot = Math.floor(hour / 6);
+  const slotNames = ['00~06시','06~12시','12~18시','18~00시'];
 
-function renderAds(data) {
-  if (!data || !data.length) {
-    return `<p class="ad-empty">소재 데이터가 없습니다. GitHub Actions 실행 후 채워집니다.</p>`;
-  }
-  return `<div class="ad-grid">` +
-    data.slice(0, 6).map((a, i) => {
-      const rc = (a.roas||0) >= 3 ? 'var(--green)' : (a.roas||0) >= 2 ? 'var(--yellow)' : 'var(--muted)';
-      return `<div class="ad-card">
-        <div class="ad-rank">🏆 TOP ${i+1} · ${a.campaign_name||''}</div>
-        <div class="ad-name">${a.ad_name||'소재명 없음'}</div>
-        <div class="ad-stats">
-          <div><div class="ad-stat-label">지출</div><div class="ad-stat-value">${won(a.spend||0)}원</div></div>
-          <div><div class="ad-stat-label">ROAS</div><div class="ad-stat-value" style="color:${rc}">${a.roas||0}x</div></div>
-          <div><div class="ad-stat-label">구매</div><div class="ad-stat-value">${num(a.purchases||0)}건</div></div>
-          <div><div class="ad-stat-label">CTR</div><div class="ad-stat-value">${pct(a.ctr||0)}</div></div>
+  // 일별 차트 데이터 (최근 14일)
+  const dailyArr  = (d.data || []).slice(-14);
+  const labels    = dailyArr.map(x => (x.date||'').slice(5));
+  const dsRoas    = dailyArr.map(x => x.roas||0);
+  const dsCpa     = dailyArr.map(x => Math.round((x.cpa||0)/1000));  // 천원 단위
+  const dsSpend   = dailyArr.map(x => Math.round((x.spend||0)/10000)); // 만원
+  const dsImp     = dailyArr.map(x => Math.round((x.impressions||0)/1000)); // 천 단위
+  const dsClick   = dailyArr.map(x => Math.round((x.clicks||0)/100)*100/1000);
+  const dsCtr     = dailyArr.map(x => x.ctr||0);
+
+  const dsMap = {
+    roas:  { label:'ROAS',        data: dsRoas,  color:'#4f6ef7', y:'y1' },
+    cpa:   { label:'CPA(천원)',   data: dsCpa,   color:'#7c3aed', y:'y1' },
+    spend: { label:'지출(만원)',  data: dsSpend, color:'#f59e0b', y:'y2' },
+    ctr:   { label:'CTR(%)',      data: dsCtr,   color:'#22c55e', y:'y1' },
+    imp:   { label:'노출(천)',    data: dsImp,   color:'#06b6d4', y:'y2' },
+    click: { label:'클릭(천)',    data: dsClick, color:'#f472b6', y:'y1' },
+  };
+
+  // 캠페인 테이블 행
+  const campRows = camps.length > 0
+    ? camps.map(c => {
+        const roasCls = c.roas >= (goals.roas||2.5) ? 'rg' : c.roas >= 1.5 ? 'ry' : 'rr';
+        const cpaCls  = c.cpa < 50000 ? 'rg' : c.cpa < 100000 ? 'ry' : 'rr';
+        return `<tr>
+          <td>${c.campaign_name||'-'}</td>
+          <td><span class="sdot son"></span>활동 중</td>
+          <td>${(c.impressions||0).toLocaleString()}</td>
+          <td>${(c.clicks||0).toLocaleString()}</td>
+          <td>${((c.ctr||0)).toFixed(1)}%</td>
+          <td>${wFmt(c.spend||0)}</td>
+          <td>${c.purchases||0}</td>
+          <td class="${cpaCls}">${wFmt(c.cpa||0)}</td>
+          <td class="${roasCls}">${(c.roas||0).toFixed(2)}x</td>
+        </tr>`;
+      }).join('')
+    : `<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px;">캠페인 데이터가 없습니다.</td></tr>`;
+
+  // 캠페인별 시간대 테이블 (campaigns의 월간 spend를 시간대 비율로 추정)
+  const slotRatios = [0.08, 0.28, 0.42, 0.22]; // 00~06 / 06~12 / 12~18 / 18~24 일반적 배분
+  const campTimeRows = camps.length > 0
+    ? camps.map((c, i) => {
+        const monthSpend     = c.spend || 0;
+        const monthPurchases = c.purchases || 0;
+        const campRoas       = c.roas || 0;
+        const daySpend       = monthSpend / 30;
+        const dayPurchases   = monthPurchases / 30;
+        const slots          = slotRatios.map(r => Math.round(daySpend * r));
+        const slotPurch      = slotRatios.map(r => Math.round(dayPurchases * r));
+        const maxSlot        = Math.max(...slots);
+        const cells          = slots.map((v, s) => {
+          const pct     = maxSlot > 0 ? Math.round(v/maxSlot*32) : 0;
+          const isCur   = s === currentSlot;
+          const valStr  = wFmt(v);
+          const purch   = slotPurch[s];
+          const roasCls = campRoas >= (goals.roas||2.5) ? 'rg' : campRoas >= 1.5 ? 'ry' : 'rr';
+          return `<td class="spend-cell ${isCur?'current-slot':''}" style="text-align:center;padding:6px 4px;">
+            <div class="cell-bar" style="height:${pct}px;background:${campColors[i]};"></div>
+            <div class="cell-val">${valStr}</div>
+            <div class="cell-sub2">${purch}건 · <span class="${roasCls}">${campRoas.toFixed(1)}x</span></div>
+            ${isCur ? '<div class="cell-sub" style="color:var(--accent);font-size:9px;">▶ NOW</div>' : ''}
+          </td>`;
+        }).join('');
+        const totalStr = wFmt(monthSpend);
+        return `<tr>
+          <td class="name-col">
+            <span class="camp-name" title="${c.campaign_name||''}">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${campColors[i]};margin-right:6px;"></span>${c.campaign_name||'캠페인 '+(i+1)}
+            </span>
+            <span class="camp-total">${totalStr} 이번달 합계</span>
+          </td>
+          ${cells}
+        </tr>`;
+      }).join('')
+    : `<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px;">데이터 없음</td></tr>`;
+
+  const nowSlotLabel = slotNames[currentSlot];
+
+  document.getElementById('main-content').outerHTML = `
+  <div id="main-content" class="main">
+
+    <!-- KPI -->
+    <div class="kpi-grid">
+      <div class="kpi-card selected" onclick="toggleCard(this,'roas')">
+        <div class="sel-dot"></div>
+        <div class="kpi-label">ROAS</div>
+        <div class="kpi-value">${(today.roas||0).toFixed(2)}x</div>
+        <div class="kpi-sub">${delta(today.roas, yesterday.roas, true)}<span class="nt">vs 어제</span></div>
+      </div>
+      <div class="kpi-card selected" onclick="toggleCard(this,'cpa')">
+        <div class="sel-dot"></div>
+        <div class="kpi-label">CPA (결과당 비용)</div>
+        <div class="kpi-value">${wFmt(today.cpa||0)}</div>
+        <div class="kpi-sub">${delta(today.cpa, yesterday.cpa, false)}<span class="nt">vs 어제</span></div>
+      </div>
+      <div class="kpi-card selected" onclick="toggleCard(this,'spend')">
+        <div class="sel-dot"></div>
+        <div class="kpi-label">오늘 총 지출</div>
+        <div class="kpi-value">${wFmt(today.spend||0)}</div>
+        <div class="kpi-sub">${delta(today.spend, yesterday.spend, false)}<span class="nt">vs 어제</span></div>
+      </div>
+      <div class="kpi-card" onclick="toggleCard(this,'ctr')">
+        <div class="sel-dot"></div>
+        <div class="kpi-label">CTR (클릭률)</div>
+        <div class="kpi-value">${(today.ctr||0).toFixed(2)}%</div>
+        <div class="kpi-sub">${delta(today.ctr, yesterday.ctr, true)}<span class="nt">vs 어제</span></div>
+      </div>
+    </div>
+
+    <!-- 성과 추이 차트 -->
+    <div class="chart-section">
+      <div class="sec-hdr">
+        <div class="sec-title">성과 추이 그래프 (최근 14일)</div>
+        <div class="metric-toggles">
+          <button class="mtog on"  data-m="roas"  onclick="toggleMetric(this)">ROAS</button>
+          <button class="mtog on"  data-m="cpa"   onclick="toggleMetric(this)">CPA</button>
+          <button class="mtog on"  data-m="spend" onclick="toggleMetric(this)">지출</button>
+          <button class="mtog"     data-m="ctr"   onclick="toggleMetric(this)">CTR</button>
+          <button class="mtog"     data-m="imp"   onclick="toggleMetric(this)">노출</button>
+          <button class="mtog"     data-m="click" onclick="toggleMetric(this)">클릭</button>
         </div>
-      </div>`;
-    }).join('') + `</div>`;
+      </div>
+      <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+    </div>
+
+    <!-- 캠페인별 시간대 광고비 -->
+    <div class="time-spend-grid">
+      <div class="ts-section">
+        <div class="sec-hdr">
+          <div class="sec-title">⏱ 캠페인별 시간대 광고비 소진</div>
+          <div style="font-size:11px;color:var(--muted)">오늘 기준 · 월간 광고비 기준 추정</div>
+        </div>
+        <div class="slot-labels" style="margin-left:150px;">
+          ${slotNames.map((n,i) => `<div class="slot-lbl ${i===currentSlot?'current':''}">${n}${i===currentSlot?' <span style="font-size:9px;color:var(--accent)">▶ NOW</span>':''}</div>`).join('')}
+        </div>
+        <table class="ts-table">
+          <thead>
+            <tr>
+              <th class="name-col">캠페인</th>
+              ${slotNames.map((n,i) => `<th ${i===currentSlot?'style="color:var(--accent)"':''}>${n}${i===currentSlot?' ▶':''}</th>`).join('')}
+            </tr>
+          </thead>
+          <tbody>${campTimeRows}</tbody>
+        </table>
+      </div>
+
+      <!-- 캠페인 상세 테이블을 오른쪽에 -->
+      <div class="ts-section">
+        <div class="sec-hdr">
+          <div class="sec-title">📊 캠페인별 이번 달 성과</div>
+        </div>
+        <table class="ts-table" style="margin-top:14px;">
+          <thead>
+            <tr>
+              <th class="name-col">캠페인</th>
+              <th>지출</th><th>구매</th><th>ROAS</th><th>CPA</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${camps.length > 0 ? camps.map((c,i) => {
+              const roasCls = c.roas >= (goals.roas||2.5) ? 'rg' : c.roas >= 1.5 ? 'ry' : 'rr';
+              return `<tr>
+                <td class="name-col"><span class="camp-name" style="max-width:160px;">
+                  <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${campColors[i]};margin-right:6px;"></span>${c.campaign_name||'-'}</span>
+                </td>
+                <td>${wFmt(c.spend||0)}</td>
+                <td>${c.purchases||0}건</td>
+                <td class="${roasCls}">${(c.roas||0).toFixed(2)}x</td>
+                <td>${wFmt(c.cpa||0)}</td>
+              </tr>`;
+            }).join('') : '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px;">데이터 없음</td></tr>'}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 캠페인 상세 전체 테이블 -->
+    <div class="table-section">
+      <div class="sec-hdr"><div class="sec-title">캠페인 상세 성과 (이번 달)</div></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>캠페인명</th><th>상태</th><th>노출</th><th>클릭</th>
+              <th>CTR</th><th>지출</th><th>결과</th><th>CPA</th><th>ROAS</th>
+            </tr>
+          </thead>
+          <tbody>${campRows}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 향후 플랫폼 -->
+    <div class="soon-row">
+      <div class="soon-banner">🟡 <strong>카카오 비즈니스</strong> 연동 준비중 <span class="badge-soon">SOON</span></div>
+      <div class="soon-banner">🎵 <strong>TikTok Ads</strong> 연동 준비중 <span class="badge-soon">SOON</span></div>
+    </div>
+
+  </div>`;
+
+  // 차트 그리기
+  function buildDS() {
+    return activeMetrics.map(k => ({
+      label: dsMap[k].label, data: dsMap[k].data,
+      borderColor: dsMap[k].color, backgroundColor: dsMap[k].color+'22',
+      tension: .4, fill: false, pointRadius: 4, yAxisID: dsMap[k].y,
+    }));
+  }
+
+  if (mainChart) mainChart.destroy();
+  const ctx = document.getElementById('mainChart').getContext('2d');
+  mainChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: buildDS() },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { labels: { color: '#8892b0', boxWidth: 12 } } },
+      scales: {
+        x:  { ticks: { color: '#8892b0' }, grid: { color: 'rgba(46,50,80,.5)' } },
+        y1: { position: 'left',  ticks: { color: '#8892b0' }, grid: { color: 'rgba(46,50,80,.5)' } },
+        y2: { position: 'right', ticks: { color: '#8892b0' }, grid: { display: false } },
+      }
+    }
+  });
+
+  // 전역에 dsMap 노출 (토글용)
+  window._dsMap    = dsMap;
+  window._labels   = labels;
+  window._chart    = mainChart;
+
+  // 업데이트 시각
+  const upd = document.getElementById('last-updated');
+  if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${s.last_updated_kst||'방금'}</span>`;
 }
 
-function renderAll() {
-  const d = _summary[_period] || {};
-  const periodLabels = { monthly:'이번 달', last_7d:'최근 7일', yesterday:'어제', today:'오늘' };
+function toggleMetric(btn) {
+  const m = btn.dataset.m;
+  if (btn.classList.contains('on')) {
+    if (activeMetrics.length <= 1) return;
+    activeMetrics = activeMetrics.filter(x => x !== m);
+    btn.classList.remove('on');
+  } else {
+    activeMetrics.push(m);
+    btn.classList.add('on');
+  }
+  if (window._chart) {
+    window._chart.data.datasets = activeMetrics.map(k => ({
+      label: window._dsMap[k].label, data: window._dsMap[k].data,
+      borderColor: window._dsMap[k].color, backgroundColor: window._dsMap[k].color+'22',
+      tension: .4, fill: false, pointRadius: 4, yAxisID: window._dsMap[k].y,
+    }));
+    window._chart.update();
+  }
+}
 
-  document.getElementById('main-content').innerHTML = `
-    <p class="section-title">${periodLabels[_period]} 핵심 지표</p>
-    ${renderKPI(d)}
-
-    <div class="section-card">
-      <p class="section-title">일별 성과 추이</p>
-      ${renderDailyTable(_daily ? _daily.data : [])}
-    </div>
-
-    <div class="section-card">
-      <p class="section-title">캠페인별 성과 (이번 달)</p>
-      ${renderCampaigns(_campaigns ? _campaigns.data : [])}
-    </div>
-
-    <div class="section-card">
-      <p class="section-title">소재 TOP 성과 (이번 달)</p>
-      ${renderAds(_ads ? _ads.data : [])}
-    </div>
-  `;
-
-  document.getElementById('last-updated').textContent = '최종 업데이트: ' + (_summary.last_updated_kst || '—');
+function toggleCard(card, metric) {
+  card.classList.toggle('selected');
+  const btn = document.querySelector(`.mtog[data-m="${metric}"]`);
+  if (btn) btn.click();
 }
 
 async function loadData() {
   try {
-    const ts = Date.now();
-    [_summary, _daily, _campaigns, _ads] = await Promise.all([
-      fetch(`${RAW}/summary.json?t=${ts}`).then(r => r.json()),
-      fetch(`${RAW}/daily_history.json?t=${ts}`).then(r => r.json()),
-      fetch(`${RAW}/campaigns.json?t=${ts}`).then(r => r.json()),
-      fetch(`${RAW}/ads.json?t=${ts}`).then(r => r.json()),
+    const [s, d, c] = await Promise.all([
+      fetch(`${RAW}/summary.json?t=${Date.now()}`).then(r => r.json()),
+      fetch(`${RAW}/daily_history.json?t=${Date.now()}`).then(r => r.json()),
+      fetch(`${RAW}/campaigns.json?t=${Date.now()}`).then(r => r.json()),
     ]);
-    renderAll();
+    render(s, d, c);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
-      `<div class="loading" style="color:#ff4d6d">⚠ 데이터를 불러오지 못했습니다.<br><small style="color:#6b7280">${e.message}</small><br><br>
-      <button onclick="loadData()" style="background:#6c63ff;border:none;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer">다시 시도</button></div>`;
+      `<div class="loading" style="color:var(--red)">
+        ⚠ 데이터를 불러오지 못했습니다.<br>
+        <small style="color:var(--muted)">${e.message}</small><br><br>
+        <button onclick="loadData()" style="background:var(--accent);border:none;color:#fff;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;">다시 시도</button>
+      </div>`;
   }
 }
 
