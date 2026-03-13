@@ -34,36 +34,15 @@
     .nbadge span{color:var(--text);font-weight:600;}
     .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px;animation:pulse 2s infinite;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-    .nav-set-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:8px;font-size:12px;cursor:pointer;font-weight:600;}
-    .nav-set-btn:hover{border-color:var(--accent);color:var(--accent);}
-
-    /* ── 목표 설정 패널 ── */
-    .settings-panel{
-      background:var(--surface);border-bottom:1px solid var(--yellow);
-      padding:16px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;
-    }
-    .settings-panel.hidden{display:none;}
-    .settings-panel label{font-size:12px;color:var(--muted);margin-right:6px;}
-    .settings-panel input{
-      background:var(--surface2);border:1px solid var(--border);color:var(--text);
-      padding:5px 10px;border-radius:6px;font-size:13px;width:140px;
-    }
-    .settings-panel .save-btn{
-      background:var(--accent);border:none;color:#fff;
-      padding:7px 18px;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;
-    }
-    .settings-panel .set-group{display:flex;align-items:center;}
 
     /* ── MAIN ── */
     .main{padding:24px 28px;display:flex;flex-direction:column;gap:24px;}
 
     /* ── LOADING ── */
-    .loading{text-align:center;padding:80px;color:var(--muted);font-size:14px;}
-    .spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-right:10px;}
-    @keyframes spin{to{transform:rotate(360deg);}}
+    .loading{display:flex;align-items:center;justify-content:center;min-height:60vh;font-size:15px;color:var(--muted);flex-direction:column;gap:12px;}
 
     /* ── TODAY SECTION ── */
-    .today-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+    .today-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
     .today-title{font-size:20px;font-weight:800;}
     .today-date{font-size:13px;color:var(--muted);}
     .today-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
@@ -114,16 +93,15 @@
 
     /* ── ASC SECTION ── */
     .asc-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;}
-    .asc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px;}
+    .asc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px;}
     .asc-card{
       background:var(--surface2);border:1px solid var(--border);border-radius:12px;
       padding:18px;position:relative;overflow:hidden;transition:border-color .2s;
     }
     .asc-card:hover{border-color:var(--accent);}
     .asc-card.active::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac,#4f6ef7);}
-    .asc-card.inactive{opacity:.55;border-style:dashed;}
     .asc-num{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
-    .asc-type{font-size:13px;font-weight:700;margin-bottom:12px;line-height:1.4;}
+    .asc-type{font-size:13px;font-weight:700;margin-bottom:14px;line-height:1.4;}
     .asc-kpi-row{display:flex;flex-direction:column;gap:8px;}
     .asc-kpi{display:flex;justify-content:space-between;align-items:center;font-size:12px;}
     .asc-kpi-lbl{color:var(--muted);}
@@ -135,12 +113,10 @@
     .asc-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;margin-bottom:10px;}
     .sdot{width:7px;height:7px;border-radius:50%;display:inline-block;}
     .son{background:var(--green);}
+    .soff{background:var(--muted);}
 
     /* 목표 달성 뱃지 */
-    .goal-badge{
-      position:absolute;top:12px;right:12px;
-      font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;
-    }
+    .goal-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;}
     .badge-reach{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
     .badge-near{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3);}
     .badge-low{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);}
@@ -163,27 +139,6 @@
     .spend-bar-val{color:var(--muted);}
     .sbar-bg{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;}
     .sbar-fill{height:100%;border-radius:99px;}
-
-    /* ── KPI 요약 카드 ── */
-    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-    .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;}
-    .kpi-label{font-size:12px;color:var(--muted);margin-bottom:6px;}
-    .kpi-value{font-size:22px;font-weight:700;}
-    .kpi-sub{font-size:11px;color:var(--muted);margin-top:4px;}
-    .kpi-delta{font-size:12px;font-weight:600;margin-top:4px;}
-    .up{color:var(--green);}
-    .down{color:var(--red);}
-
-    @media(max-width:900px){
-      .today-grid,.asc-grid,.kpi-row{grid-template-columns:repeat(2,1fr);}
-      .spend-overview{grid-template-columns:1fr;}
-      .main{padding:16px;}
-      .nav{padding:12px 16px;}
-    }
-    @media(max-width:600px){
-      .today-grid,.kpi-row{grid-template-columns:1fr;}
-      .asc-grid{grid-template-columns:repeat(2,1fr);}
-    }
   </style>
 </head>
 <body>
@@ -199,94 +154,35 @@
   </div>
   <div class="nav-right">
     <div class="nbadge">광고 계정 <span>이어리프트</span></div>
-    <div class="nbadge" id="last-updated"><span class="pulse"></span>업데이트 <span>로딩 중...</span></div>
-    <button class="nav-set-btn" onclick="toggleSettings()">⚙ 목표 설정</button>
+    <div class="nbadge" id="last-updated"><span class="pulse"></span>로딩 중...</div>
   </div>
 </nav>
 
-<!-- 목표 설정 패널 -->
-<div class="settings-panel hidden" id="settings-panel">
-  <div class="set-group">
-    <label>일 매출 목표(원)</label>
-    <input type="number" id="g-revenue" placeholder="예: 10000000">
-  </div>
-  <div class="set-group">
-    <label>일 ROAS 목표</label>
-    <input type="number" step="0.1" id="g-roas" placeholder="예: 2.5">
-  </div>
-  <div class="set-group">
-    <label>일 광고비 목표(원)</label>
-    <input type="number" id="g-spend" placeholder="예: 4400000">
-  </div>
-  <div class="set-group">
-    <label>월 예산(원)</label>
-    <input type="number" id="g-budget" placeholder="예: 30000000">
-  </div>
-  <button class="save-btn" onclick="saveGoals()">저장</button>
-</div>
-
-<!-- 메인 콘텐츠 -->
-<div id="main-content" class="loading">
-  <span class="spinner"></span> 광고 데이터를 불러오는 중...
+<div id="main-content" class="main">
+  <div class="loading">⏳ 데이터 불러오는 중...</div>
 </div>
 
 <script>
-// ── 데이터 URL ────────────────────────────────────────────
 const REPO = 'giganticsolarium/earift-dashboard';
 const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
+const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e','#06b6d4','#f472b6'];
+let gaugeCharts = {};
 
-// ── 목표값 관리 ───────────────────────────────────────────
-function getGoals() {
-  return {
-    revenue : parseFloat(localStorage.getItem('g_revenue') || 10000000),
-    roas    : parseFloat(localStorage.getItem('g_roas')    || 2.5),
-    spend   : parseFloat(localStorage.getItem('g_spend')   || 4400000),
-    budget  : parseFloat(localStorage.getItem('g_budget')  || 30000000),
-  };
-}
-function saveGoals() {
-  const fields = { g_revenue:'g-revenue', g_roas:'g-roas', g_spend:'g-spend', g_budget:'g-budget' };
-  for (const [k,id] of Object.entries(fields)) {
-    const v = document.getElementById(id).value;
-    if (v) localStorage.setItem(k, v);
-  }
-  document.getElementById('settings-panel').classList.add('hidden');
-  loadData();
-}
-function toggleSettings() {
-  const p = document.getElementById('settings-panel');
-  p.classList.toggle('hidden');
-  if (!p.classList.contains('hidden')) {
-    const g = getGoals();
-    document.getElementById('g-revenue').value = g.revenue;
-    document.getElementById('g-roas').value    = g.roas;
-    document.getElementById('g-spend').value   = g.spend;
-    document.getElementById('g-budget').value  = g.budget;
-  }
+function wFmt(n) {
+  n = Math.round(+n || 0);
+  if (n >= 100000000) { const v = n/100000000; return (v%1===0?v:v.toFixed(1))+'억원'; }
+  if (n >= 10000)     return Math.round(n/10000).toLocaleString()+'만원';
+  return n.toLocaleString()+'원';
 }
 
-// ── 숫자 포맷 ─────────────────────────────────────────────
-const wFmt = n => {
-  if (n >= 1e8) return (n/1e8).toFixed(1)+'억';
-  if (n >= 1e4) return (n/1e4).toFixed(0)+'만';
-  if (n >= 1e3) return (n/1e3).toFixed(0)+'K';
-  return n.toLocaleString('ko-KR');
-};
-const numFmt = n => (n||0).toLocaleString('ko-KR');
-const pctFmt = n => (n||0).toFixed(1)+'%';
-
-// ── 게이지 차트 인스턴스 ──────────────────────────────────
-const gaugeCharts = {};
 function makeGauge(id, pct, color) {
-  const canvas = document.getElementById(id);
-  if (!canvas) return;
   if (gaugeCharts[id]) gaugeCharts[id].destroy();
-  const ctx = canvas.getContext('2d');
+  const ctx = document.getElementById(id).getContext('2d');
   gaugeCharts[id] = new Chart(ctx, {
     type: 'doughnut',
     data: {
       datasets: [{
-        data: [Math.min(pct, 100), Math.max(0, 100 - Math.min(pct, 100))],
+        data: [Math.min(pct,100), Math.max(0,100-pct)],
         backgroundColor: [color, 'rgba(46,50,80,.4)'],
         borderWidth: 0, borderRadius: 4,
       }]
@@ -300,111 +196,78 @@ function makeGauge(id, pct, color) {
   });
 }
 
-// ── 메인 렌더 ────────────────────────────────────────────
-function render(summary, daily, campaigns) {
-  const goals = getGoals();
-  const t = summary.today     || {};
-  const y = summary.yesterday || {};
-  const m = summary.monthly   || {};
+function render(s, d) {
+  const goals   = s.goals   || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
+  const today   = s.today   || {};
+  const camps   = s.campaigns || [];
 
-  // 달성률 계산
-  const revenuePct = goals.revenue > 0 ? (t.purchase_value / goals.revenue * 100) : 0;
-  const roasPct    = goals.roas    > 0 ? (t.roas    / goals.roas    * 100) : 0;
-  const spendPct   = goals.spend   > 0 ? (t.spend   / goals.spend   * 100) : 0;
+  const revenuePct = goals.revenue > 0 ? Math.round((today.purchase_value||0) / goals.revenue * 100) : 0;
+  const roasPct    = goals.roas    > 0 ? Math.round((today.roas||0) / goals.roas * 100) : 0;
+  const spendPct   = goals.spend   > 0 ? Math.round((today.spend||0) / goals.spend * 100) : 0;
+  const totalSpendPct = goals.spend > 0 ? Math.round((today.spend||0) / goals.spend * 100) : 0;
 
-  // 캠페인 데이터 (최대 4개)
-  const campList = (campaigns.data || []).slice(0, 4);
-  const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e'];
-
-  // ── 오늘 전체 광고비 섹션 ──
-  const spendBarItems = campList.length > 0
-    ? campList.map((c, i) => {
-        const maxSpend = Math.max(...campList.map(x => x.spend), 1);
-        const pct = Math.round(c.spend / maxSpend * 100);
-        const name = c.campaign_name || `캠페인 ${i+1}`;
+  // 캠페인 지출 바
+  const spendBarItems = camps.length > 0
+    ? camps.map((c, i) => {
+        const pct = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(camps.length,1)) * 100) : 0;
         return `<div class="spend-bar-item">
           <div class="spend-bar-meta">
-            <span class="spend-bar-name">${name.length > 18 ? name.slice(0,18)+'…' : name}</span>
-            <span class="spend-bar-val">₩${wFmt(c.spend)} · ROAS ${c.roas}x</span>
+            <span class="spend-bar-name">${c.campaign_name || '캠페인 '+(i+1)}</span>
+            <span class="spend-bar-val">${wFmt(c.spend)} · ${Math.min(pct,999)}%</span>
           </div>
-          <div class="sbar-bg"><div class="sbar-fill" style="width:${pct}%;background:${campColors[i]};"></div></div>
+          <div class="sbar-bg"><div class="sbar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
         </div>`;
       }).join('')
-    : `<div style="color:var(--muted);font-size:13px;padding:12px 0;">캠페인 데이터 로딩 중...</div>`;
+    : `<div style="color:var(--muted);font-size:13px;padding:8px 0;">캠페인 데이터 없음</div>`;
 
-  const totalSpendPct = Math.round(spendPct);
-
-  // ── 일 KPI 델타 ──
-  function deltaHtml(curr, prev, isRoas) {
-    if (!prev) return '';
-    const d = curr - prev;
-    const cls = d >= 0 ? 'up' : 'down';
-    const sign = d >= 0 ? '▲' : '▼';
-    const val = isRoas ? Math.abs(d).toFixed(2) : numFmt(Math.abs(d));
-    return `<div class="kpi-delta ${cls}">${sign} ${val}</div>`;
-  }
-
-  // ── 게이지 diff 텍스트 ──
-  function gaugeDiff(curr, goal, isRoas) {
-    const diff = goal - curr;
-    if (diff <= 0) return `<div class="gauge-diff diff-up">목표 달성!</div>`;
-    if (isRoas) return `<div class="gauge-diff diff-dn">▼ ${Math.abs(diff).toFixed(2)} 부족</div>`;
-    return `<div class="gauge-diff diff-dn">₩${wFmt(Math.abs(diff))} 부족</div>`;
-  }
-
-  // ── ASC 캠페인 카드 ──
-  const ascCards = campList.length > 0
-    ? campList.map((c, i) => {
-        const spendPctCamp = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(campList.length,1)) * 100) : 0;
+  // ASC 카드
+  const ascCards = camps.length > 0
+    ? camps.map((c, i) => {
+        const pct = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(camps.length,1)) * 100) : 0;
         const badgeCls = c.roas >= goals.roas ? 'badge-reach' : c.roas >= goals.roas * 0.7 ? 'badge-near' : 'badge-low';
-        const badgeTxt = c.roas >= goals.roas ? '목표 달성' : `${Math.round(c.roas / goals.roas * 100)}% 달성`;
+        const badgeTxt = c.roas >= goals.roas ? '목표 달성' : `${Math.round((c.roas||0)/goals.roas*100)}% 달성`;
         const name = c.campaign_name || `캠페인 ${i+1}`;
+        const roasColor = c.roas >= goals.roas ? 'var(--green)' : c.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
         return `<div class="asc-card active" style="--ac:${campColors[i]}">
           <div class="goal-badge ${badgeCls}">${badgeTxt}</div>
           <div class="asc-num">캠페인 ${i+1}</div>
-          <div class="asc-type">${name.length > 12 ? name.slice(0,12)+'…' : name}</div>
+          <div class="asc-type">${name.length > 14 ? name.slice(0,14)+'…' : name}</div>
           <div class="asc-status"><span class="sdot son"></span>활동 중</div>
           <div class="asc-kpi-row">
-            <div class="asc-kpi">
-              <span class="asc-kpi-lbl">ROAS</span>
-              <span class="asc-kpi-val" style="color:${c.roas >= goals.roas ? 'var(--green)' : c.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)'}">${c.roas}x</span>
-            </div>
-            <div class="asc-kpi">
-              <span class="asc-kpi-lbl">구매</span>
-              <span class="asc-kpi-val">${numFmt(c.purchases)}건</span>
-            </div>
-            <div class="asc-kpi">
-              <span class="asc-kpi-lbl">CPA</span>
-              <span class="asc-kpi-val">₩${wFmt(c.cpa)}</span>
-            </div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${(c.roas||0).toFixed(2)}x</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">구매</span><span class="asc-kpi-val">${(c.purchases||0)}건</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(c.cpa||0)}</span></div>
           </div>
           <div class="asc-spend-bar">
-            <div class="asc-bar-row">
-              <span>이번 달 광고비</span><span>₩${wFmt(c.spend)}</span>
-            </div>
-            <div class="asc-bar-bg">
-              <div class="asc-bar-fill" style="width:${Math.min(spendPctCamp,100)}%;background:${campColors[i]};"></div>
-            </div>
+            <div class="asc-bar-row"><span>이번 달 광고비</span><span>${wFmt(c.spend||0)}</span></div>
+            <div class="asc-bar-bg"><div class="asc-bar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
           </div>
         </div>`;
       }).join('')
-    : `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">캠페인 데이터가 아직 없습니다. GitHub Actions가 처음 실행되면 자동으로 채워집니다.</div>`;
+    : `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">캠페인 데이터가 아직 없습니다.</div>`;
 
-  // ── 일별 차트 데이터 ──
-  const dailyArr = (daily.data || []).slice(-14);
-  const chartLabels = dailyArr.map(d => d.date ? d.date.slice(5) : '');
-  const chartSpend  = dailyArr.map(d => Math.round((d.spend || 0) / 10000));
-  const chartRevenue = dailyArr.map(d => Math.round((d.purchase_value || 0) / 10000));
+  // 일별 차트 데이터 (최근 14일)
+  const dailyArr   = (d.data || []).slice(-14);
+  const chartLabels = dailyArr.map(x => (x.date||'').slice(5));
+  const chartSpend  = dailyArr.map(x => Math.round((x.spend||0) / 10000));
+  const chartRevenue = dailyArr.map(x => Math.round((x.purchase_value||0) / 10000));
 
   // 이번 달 누적
-  const monthTotal = m.purchase_value || 0;
+  const monthTotal = (s.month||{}).purchase_value || 0;
   const monthGoal  = goals.budget * goals.roas;
   const monthPct   = monthGoal > 0 ? Math.round(monthTotal / monthGoal * 100) : 0;
   const monthLeft  = Math.max(0, monthGoal - monthTotal);
 
-  // ── HTML 렌더 ──
   const now = new Date();
   const dateStr = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일`;
+
+  // gaugeDiff
+  function gaugeDiff(cur, goal, isRoas) {
+    const diff = goal - cur;
+    if (diff <= 0) return `<div class="gauge-diff diff-up">🎉 목표 달성!</div>`;
+    if (isRoas)    return `<div class="gauge-diff diff-dn">▼ ${Math.abs(diff).toFixed(2)} 부족</div>`;
+    return `<div class="gauge-diff diff-dn">${wFmt(Math.abs(diff))} 부족</div>`;
+  }
 
   document.getElementById('main-content').outerHTML = `
   <div id="main-content" class="main">
@@ -413,12 +276,12 @@ function render(summary, daily, campaigns) {
     <div class="total-spend-section">
       <div class="sec-hdr">
         <div class="sec-title">💰 오늘 전체 광고비 집행 현황</div>
-        <div style="font-size:12px;color:var(--muted)">일 목표: ₩${wFmt(goals.spend)}</div>
+        <div style="font-size:12px;color:var(--muted)">일 목표: ${wFmt(goals.spend)}</div>
       </div>
       <div class="spend-overview">
         <div class="spend-numbers">
-          <div class="spend-big">₩${wFmt(t.spend||0)}</div>
-          <div class="spend-target">목표 ₩${wFmt(goals.spend)}</div>
+          <div class="spend-big">${wFmt(today.spend||0)}</div>
+          <div class="spend-target">목표 ${wFmt(goals.spend)}</div>
           <div class="spend-pct-badge">${totalSpendPct}% 집행</div>
         </div>
         <div class="spend-bar-section">${spendBarItems}</div>
@@ -443,9 +306,9 @@ function render(summary, daily, campaigns) {
             </div>
           </div>
           <div class="gauge-values">
-            <div class="gauge-current">₩${wFmt(t.purchase_value||0)}</div>
-            <div class="gauge-target">목표 ₩${wFmt(goals.revenue)}</div>
-            ${gaugeDiff(t.purchase_value||0, goals.revenue, false)}
+            <div class="gauge-current">${wFmt(today.purchase_value||0)}</div>
+            <div class="gauge-target">목표 ${wFmt(goals.revenue)}</div>
+            ${gaugeDiff(today.purchase_value||0, goals.revenue, false)}
           </div>
         </div>
 
@@ -459,9 +322,9 @@ function render(summary, daily, campaigns) {
             </div>
           </div>
           <div class="gauge-values">
-            <div class="gauge-current">${(t.roas||0)}x</div>
+            <div class="gauge-current">${(today.roas||0)}x</div>
             <div class="gauge-target">목표 ${goals.roas}x</div>
-            ${gaugeDiff(t.roas||0, goals.roas, true)}
+            ${gaugeDiff(today.roas||0, goals.roas, true)}
           </div>
         </div>
 
@@ -475,8 +338,8 @@ function render(summary, daily, campaigns) {
             </div>
           </div>
           <div class="gauge-values">
-            <div class="gauge-current">₩${wFmt(t.spend||0)}</div>
-            <div class="gauge-target">목표 ₩${wFmt(goals.spend)}</div>
+            <div class="gauge-current">${wFmt(today.spend||0)}</div>
+            <div class="gauge-target">목표 ${wFmt(goals.spend)}</div>
             <div class="gauge-diff diff-ok">정상 집행 중</div>
           </div>
         </div>
@@ -484,35 +347,7 @@ function render(summary, daily, campaigns) {
       </div>
     </div>
 
-    <!-- ③ 오늘 KPI 요약 -->
-    <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-label">오늘 광고비</div>
-        <div class="kpi-value">₩${wFmt(t.spend||0)}</div>
-        ${deltaHtml(t.spend||0, y.spend||0, false)}
-        <div class="kpi-sub">어제 ₩${wFmt(y.spend||0)}</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">오늘 ROAS</div>
-        <div class="kpi-value">${(t.roas||0)}x</div>
-        ${deltaHtml(t.roas||0, y.roas||0, true)}
-        <div class="kpi-sub">어제 ${(y.roas||0)}x</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">오늘 구매</div>
-        <div class="kpi-value">${numFmt(t.purchases||0)}건</div>
-        ${deltaHtml(t.purchases||0, y.purchases||0, false)}
-        <div class="kpi-sub">어제 ${numFmt(y.purchases||0)}건</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">오늘 구매금액</div>
-        <div class="kpi-value">₩${wFmt(t.purchase_value||0)}</div>
-        ${deltaHtml(t.purchase_value||0, y.purchase_value||0, false)}
-        <div class="kpi-sub">어제 ₩${wFmt(y.purchase_value||0)}</div>
-      </div>
-    </div>
-
-    <!-- ④ 캠페인별 현황 -->
+    <!-- ③ 캠페인별 현황 -->
     <div class="asc-section">
       <div class="sec-hdr">
         <div class="sec-title">🚀 이번 달 캠페인별 현황</div>
@@ -521,38 +356,34 @@ function render(summary, daily, campaigns) {
       <div class="asc-grid">${ascCards}</div>
     </div>
 
-    <!-- ⑤ 일별 광고비·매출 추이 -->
+    <!-- ④ 최근 14일 추이 -->
     <div class="weekly-section">
       <div class="sec-hdr">
         <div class="sec-title">📈 최근 14일 광고비·매출 추이</div>
         <div class="week-meta">
           <div class="week-stat">
-            <div class="week-stat-val" style="color:var(--accent)">₩${wFmt(monthTotal)}</div>
+            <div class="week-stat-val" style="color:var(--accent)">${wFmt(monthTotal)}</div>
             <div class="week-stat-lbl">이번 달 누적 매출</div>
           </div>
           <div class="week-stat">
-            <div class="week-stat-val" style="color:var(--muted)">₩${wFmt(monthGoal)}</div>
+            <div class="week-stat-val" style="color:var(--muted)">${wFmt(monthGoal)}</div>
             <div class="week-stat-lbl">월 목표 매출</div>
           </div>
           <div class="week-goal-line">
             <span style="color:var(--yellow)">●</span>
-            목표까지 <strong style="color:var(--text)">₩${wFmt(monthLeft)}</strong> 남음 (${monthPct}% 달성)
+            목표까지 <strong style="color:var(--text)">${wFmt(monthLeft)}</strong> 남음 (${monthPct}% 달성)
           </div>
         </div>
       </div>
-      <div class="chart-wrap">
-        <canvas id="weeklyChart"></canvas>
-      </div>
+      <div class="chart-wrap"><canvas id="weeklyChart"></canvas></div>
     </div>
 
   </div>`;
 
-  // 게이지 그리기
   makeGauge('gaugeRevenue', revenuePct, '#4f6ef7');
   makeGauge('gaugeRoas',    roasPct,    '#22c55e');
   makeGauge('gaugeSpend',   spendPct,   '#f59e0b');
 
-  // 주간 차트 그리기
   const wCtx = document.getElementById('weeklyChart').getContext('2d');
   if (gaugeCharts['weeklyChart']) gaugeCharts['weeklyChart'].destroy();
   gaugeCharts['weeklyChart'] = new Chart(wCtx, {
@@ -578,20 +409,18 @@ function render(summary, daily, campaigns) {
     options: {
       responsive: true, maintainAspectRatio: false,
       interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { labels: { color: '#8892b0', boxWidth: 12, font: { size: 11 } }, position: 'top' }
-      },
+      plugins: { legend: { labels: { color: '#8892b0', boxWidth: 12, font: { size: 11 } }, position: 'top' } },
       scales: {
         x: { ticks: { color: '#8892b0' }, grid: { color: 'rgba(46,50,80,.4)' } },
         y1: {
           position: 'left', min: 0,
-          ticks: { color: '#8892b0', callback: v => '₩'+v+'만' },
+          ticks: { color: '#8892b0', callback: v => v.toLocaleString()+'만원' },
           grid: { color: 'rgba(46,50,80,.4)' },
           title: { display: true, text: '광고비 (만원)', color: '#8892b0', font: { size: 11 } },
         },
         y2: {
           position: 'right',
-          ticks: { color: '#4f6ef7', callback: v => '₩'+v+'만' },
+          ticks: { color: '#4f6ef7', callback: v => v.toLocaleString()+'만원' },
           grid: { display: false },
           title: { display: true, text: '매출 (만원)', color: '#4f6ef7', font: { size: 11 } },
         },
@@ -599,12 +428,10 @@ function render(summary, daily, campaigns) {
     }
   });
 
-  // 마지막 업데이트 표시
   const upd = document.getElementById('last-updated');
-  if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${summary.last_updated_kst || '방금'}</span>`;
+  if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${s.last_updated_kst || '방금'}</span>`;
 }
 
-// ── 데이터 로드 ───────────────────────────────────────────
 async function loadData() {
   try {
     const [s, d, c] = await Promise.all([
