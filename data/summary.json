@@ -1,9 +1,56 @@
 {
-  "last_updated": "2026-03-13T00:00:00+09:00",
-  "last_updated_kst": "2026-03-13 00:00 KST",
-  "_note": "샘플 데이터. GitHub Actions 실행 후 실제 데이터로 교체됩니다.",
-  "monthly": {},
-  "today": {},
-  "yesterday": {},
-  "last_7d": {}
+  "last_updated": "2026-03-13T11:28:49.730332+09:00",
+  "last_updated_kst": "2026-03-13 11:28 KST",
+  "monthly": {
+    "spend": 6219394.0,
+    "impressions": 88099,
+    "clicks": 2937,
+    "reach": 43072,
+    "ctr": 3.33,
+    "cpc": 2118.0,
+    "cpm": 70596.0,
+    "purchases": 114,
+    "purchase_value": 9455360.0,
+    "roas": 1.52,
+    "cpa": 54556.0
+  },
+  "today": {
+    "spend": 245728.0,
+    "impressions": 2525,
+    "clicks": 96,
+    "reach": 2094,
+    "ctr": 3.8,
+    "cpc": 2560.0,
+    "cpm": 97318.0,
+    "purchases": 4,
+    "purchase_value": 264942.0,
+    "roas": 1.08,
+    "cpa": 61432.0
+  },
+  "yesterday": {
+    "spend": 605340.0,
+    "impressions": 8516,
+    "clicks": 298,
+    "reach": 6506,
+    "ctr": 3.5,
+    "cpc": 2031.0,
+    "cpm": 71083.0,
+    "purchases": 8,
+    "purchase_value": 814395.0,
+    "roas": 1.35,
+    "cpa": 75668.0
+  },
+  "last_7d": {
+    "spend": 3507405.0,
+    "impressions": 50427,
+    "clicks": 1721,
+    "reach": 28413,
+    "ctr": 3.41,
+    "cpc": 2038.0,
+    "cpm": 69554.0,
+    "purchases": 68,
+    "purchase_value": 5963806.0,
+    "roas": 1.7,
+    "cpa": 51579.0
+  }
 }
