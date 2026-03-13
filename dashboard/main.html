@@ -3,152 +3,152 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ì´ì´ë¦¬íí¸ ê´ê³  ëìë³´ë</title>
+<title>이어리프트 광고 대시보드</title>
 <style>
-  :root {
-    --bg: #0f1117; --card: #1a1d2e; --card2: #222538;
-    --accent: #6c63ff; --green: #00d97e; --red: #ff4d6d;
-    --yellow: #ffd60a; --text: #e8eaf0; --muted: #6b7280;
-    --border: #2d3148;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; min-height:100vh; }
+ :root {
+  --bg: #0f1117; --card: #1a1d2e; --card2: #222538;
+  --accent: #6c63ff; --green: #00d97e; --red: #ff4d6d;
+  --yellow: #ffd60a; --text: #e8eaf0; --muted: #6b7280;
+  --border: #2d3148;
+ }
+ * { margin:0; padding:0; box-sizing:border-box; }
+ body { background:var(--bg); color:var(--text); font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; min-height:100vh; }
 
-  /* âââ í¤ë âââââââââââââââââââââââââââââââââââ */
-  header { display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid var(--border); }
-  .logo  { font-size:18px; font-weight:700; letter-spacing:-.5px; }
-  .logo span { color:var(--accent); }
-  .header-right { display:flex; align-items:center; gap:16px; }
-  #last-updated { font-size:12px; color:var(--muted); }
-  .nav-btn { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; }
-  .nav-btn:hover { background:var(--accent); border-color:var(--accent); }
+ /* ─── 헤더 ─────────────────────────────────────────────── */
+ header { display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid var(--border); }
+ .logo { font-size:18px; font-weight:700; letter-spacing:-.5px; }
+ .logo span { color:var(--accent); }
+ .header-right { display:flex; align-items:center; gap:16px; }
+ #last-updated { font-size:12px; color:var(--muted); }
+ .nav-btn { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; }
+ .nav-btn:hover { background:var(--accent); border-color:var(--accent); }
 
-  /* âââ ë ì´ìì ââââââââââââââââââââââââââââââââ */
-  main { max-width:1300px; margin:0 auto; padding:28px 20px; }
-  .section-title { font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px; }
+ /* ─── 레이아웃 ─────────────────────────────────────────── */
+ main { max-width:1300px; margin:0 auto; padding:28px 20px; }
+ .section-title { font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px; }
 
-  /* âââ ëª©í ê²ì´ì§ ìì­ âââââââââââââââââââââââââ */
-  .goals-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
-  .goal-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px 20px; text-align:center; position:relative; overflow:hidden; }
-  .goal-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
-  .gauge-wrap { position:relative; width:130px; height:130px; margin:0 auto 16px; }
-  .gauge-wrap svg { transform:rotate(-90deg); }
-  .gauge-bg  { fill:none; stroke:var(--card2); stroke-width:10; }
-  .gauge-bar { fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset .8s ease; }
-  .gauge-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
-  .gauge-pct { font-size:22px; font-weight:800; }
-  .gauge-label-sub { font-size:11px; color:var(--muted); margin-top:2px; }
-  .goal-name { font-size:15px; font-weight:600; margin-bottom:6px; }
-  .goal-values { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
-  .goal-values .current { color:var(--text); font-weight:600; font-size:14px; }
+ /* ─── 목표 게이지 영역 ───────────────────────────────── */
+ .goals-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+ .goal-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px 20px; text-align:center; position:relative; overflow:hidden; }
+ .goal-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
+ .gauge-wrap { position:relative; width:130px; height:130px; margin:0 auto 16px; }
+ .gauge-wrap svg { transform:rotate(-90deg); }
+ .gauge-bg { fill:none; stroke:var(--card2); stroke-width:10; }
+ .gauge-bar { fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset .8s ease; }
+ .gauge-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+ .gauge-pct { font-size:22px; font-weight:800; }
+ .gauge-label-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+ .goal-name { font-size:15px; font-weight:600; margin-bottom:6px; }
+ .goal-values { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+ .goal-values .current { color:var(--text); font-weight:600; font-size:14px; }
 
-  /* âââ KPI ì¹´ë ââââââââââââââââââââââââââââââââ */
-  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px; }
-  .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 16px; }
-  .kpi-label { font-size:12px; color:var(--muted); margin-bottom:6px; }
-  .kpi-value { font-size:22px; font-weight:700; }
-  .kpi-sub { font-size:11px; color:var(--muted); margin-top:4px; }
-  .kpi-delta { font-size:12px; font-weight:600; margin-top:6px; }
-  .up   { color:var(--green); }
-  .down { color:var(--red); }
+ /* ─── KPI 카드 ──────────────────────────────────────── */
+ .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px; }
+ .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 16px; }
+ .kpi-label { font-size:12px; color:var(--muted); margin-bottom:6px; }
+ .kpi-value { font-size:22px; font-weight:700; }
+ .kpi-sub { font-size:11px; color:var(--muted); margin-top:4px; }
+ .kpi-delta { font-size:12px; font-weight:600; margin-top:6px; }
+ .up { color:var(--green); }
+ .down { color:var(--red); }
 
-  /* âââ ì£¼ê° ì°¨í¸ âââââââââââââââââââââââââââââââ */
-  .chart-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
-  .chart-header  { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-  .chart-tabs { display:flex; gap:8px; }
-  .tab-btn { background:none; border:1px solid var(--border); color:var(--muted); padding:5px 12px; border-radius:6px; font-size:12px; cursor:pointer; }
-  .tab-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-  #chart-canvas { width:100%; height:200px; position:relative; }
-  .chart-bars { display:flex; align-items:flex-end; gap:6px; height:160px; padding-bottom:24px; position:relative; }
-  .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
-  .chart-bar { width:100%; border-radius:4px 4px 0 0; min-height:2px; transition:height .5s ease; cursor:pointer; position:relative; }
-  .chart-bar:hover::after { content:attr(data-tooltip); position:absolute; top:-28px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:4px 8px; border-radius:4px; font-size:11px; white-space:nowrap; z-index:10; }
-  .chart-date { font-size:10px; color:var(--muted); }
-  .chart-empty { text-align:center; color:var(--muted); padding:60px 0; font-size:14px; }
+ /* ─── 주간 차트 ─────────────────────────────────────── */
+ .chart-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
+ .chart-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+ .chart-tabs { display:flex; gap:8px; }
+ .tab-btn { background:none; border:1px solid var(--border); color:var(--muted); padding:5px 12px; border-radius:6px; font-size:12px; cursor:pointer; }
+ .tab-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+ #chart-canvas { width:100%; height:200px; position:relative; }
+ .chart-bars { display:flex; align-items:flex-end; gap:6px; height:160px; padding-bottom:24px; position:relative; }
+ .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+ .chart-bar { width:100%; border-radius:4px 4px 0 0; min-height:2px; transition:height .5s ease; cursor:pointer; position:relative; }
+ .chart-bar:hover::after { content:attr(data-tooltip); position:absolute; top:-28px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:4px 8px; border-radius:4px; font-size:11px; white-space:nowrap; z-index:10; }
+ .chart-date { font-size:10px; color:var(--muted); }
+ .chart-empty { text-align:center; color:var(--muted); padding:60px 0; font-size:14px; }
 
-  /* âââ ìº íì¸ ëª©ë¡ âââââââââââââââââââââââââââââ */
-  .campaigns-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
-  .camp-table { width:100%; border-collapse:collapse; }
-  .camp-table th { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
-  .camp-table td { padding:12px; font-size:13px; border-bottom:1px solid var(--border); }
-  .camp-table tr:last-child td { border-bottom:none; }
-  .camp-table tr:hover td { background:var(--card2); }
-  .roas-badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:12px; font-weight:600; }
-  .roas-good { background:rgba(0,217,126,.15); color:var(--green); }
-  .roas-mid  { background:rgba(255,214,10,.12); color:var(--yellow); }
-  .roas-bad  { background:rgba(255,77,109,.12); color:var(--red); }
-  .camp-empty { text-align:center; color:var(--muted); padding:32px; font-size:14px; }
+ /* ─── 캠페인 목록 ────────────────────────────────────── */
+ .campaigns-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
+ .camp-table { width:100%; border-collapse:collapse; }
+ .camp-table th { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+ .camp-table td { padding:12px; font-size:13px; border-bottom:1px solid var(--border); }
+ .camp-table tr:last-child td { border-bottom:none; }
+ .camp-table tr:hover td { background:var(--card2); }
+ .roas-badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:12px; font-weight:600; }
+ .roas-good { background:rgba(0,217,126,.15); color:var(--green); }
+ .roas-mid { background:rgba(255,214,10,.12); color:var(--yellow); }
+ .roas-bad { background:rgba(255,77,109,.12); color:var(--red); }
+ .camp-empty { text-align:center; color:var(--muted); padding:32px; font-size:14px; }
 
-  /* âââ ì¤ì  í¨ë âââââââââââââââââââââââââââââââ */
-  .settings-bar { background:var(--card); border:1px solid var(--yellow); border-radius:12px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-  .settings-bar.hidden { display:none; }
-  .settings-bar label { font-size:13px; color:var(--muted); margin-right:6px; }
-  .settings-bar input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:6px; font-size:13px; width:160px; }
-  .settings-bar .save-btn { background:var(--accent); border:none; color:#fff; padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; }
+ /* ─── 설정 패널 ─────────────────────────────────────── */
+ .settings-bar { background:var(--card); border:1px solid var(--yellow); border-radius:12px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+ .settings-bar.hidden { display:none; }
+ .settings-bar label { font-size:13px; color:var(--muted); margin-right:6px; }
+ .settings-bar input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:6px; font-size:13px; width:160px; }
+ .settings-bar .save-btn { background:var(--accent); border:none; color:#fff; padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; }
 
-  /* âââ ë¡ë© ââââââââââââââââââââââââââââââââââââ */
-  .loading { text-align:center; padding:60px; color:var(--muted); font-size:14px; }
-  .spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin-right:10px; }
-  @keyframes spin { to { transform:rotate(360deg); } }
+ /* ─── 로딩 ──────────────────────────────────────────── */
+ .loading { text-align:center; padding:60px; color:var(--muted); font-size:14px; }
+ .spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin-right:10px; }
+ @keyframes spin { to { transform:rotate(360deg); } }
 
-  @media (max-width:768px) {
-    .goals-grid { grid-template-columns:1fr; }
-    .kpi-grid   { grid-template-columns:repeat(2,1fr); }
-  }
+ @media (max-width:768px) {
+  .goals-grid { grid-template-columns:1fr; }
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+ }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">ì´ì´ë¦¬íí¸ <span>AD</span></div>
+  <div class="logo">이어리프트 <span>AD</span></div>
   <div class="header-right">
-    <span id="last-updated">ë¡ë© ì¤...</span>
-    <a href="detail.html" class="nav-btn">ìì¸ ë°ì´í° â</a>
-    <button class="nav-btn" onclick="toggleSettings()">â ëª©í ì¤ì </button>
+    <span id="last-updated">로딩 중...</span>
+    <a href="detail.html" class="nav-btn">상세 데이터 →</a>
+    <button class="nav-btn" onclick="toggleSettings()">⚙ 목표 설정</button>
   </div>
 </header>
 
-<!-- ëª©í ì¤ì  í¨ë -->
+<!-- 목표 설정 패널 -->
 <div style="max-width:1300px;margin:16px auto 0;padding:0 20px;">
   <div class="settings-bar hidden" id="settings-bar">
     <div>
-      <label>ì ìì°(ì)</label>
-      <input type="number" id="goal-budget" placeholder="ì: 3000000">
+      <label>월 예산(원)</label>
+      <input type="number" id="goal-budget" placeholder="예: 3000000">
     </div>
     <div>
-      <label>ROAS ëª©í</label>
-      <input type="number" step="0.1" id="goal-roas" placeholder="ì: 3.0">
+      <label>ROAS 목표</label>
+      <input type="number" step="0.1" id="goal-roas" placeholder="예: 3.0">
     </div>
     <div>
-      <label>ì êµ¬ë§¤ ëª©í(ê±´)</label>
-      <input type="number" id="goal-purchases" placeholder="ì: 300">
+      <label>신규구매 목표(건)</label>
+      <input type="number" id="goal-purchases" placeholder="예: 300">
     </div>
-    <button class="save-btn" onclick="saveGoals()">ì ì¥</button>
+    <button class="save-btn" onclick="saveGoals()">저장</button>
   </div>
 </div>
 
 <main>
   <div id="main-content" class="loading">
-    <span class="spinner"></span> ê´ê³  ë°ì´í°ë¥¼ ë¶ë¬ì¤ë ì¤...
+    <span class="spinner"></span> 광고 데이터를 불러오는 중...
   </div>
 </main>
 
 <script>
-// ââ ë°ì´í° URL âââââââââââââââââââââââââââââââââââââââââââââ
+// ── 데이터 URL ───────────────────────────────────────────────────────
 const REPO = 'giganticsolarium/earift-dashboard';
-const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
+const RAW = `https://raw.githubusercontent.com/${REPO}/main/data`;
 
-// ââ ê¸°ë³¸ ëª©íê° (localStorage ì°ì ) âââââââââââââââââââââââ
+// ── 기본 목표값 (localStorage 우선) ──────────────────────────────────
 function getGoals() {
   return {
-    budget:    parseFloat(localStorage.getItem('goal_budget')    || 3000000),
-    roas:      parseFloat(localStorage.getItem('goal_roas')      || 3.0),
+    budget: parseFloat(localStorage.getItem('goal_budget') || 3000000),
+    roas: parseFloat(localStorage.getItem('goal_roas') || 3.0),
     purchases: parseFloat(localStorage.getItem('goal_purchases') || 300),
   };
 }
 function saveGoals() {
-  localStorage.setItem('goal_budget',    document.getElementById('goal-budget').value    || 3000000);
-  localStorage.setItem('goal_roas',      document.getElementById('goal-roas').value      || 3.0);
+  localStorage.setItem('goal_budget', document.getElementById('goal-budget').value || 3000000);
+  localStorage.setItem('goal_roas', document.getElementById('goal-roas').value || 3.0);
   localStorage.setItem('goal_purchases', document.getElementById('goal-purchases').value || 300);
   document.getElementById('settings-bar').classList.add('hidden');
   loadData();
@@ -158,22 +158,21 @@ function toggleSettings() {
   bar.classList.toggle('hidden');
   if (!bar.classList.contains('hidden')) {
     const g = getGoals();
-    document.getElementById('goal-budget').value    = g.budget;
-    document.getElementById('goal-roas').value      = g.roas;
+    document.getElementById('goal-budget').value = g.budget;
+    document.getElementById('goal-roas').value = g.roas;
     document.getElementById('goal-purchases').value = g.purchases;
   }
 }
 
-// ââ ì«ì í¬ë§· ââââââââââââââââââââââââââââââââââââââââââââââ
-const won  = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : n.toLocaleString();
-const num  = n => n.toLocaleString('ko-KR');
-const pct  = n => n.toFixed(1) + '%';
+// ── 숫자 포맷 ─────────────────────────────────────────────────────────
+const won = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : n.toLocaleString();
+const num = n => n.toLocaleString('ko-KR');
+const pct = n => n.toFixed(1) + '%';
 
-// ââ ê²ì´ì§ SVG âââââââââââââââââââââââââââââââââââââââââââââ
+// ── 게이지 SVG ───────────────────────────────────────────────────────
 function buildGauge(pctVal, color) {
   const r = 54, circ = 2 * Math.PI * r;
   const filled = Math.min(pctVal / 100, 1) * circ;
-  const colorMap = { green:var(--green)||'#00d97e', accent:'#6c63ff', yellow:'#ffd60a', red:'#ff4d6d' };
   const stroke = { green:'#00d97e', accent:'#6c63ff', yellow:'#ffd60a', red:'#ff4d6d' }[color] || '#6c63ff';
   return `<svg width="130" height="130" viewBox="0 0 130 130">
     <circle class="gauge-bg" cx="65" cy="65" r="${r}"/>
@@ -182,62 +181,57 @@ function buildGauge(pctVal, color) {
       stroke-dasharray="${circ}"
       stroke-dashoffset="${circ - filled}"
       style="transition:stroke-dashoffset .8s ease"/>
-  </svg>`;
+    </svg>`;
 }
 
-// ââ ë©ì¸ ë ë ââââââââââââââââââââââââââââââââââââââââââââââ
+// ── 메인 렌더 ─────────────────────────────────────────────────────────
 function render(summary, daily, campaigns) {
   const goals = getGoals();
-  const m = summary.monthly  || {};
-  const t = summary.today    || {};
+  const m = summary.monthly || {};
+  const t = summary.today || {};
   const y = summary.yesterday|| {};
 
-  const budgetPct    = goals.budget    > 0 ? (m.spend / goals.budget * 100) : 0;
-  const roasPct      = goals.roas      > 0 ? (m.roas  / goals.roas   * 100) : 0;
+  const budgetPct = goals.budget > 0 ? (m.spend / goals.budget * 100) : 0;
+  const roasPct = goals.roas > 0 ? (m.roas / goals.roas * 100) : 0;
   const purchasesPct = goals.purchases > 0 ? (m.purchases / goals.purchases * 100) : 0;
 
-  const budgetColor    = budgetPct > 90 ? 'red' : budgetPct > 70 ? 'yellow' : 'accent';
-  const roasColor      = roasPct   > 80 ? 'green' : roasPct > 50 ? 'yellow' : 'red';
+  const budgetColor = budgetPct > 90 ? 'red' : budgetPct > 70 ? 'yellow' : 'accent';
+  const roasColor = roasPct > 80 ? 'green' : roasPct > 50 ? 'yellow' : 'red';
   const purchasesColor = purchasesPct > 80 ? 'green' : purchasesPct > 50 ? 'yellow' : 'accent';
 
-  // â ì¤ë vs ì´ì  ì°¨ì´
   function deltaHtml(curr, prev) {
     if (!prev) return '';
     const d = curr - prev;
     const cls = d >= 0 ? 'up' : 'down';
-    const sign = d >= 0 ? 'â²' : 'â¼';
+    const sign = d >= 0 ? '▲' : '▼';
     return `<div class="kpi-delta ${cls}">${sign} ${Math.abs(d).toLocaleString()}</div>`;
   }
   function roasDelta(curr, prev) {
     if (!prev) return '';
     const d = (curr - prev).toFixed(2);
     const cls = d >= 0 ? 'up' : 'down';
-    const sign = d >= 0 ? 'â²' : 'â¼';
+    const sign = d >= 0 ? '▲' : '▼';
     return `<div class="kpi-delta ${cls}">${sign} ${Math.abs(d)}</div>`;
   }
 
-  const dataAvailable = m.spend > 0;
-
-  // â ìº íì¸ íì´ë¸
   let campRows = '';
   if (campaigns.data && campaigns.data.length) {
     campaigns.data.slice(0, 8).forEach(c => {
       const roasClass = c.roas >= 3 ? 'roas-good' : c.roas >= 2 ? 'roas-mid' : 'roas-bad';
       campRows += `<tr>
-        <td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.campaign_name||'â'}</td>
-        <td>${won(c.spend)}ì</td>
+        <td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.campaign_name||'—'}</td>
+        <td>${won(c.spend)}원</td>
         <td>${num(c.impressions)}</td>
         <td>${pct(c.ctr)}</td>
         <td>${num(c.purchases)}</td>
         <td><span class="roas-badge ${roasClass}">${c.roas}x</span></td>
-        <td>${c.cpa > 0 ? won(c.cpa)+'ì' : 'â'}</td>
+        <td>${c.cpa > 0 ? won(c.cpa)+'원' : '—'}</td>
       </tr>`;
     });
   } else {
-    campRows = `<tr><td colspan="7" class="camp-empty">ìº íì¸ ë°ì´í°ë¥¼ ë¶ë¬ì¤ë ì¤ìëë¤.<br>GitHub Actionsê° ì²ì ì¤íëë©´ ìëì¼ë¡ ì±ìì§ëë¤.</td></tr>`;
+    campRows = `<tr><td colspan="7" class="camp-empty">캠페인 데이터를 불러오는 중입니다.<br>GitHub Actions가 처음 실행되면 자동으로 채워집니다.</td></tr>`;
   }
 
-  // â ì¼ë³ ì°¨í¸
   const dailyData = daily.data || [];
   let chartHtml = '';
   if (dailyData.length > 0) {
@@ -247,92 +241,87 @@ function render(summary, daily, campaigns) {
         const h = Math.max((d.spend / maxSpend) * 140, 2);
         const dateShort = d.date ? d.date.slice(5) : '';
         return `<div class="chart-bar-wrap">
-          <div class="chart-bar" style="height:${h}px;background:linear-gradient(180deg,#6c63ff,#9d97ff)" data-tooltip="${dateShort} â©${won(d.spend)}"></div>
+          <div class="chart-bar" style="height:${h}px;background:linear-gradient(180deg,#6c63ff,#9d97ff)" data-tooltip="${dateShort} ₩${won(d.spend)}"></div>
           <div class="chart-date">${dateShort}</div>
         </div>`;
       }).join('') + `</div>`;
   } else {
-    chartHtml = `<div class="chart-empty">ð ì²« ë²ì§¸ GitHub Actions ì¤í í ì°¨í¸ê° íìë©ëë¤</div>`;
+    chartHtml = `<div class="chart-empty">📊 첫 번째 GitHub Actions 실행 후 차트가 표시됩니다</div>`;
   }
 
   document.getElementById('main-content').innerHTML = `
-
-    <!-- â  ëª©í ê²ì´ì§ -->
-    <p class="section-title">ì´ë² ë¬ ëª©í ë¬ì±ë¥ </p>
+    <!-- ① 목표 게이지 -->
+    <p class="section-title">이번 달 목표 달성률 </p>
     <div class="goals-grid">
       <div class="goal-card">
-        <div class="gauge-wrap">${buildGauge(budgetPct, budgetColor)}<div class="gauge-center"><div class="gauge-pct" style="color:${budgetColor==='red'?'#ff4d6d':budgetColor==='yellow'?'#ffd60a':'#6c63ff'}">${budgetPct.toFixed(0)}%</div><div class="gauge-label-sub">ìì°ìì§</div></div></div>
-        <div class="goal-name">ì ê´ê³ ë¹ ìì°</div>
-        <div class="goal-values"><span>ëª©í <b>${won(goals.budget)}ì</b></span><span class="current">${won(m.spend||0)}ì ì¬ì©</span></div>
+        <div class="gauge-wrap">${buildGauge(budgetPct, budgetColor)}<div class="gauge-center"><div class="gauge-pct" style="color:${budgetColor==='red'?'#ff4d6d':budgetColor==='yellow'?'#ffd60a':'#6c63ff'}">${budgetPct.toFixed(0)}%</div><div class="gauge-label-sub">예산소진</div></div></div>
+        <div class="goal-name">월 광고비 예산</div>
+        <div class="goal-values"><span>목표 <b>${won(goals.budget)}원</b></span><span class="current">${won(m.spend||0)}원 사용</span></div>
       </div>
       <div class="goal-card" style="--accent:#00d97e">
         <div class="gauge-wrap">${buildGauge(roasPct, roasColor)}<div class="gauge-center"><div class="gauge-pct" style="color:${roasColor==='green'?'#00d97e':roasColor==='yellow'?'#ffd60a':'#ff4d6d'}">${roasPct.toFixed(0)}%</div><div class="gauge-label-sub">ROAS</div></div></div>
-        <div class="goal-name">ROAS ëª©í</div>
-        <div class="goal-values"><span>ëª©í <b>${goals.roas}x</b></span><span class="current">${(m.roas||0)}x ë¬ì±</span></div>
+        <div class="goal-name">ROAS 목표</div>
+        <div class="goal-values"><span>목표 <b>${goals.roas}x</b></span><span class="current">${(m.roas||0)}x 달성</span></div>
       </div>
       <div class="goal-card">
-        <div class="gauge-wrap">${buildGauge(purchasesPct, purchasesColor)}<div class="gauge-center"><div class="gauge-pct" style="color:#6c63ff">${purchasesPct.toFixed(0)}%</div><div class="gauge-label-sub">êµ¬ë§¤</div></div></div>
-        <div class="goal-name">ì êµ¬ë§¤ ëª©í</div>
-        <div class="goal-values"><span>ëª©í <b>${num(goals.purchases)}ê±´</b></span><span class="current">${num(m.purchases||0)}ê±´ ë¬ì±</span></div>
+        <div class="gauge-wrap">${buildGauge(purchasesPct, purchasesColor)}<div class="gauge-center"><div class="gauge-pct" style="color:#6c63ff">${purchasesPct.toFixed(0)}%</div><div class="gauge-label-sub">구매</div></div></div>
+        <div class="goal-name">신규 구매 목표</div>
+        <div class="goal-values"><span>목표 <b>${num(goals.purchases)}건</b></span><span class="current">${num(m.purchases||0)}건 달성</span></div>
       </div>
     </div>
-
-    <!-- â¡ KPI ì¹´ë -->
-    <p class="section-title">ì¤ë ì±ê³¼</p>
+    <!-- ② KPI 카드 -->
+    <p class="section-title">오늘 성과</p>
     <div class="kpi-grid">
       <div class="kpi-card">
-        <div class="kpi-label">ì¤ë ê´ê³ ë¹</div>
-        <div class="kpi-value">${won(t.spend||0)}ì</div>
+        <div class="kpi-label">오늘 광고비</div>
+        <div class="kpi-value">${won(t.spend||0)}원</div>
         ${deltaHtml(t.spend||0, y.spend||0)}
-        <div class="kpi-sub">ì´ì  ${won(y.spend||0)}ì</div>
+        <div class="kpi-sub">어제 ${won(y.spend||0)}원</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">ì¤ë ROAS</div>
+        <div class="kpi-label">오늘 ROAS</div>
         <div class="kpi-value">${(t.roas||0)}x</div>
         ${roasDelta(t.roas||0, y.roas||0)}
-        <div class="kpi-sub">ì´ì  ${(y.roas||0)}x</div>
+        <div class="kpi-sub">어제 ${(y.roas||0)}x</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">ì¤ë êµ¬ë§¤</div>
-        <div class="kpi-value">${num(t.purchases||0)}ê±´</div>
+        <div class="kpi-label">오늘 구매</div>
+        <div class="kpi-value">${num(t.purchases||0)}건</div>
         ${deltaHtml(t.purchases||0, y.purchases||0)}
-        <div class="kpi-sub">ì´ì  ${num(y.purchases||0)}ê±´</div>
+        <div class="kpi-sub">어제 ${num(y.purchases||0)}건</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">ì¤ë êµ¬ë§¤ê¸ì¡</div>
-        <div class="kpi-value">${won(t.purchase_value||0)}ì</div>
+        <div class="kpi-label">오늘 구매금액</div>
+        <div class="kpi-value">${won(t.purchase_value||0)}원</div>
         ${deltaHtml(t.purchase_value||0, y.purchase_value||0)}
-        <div class="kpi-sub">ì´ì  ${won(y.purchase_value||0)}ì</div>
+        <div class="kpi-sub">어제 ${won(y.purchase_value||0)}원</div>
       </div>
     </div>
-
-    <!-- â¢ ì¼ë³ ì§ì¶ ì°¨í¸ -->
+    <!-- ③ 일별 지출 차트 -->
     <div class="chart-section">
       <div class="chart-header">
-        <div class="section-title" style="margin:0">ì¼ë³ ê´ê³ ë¹ ì¶ì´ (ìµê·¼ 14ì¼)</div>
+        <div class="section-title" style="margin:0">일별 광고비 추이 (최근 14일)</div>
       </div>
       <div id="chart-canvas">${chartHtml}</div>
     </div>
-
-    <!-- â£ ìº íì¸ íì´ë¸ -->
+    <!-- ④ 캠페인 테이블 -->
     <div class="campaigns-section">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <p class="section-title" style="margin:0">ì´ë² ë¬ ìº íì¸ ì±ê³¼</p>
-        <a href="detail.html" style="font-size:12px;color:var(--accent);text-decoration:none">ì ì²´ ë³´ê¸° â</a>
+        <p class="section-title" style="margin:0">이번 달 캠페인 성과</p>
+        <a href="detail.html" style="font-size:12px;color:var(--accent);text-decoration:none">전체 보기 →</a>
       </div>
       <table class="camp-table">
         <thead><tr>
-          <th>ìº íì¸</th><th>ì§ì¶</th><th>ë¸ì¶</th><th>CTR</th><th>êµ¬ë§¤</th><th>ROAS</th><th>CPA</th>
+          <th>캠페인</th><th>지출</th><th>노출</th><th>CTR</th><th>구매</th><th>ROAS</th><th>CPA</th>
         </tr></thead>
         <tbody>${campRows}</tbody>
       </table>
     </div>
   `;
-
-  document.getElementById('last-updated').textContent = 'ìµì¢ ìë°ì´í¸: ' + (summary.last_updated_kst || 'â');
+  document.getElementById('last-updated').textContent = '최종 업데이트: ' + (summary.last_updated_kst || '—');
 }
 
-// ââ ë°ì´í° ë¡ë ââââââââââââââââââââââââââââââââââââââââââââ
+// ── 데이터 로드 ──────────────────────────────────────────────────────
 async function loadData() {
   try {
     const [s, d, c] = await Promise.all([
@@ -343,12 +332,12 @@ async function loadData() {
     render(s, d, c);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
-      `<div class="loading" style="color:#ff4d6d">â  ë°ì´í°ë¥¼ ë¶ë¬ì¤ì§ ëª»íìµëë¤.<br><small style="color:#6b7280">${e.message}</small><br><br>
-      <button onclick="loadData()" style="background:#6c63ff;border:none;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer">ë¤ì ìë</button></div>`;
+      `<div class="loading" style="color:#ff4d6d">⚠ 데이터를 불러오지 못했습니다.<br><small style="color:#6b7280">${e.message}</small><br><br>
+      <button onclick="loadData()" style="background:#6c63ff;border:none;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer">다시 시도</button></div>`;
   }
 }
 
-// ââ 1ìê°ë§ë¤ ìë ê°±ì  âââââââââââââââââââââââââââââââââââââ
+// ── 1시간마다 자동 갱신 ──────────────────────────────────────────────
 loadData();
 setInterval(loadData, 60 * 60 * 1000);
 </script>
