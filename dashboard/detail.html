@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이어리프트 상세 성과 데이터</title>
+<style>
+  :root {
+    --bg:#0f1117; --card:#1a1d2e; --card2:#222538;
+    --accent:#6c63ff; --green:#00d97e; --red:#ff4d6d;
+    --yellow:#ffd60a; --text:#e8eaf0; --muted:#6b7280; --border:#2d3148;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; }
+
+  header { display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid var(--border); }
+  .logo  { font-size:18px; font-weight:700; }
+  .logo span { color:var(--accent); }
+  .header-right { display:flex; align-items:center; gap:14px; }
+  #last-updated { font-size:12px; color:var(--muted); }
+  .nav-btn { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; }
+  .nav-btn:hover { background:var(--accent); border-color:var(--accent); }
+
+  main { max-width:1300px; margin:0 auto; padding:28px 20px; }
+
+  /* ─── 기간 탭 ──────────────────────────────── */
+  .period-tabs { display:flex; gap:8px; margin-bottom:24px; }
+  .period-tab { background:var(--card2); border:1px solid var(--border); color:var(--muted); padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; }
+  .period-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; font-weight:600; }
+
+  /* ─── KPI 그리드 ──────────────────────────── */
+  .kpi-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:28px; }
+  .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; }
+  .kpi-label { font-size:11px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em; }
+  .kpi-value { font-size:20px; font-weight:700; }
+  .kpi-sub   { font-size:11px; color:var(--muted); margin-top:4px; }
+
+  /* ─── 섹션 카드 ──────────────────────────── */
+  .section-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:24px; }
+  .section-title { font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:16px; }
+
+  /* ─── 테이블 ─────────────────────────────── */
+  .data-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .data-table th { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; padding:8px 12px; text-align:right; border-bottom:1px solid var(--border); }
+  .data-table th:first-child { text-align:left; }
+  .data-table td { padding:11px 12px; text-align:right; border-bottom:1px solid var(--border); }
+  .data-table td:first-child { text-align:left; font-weight:500; }
+  .data-table tr:last-child td { border-bottom:none; }
+  .data-table tr:hover td { background:var(--card2); }
+  .roas-badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:12px; font-weight:600; }
+  .roas-good { background:rgba(0,217,126,.15);  color:var(--green); }
+  .roas-mid  { background:rgba(255,214,10,.12); color:var(--yellow); }
+  .roas-bad  { background:rgba(255,77,109,.12); color:var(--red); }
+
+  /* ─── 소재 TOP ───────────────────────────── */
+  .ad-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .ad-card { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:16px; }
+  .ad-rank { font-size:11px; color:var(--muted); margin-bottom:8px; }
+  .ad-name { font-size:13px; font-weight:600; margin-bottom:10px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .ad-stats { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .ad-stat-label { font-size:10px; color:var(--muted); }
+  .ad-stat-value { font-size:13px; font-weight:600; }
+  .ad-empty { text-align:center; color:var(--muted); padding:32px; font-size:14px; }
+
+  /* ─── 로딩 ──────────────────────────────── */
+  .loading { text-align:center; padding:60px; color:var(--muted); font-size:14px; }
+  .spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin-right:10px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  @media (max-width:768px) {
+    .kpi-grid { grid-template-columns:repeat(2,1fr); }
+    .ad-grid  { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">이어리프트 <span>AD</span> · 상세 데이터</div>
+  <div class="header-right">
+    <span id="last-updated">로딩 중...</span>
+    <a href="main.html" class="nav-btn">← 목표 대시보드</a>
+  </div>
+</header>
+
+<main>
+  <div class="period-tabs">
+    <button class="period-tab active" onclick="switchPeriod('monthly',this)">이번 달</button>
+    <button class="period-tab" onclick="switchPeriod('last_7d',this)">최근 7일</button>
+    <button class="period-tab" onclick="switchPeriod('yesterday',this)">어제</button>
+    <button class="period-tab" onclick="switchPeriod('today',this)">오늘</button>
+  </div>
+
+  <div id="main-content" class="loading">
+    <span class="spinner"></span> 광고 데이터를 불러오는 중...
+  </div>
+</main>
+
+<script>
+const REPO = 'giganticsolarium/earift-dashboard';
+const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
+
+const won  = n => n >= 1e6 ? (n/1e6).toFixed(1)+'M' : n >= 1e3 ? (n/1e3).toFixed(0)+'K' : n.toLocaleString();
+const num  = n => Number(n).toLocaleString('ko-KR');
+const pct  = n => Number(n).toFixed(2) + '%';
+
+let _summary = null, _daily = null, _campaigns = null, _ads = null;
+let _period = 'monthly';
+
+function switchPeriod(p, btn) {
+  _period = p;
+  document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (_summary) renderAll();
+}
+
+function renderKPI(d) {
+  return `
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">광고비 지출</div>
+      <div class="kpi-value">${won(d.spend||0)}원</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">ROAS</div>
+      <div class="kpi-value" style="color:${(d.roas||0)>=3?'var(--green)':'var(--text)'}">${d.roas||0}x</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">구매건수</div>
+      <div class="kpi-value">${num(d.purchases||0)}건</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">구매금액</div>
+      <div class="kpi-value">${won(d.purchase_value||0)}원</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">CPA</div>
+      <div class="kpi-value">${d.cpa > 0 ? won(d.cpa)+'원' : '—'}</div>
+    </div>
+  </div>
+  <div class="kpi-grid" style="margin-top:-16px">
+    <div class="kpi-card">
+      <div class="kpi-label">노출</div>
+      <div class="kpi-value">${won(d.impressions||0)}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">클릭</div>
+      <div class="kpi-value">${num(d.clicks||0)}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">CTR</div>
+      <div class="kpi-value">${pct(d.ctr||0)}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">CPC</div>
+      <div class="kpi-value">${d.cpc > 0 ? won(d.cpc)+'원' : '—'}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">CPM</div>
+      <div class="kpi-value">${d.cpm > 0 ? won(d.cpm)+'원' : '—'}</div>
+    </div>
+  </div>`;
+}
+
+function renderDailyTable(data) {
+  if (!data || !data.length) {
+    return `<p style="text-align:center;color:var(--muted);padding:24px">일별 데이터가 없습니다. GitHub Actions 실행 후 채워집니다.</p>`;
+  }
+  const rows = [...data].reverse().slice(0, 30).map(d => {
+    const rc = (d.roas||0) >= 3 ? 'roas-good' : (d.roas||0) >= 2 ? 'roas-mid' : 'roas-bad';
+    return `<tr>
+      <td>${d.date||'—'}</td>
+      <td>${won(d.spend||0)}원</td>
+      <td>${won(d.impressions||0)}</td>
+      <td>${num(d.clicks||0)}</td>
+      <td>${pct(d.ctr||0)}</td>
+      <td>${num(d.purchases||0)}</td>
+      <td><span class="roas-badge ${rc}">${d.roas||0}x</span></td>
+      <td>${won(d.purchase_value||0)}원</td>
+      <td>${d.cpa > 0 ? won(d.cpa)+'원' : '—'}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="data-table">
+    <thead><tr>
+      <th style="text-align:left">날짜</th>
+      <th>지출</th><th>노출</th><th>클릭</th><th>CTR</th>
+      <th>구매</th><th>ROAS</th><th>구매금액</th><th>CPA</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderCampaigns(data) {
+  if (!data || !data.length) {
+    return `<p style="text-align:center;color:var(--muted);padding:24px">캠페인 데이터가 없습니다.</p>`;
+  }
+  const rows = data.map(c => {
+    const rc = (c.roas||0) >= 3 ? 'roas-good' : (c.roas||0) >= 2 ? 'roas-mid' : 'roas-bad';
+    return `<tr>
+      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.campaign_name||'—'}</td>
+      <td>${won(c.spend||0)}원</td>
+      <td>${won(c.impressions||0)}</td>
+      <td>${num(c.clicks||0)}</td>
+      <td>${pct(c.ctr||0)}</td>
+      <td>${num(c.purchases||0)}</td>
+      <td><span class="roas-badge ${rc}">${c.roas||0}x</span></td>
+      <td>${won(c.purchase_value||0)}원</td>
+      <td>${c.cpa > 0 ? won(c.cpa)+'원' : '—'}</td>
+    </tr>`;
+  }).join('');
+  return `<table class="data-table">
+    <thead><tr>
+      <th style="text-align:left">캠페인</th>
+      <th>지출</th><th>노출</th><th>클릭</th><th>CTR</th>
+      <th>구매</th><th>ROAS</th><th>구매금액</th><th>CPA</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
+function renderAds(data) {
+  if (!data || !data.length) {
+    return `<p class="ad-empty">소재 데이터가 없습니다. GitHub Actions 실행 후 채워집니다.</p>`;
+  }
+  return `<div class="ad-grid">` +
+    data.slice(0, 6).map((a, i) => {
+      const rc = (a.roas||0) >= 3 ? 'var(--green)' : (a.roas||0) >= 2 ? 'var(--yellow)' : 'var(--muted)';
+      return `<div class="ad-card">
+        <div class="ad-rank">🏆 TOP ${i+1} · ${a.campaign_name||''}</div>
+        <div class="ad-name">${a.ad_name||'소재명 없음'}</div>
+        <div class="ad-stats">
+          <div><div class="ad-stat-label">지출</div><div class="ad-stat-value">${won(a.spend||0)}원</div></div>
+          <div><div class="ad-stat-label">ROAS</div><div class="ad-stat-value" style="color:${rc}">${a.roas||0}x</div></div>
+          <div><div class="ad-stat-label">구매</div><div class="ad-stat-value">${num(a.purchases||0)}건</div></div>
+          <div><div class="ad-stat-label">CTR</div><div class="ad-stat-value">${pct(a.ctr||0)}</div></div>
+        </div>
+      </div>`;
+    }).join('') + `</div>`;
+}
+
+function renderAll() {
+  const d = _summary[_period] || {};
+  const periodLabels = { monthly:'이번 달', last_7d:'최근 7일', yesterday:'어제', today:'오늘' };
+
+  document.getElementById('main-content').innerHTML = `
+    <p class="section-title">${periodLabels[_period]} 핵심 지표</p>
+    ${renderKPI(d)}
+
+    <div class="section-card">
+      <p class="section-title">일별 성과 추이</p>
+      ${renderDailyTable(_daily ? _daily.data : [])}
+    </div>
+
+    <div class="section-card">
+      <p class="section-title">캠페인별 성과 (이번 달)</p>
+      ${renderCampaigns(_campaigns ? _campaigns.data : [])}
+    </div>
+
+    <div class="section-card">
+      <p class="section-title">소재 TOP 성과 (이번 달)</p>
+      ${renderAds(_ads ? _ads.data : [])}
+    </div>
+  `;
+
+  document.getElementById('last-updated').textContent = '최종 업데이트: ' + (_summary.last_updated_kst || '—');
+}
+
+async function loadData() {
+  try {
+    const ts = Date.now();
+    [_summary, _daily, _campaigns, _ads] = await Promise.all([
+      fetch(`${RAW}/summary.json?t=${ts}`).then(r => r.json()),
+      fetch(`${RAW}/daily_history.json?t=${ts}`).then(r => r.json()),
+      fetch(`${RAW}/campaigns.json?t=${ts}`).then(r => r.json()),
+      fetch(`${RAW}/ads.json?t=${ts}`).then(r => r.json()),
+    ]);
+    renderAll();
+  } catch(e) {
+    document.getElementById('main-content').innerHTML =
+      `<div class="loading" style="color:#ff4d6d">⚠ 데이터를 불러오지 못했습니다.<br><small style="color:#6b7280">${e.message}</small><br><br>
+      <button onclick="loadData()" style="background:#6c63ff;border:none;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer">다시 시도</button></div>`;
+  }
+}
+
+loadData();
+setInterval(loadData, 60 * 60 * 1000);
+</script>
+</body>
+</html>
