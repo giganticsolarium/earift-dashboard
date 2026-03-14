@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이어리프트 — 시간별 히스토리</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0f1117;--surface:#1a1d2e;--surface2:#222538;--border:#2a2d3e;
+  --accent:#4f6ef7;--text:#e2e8f0;--muted:#64748b;
+  --green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--purple:#a855f7;
+  --pink:#f472b6;--cyan:#06b6d4;
+  --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',sans-serif;font-size:14px;min-height:100vh;}
+
+/* ── 탭 네비 ── */
+.nav{display:flex;align-items:center;background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;}
+.nav-logo{font-size:15px;font-weight:800;color:var(--accent);padding:14px 20px 14px 0;border-right:1px solid var(--border);margin-right:4px;}
+.ntab{padding:15px 18px;cursor:pointer;color:var(--muted);font-size:13px;border-bottom:3px solid transparent;text-decoration:none;transition:color .2s;}
+.ntab:hover{color:var(--text);}
+.ntab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
+.badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(79,110,247,.2);color:#4f6ef7;margin-left:5px;vertical-align:middle;}
+
+/* ── 레이아웃 ── */
+.page{max-width:1360px;margin:0 auto;padding:20px;}
+
+/* ── 날짜 헤더 ── */
+.date-bar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;margin-bottom:16px;flex-wrap:wrap;}
+.date-bar h2{font-size:15px;font-weight:700;flex:1;min-width:160px;}
+.qbtns{display:flex;gap:5px;}
+.qbtn{background:var(--border);border:none;color:var(--muted);border-radius:6px;padding:5px 11px;cursor:pointer;font-size:12px;transition:all .15s;}
+.qbtn.active,.qbtn:hover{background:var(--accent);color:#fff;}
+.date-nav{display:flex;align-items:center;gap:7px;}
+.date-nav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;}
+.date-nav button:hover{background:var(--accent);border-color:var(--accent);}
+.date-display{font-size:15px;font-weight:700;color:var(--accent);min-width:105px;text-align:center;}
+.snap-count{font-size:11px;color:var(--muted);}
+
+/* ── KPI ── */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;}
+@media(max-width:900px){.kpi-row{grid-template-columns:repeat(3,1fr);}}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .2s;}
+.kpi:hover,.kpi.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,110,247,.18);}
+.kpi-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
+.kpi-val{font-size:19px;font-weight:700;}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.up{color:var(--green);} .dn{color:var(--red);}
+
+/* ── 섹션 ── */
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:14px;}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:13px;}
+.sec-title{font-size:13px;font-weight:700;}
+.chart-wrap{height:220px;position:relative;}
+
+/* ── 메트릭 토글 ── */
+.mtog-row{display:flex;gap:5px;flex-wrap:wrap;}
+.mtog{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;}
+.mtog.on{font-weight:600;border-color:currentColor;}
+.mtog[data-m="spend"].on{color:#4f6ef7;background:rgba(79,110,247,.15);}
+.mtog[data-m="roas"].on{color:#22c55e;background:rgba(34,197,94,.15);}
+.mtog[data-m="revenue"].on{color:#a855f7;background:rgba(168,85,247,.15);}
+.mtog[data-m="purchases"].on{color:#f59e0b;background:rgba(245,158,11,.15);}
+.mtog[data-m="ctr"].on{color:#06b6d4;background:rgba(6,182,212,.15);}
+.mtog[data-m="cpm"].on{color:#f472b6;background:rgba(244,114,182,.15);}
+
+/* ── 히트맵 ── */
+.metric-tabs{display:flex;gap:2px;margin-bottom:12px;border-bottom:1px solid var(--border);overflow-x:auto;}
+.mtab{padding:6px 14px;cursor:pointer;color:var(--muted);font-size:12px;border-bottom:2px solid transparent;white-space:nowrap;}
+.mtab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
+.heat-wrap{overflow-x:auto;}
+table.heat{width:100%;border-collapse:collapse;min-width:860px;}
+table.heat th{font-size:10px;color:var(--muted);padding:4px 3px;text-align:center;font-weight:500;white-space:nowrap;}
+table.heat td{padding:3px;text-align:center;border-bottom:1px solid var(--border);}
+.ncol{text-align:left!important;padding-left:8px!important;font-weight:600;font-size:11px;min-width:120px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hc{border-radius:3px;padding:4px 2px;font-size:10px;font-weight:600;cursor:pointer;display:block;}
+.h0{background:var(--surface2);color:var(--muted);}
+.h1{background:rgba(79,110,247,.12);color:#8fa4fb;}
+.h2{background:rgba(79,110,247,.28);color:#a5b8ff;}
+.h3{background:rgba(79,110,247,.48);color:#c4d0ff;}
+.h4{background:rgba(79,110,247,.70);color:#e0e8ff;}
+.h5{background:#4f6ef7;color:#fff;}
+/* ROAS 색상 */
+.ra{background:rgba(239,68,68,.18);color:#fca5a5;}
+.rb{background:rgba(245,158,11,.22);color:#fcd34d;}
+.rc{background:rgba(34,197,94,.22);color:#86efac;}
+.rd{background:rgba(34,197,94,.55);color:#fff;}
+.cur-h{outline:2px solid var(--yellow);outline-offset:-2px;}
+.total-row td{border-top:2px solid var(--border);}
+
+/* ── 슬라이더 & 스냅샷 ── */
+.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.slider-row label{font-size:12px;color:var(--muted);white-space:nowrap;}
+input[type=range]{flex:1;accent-color:var(--accent);}
+.slider-val{font-size:15px;font-weight:700;color:var(--accent);min-width:55px;}
+.snap-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.snap-grid{grid-template-columns:1fr;}}
+.snap-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.snap-time{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.snap-m-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;}
+.snap-m{background:var(--surface);border-radius:6px;padding:8px 10px;}
+.snap-m-lbl{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.snap-m-val{font-size:14px;font-weight:700;}
+.diff{font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:4px;}
+.diff-up{background:rgba(34,197,94,.15);color:var(--green);}
+.diff-dn{background:rgba(239,68,68,.15);color:var(--red);}
+.camp-list{margin-top:2px;}
+.camp-row{display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);}
+.camp-row:last-child{border:none;}
+.camp-name{font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.camp-vals{display:flex;gap:8px;}
+
+/* ── 로딩 / 에러 ── */
+.loading{text-align:center;padding:60px 20px;color:var(--muted);}
+.no-data{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
+.axis-hint{font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">이어리프트</div>
+  <a class="ntab" href="main.html">🎯 목표 현황</a>
+  <a class="ntab" href="detail.html">📊 상세 데이터</a>
+  <a class="ntab active" href="hourly.html">📅 시간별 히스토리<span class="badge">NEW</span></a>
+</nav>
+
+<div class="page">
+
+  <!-- 날짜 선택 -->
+  <div class="date-bar">
+    <h2>시간별 광고 히스토리</h2>
+    <div class="qbtns" id="qbtns">
+      <button class="qbtn active" onclick="quickDate(0,this)">오늘</button>
+      <button class="qbtn" onclick="quickDate(1,this)">어제</button>
+      <button class="qbtn" onclick="quickDate(2,this)">2일 전</button>
+      <button class="qbtn" onclick="quickDate(3,this)">3일 전</button>
+    </div>
+    <div class="date-nav">
+      <button onclick="shiftDate(-1)">◀</button>
+      <div class="date-display" id="dateDisplay">—</div>
+      <button onclick="shiftDate(1)">▶</button>
+    </div>
+    <span class="snap-count" id="snapCount"></span>
+  </div>
+
+  <!-- KPI 6개 -->
+  <div class="kpi-row" id="kpiRow">
+    <div class="kpi sel" onclick="pickMetric('spend',this)">
+      <div class="kpi-lbl">총 지출</div>
+      <div class="kpi-val" style="color:#4f6ef7;" id="kpi-spend">—</div>
+      <div class="kpi-sub" id="kpisub-spend"></div>
+    </div>
+    <div class="kpi" onclick="pickMetric('roas',this)">
+      <div class="kpi-lbl">ROAS</div>
+      <div class="kpi-val" style="color:#22c55e;" id="kpi-roas">—</div>
+      <div class="kpi-sub" id="kpisub-roas"></div>
+    </div>
+    <div class="kpi" onclick="pickMetric('revenue',this)">
+      <div class="kpi-lbl">판매금액</div>
+      <div class="kpi-val" style="color:#a855f7;" id="kpi-revenue">—</div>
+      <div class="kpi-sub" id="kpisub-revenue"></div>
+    </div>
+    <div class="kpi" onclick="pickMetric('purchases',this)">
+      <div class="kpi-lbl">판매개수</div>
+      <div class="kpi-val" style="color:#f59e0b;" id="kpi-purchases">—</div>
+      <div class="kpi-sub" id="kpisub-purchases"></div>
+    </div>
+    <div class="kpi" onclick="pickMetric('ctr',this)">
+      <div class="kpi-lbl">CTR</div>
+      <div class="kpi-val" style="color:#06b6d4;" id="kpi-ctr">—</div>
+      <div class="kpi-sub" id="kpisub-ctr"></div>
+    </div>
+    <div class="kpi" onclick="pickMetric('cpm',this)">
+      <div class="kpi-lbl">CPM</div>
+      <div class="kpi-val" style="color:#f472b6;" id="kpi-cpm">—</div>
+      <div class="kpi-sub" id="kpisub-cpm"></div>
+    </div>
+  </div>
+
+  <!-- 시간별 성과 추이 차트 -->
+  <div class="sec">
+    <div class="sec-hdr">
+      <span class="sec-title">⏰ 시간별 성과 지표 추이
+        <span class="axis-hint" id="axisHint"></span>
+      </span>
+      <div class="mtog-row">
+        <button class="mtog on" data-m="spend"     onclick="toggleM('spend',this)">지출</button>
+        <button class="mtog on" data-m="roas"      onclick="toggleM('roas',this)">ROAS</button>
+        <button class="mtog on" data-m="revenue"   onclick="toggleM('revenue',this)">판매금액</button>
+        <button class="mtog"    data-m="purchases" onclick="toggleM('purchases',this)">판매개수</button>
+        <button class="mtog"    data-m="ctr"       onclick="toggleM('ctr',this)">CTR</button>
+        <button class="mtog"    data-m="cpm"       onclick="toggleM('cpm',this)">CPM</button>
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
+  </div>
+
+  <!-- 캠페인 × 시간 히트맵 -->
+  <div class="sec">
+    <div class="sec-hdr">
+      <span class="sec-title">🔥 캠페인별 시간대 히트맵</span>
+      <span style="font-size:11px;color:var(--muted);">노란 테두리 = 현재 시간대</span>
+    </div>
+    <div class="metric-tabs" id="heatTabs">
+      <div class="mtab active" onclick="switchHeat('spend',this)">지출</div>
+      <div class="mtab" onclick="switchHeat('roas',this)">ROAS</div>
+      <div class="mtab" onclick="switchHeat('revenue',this)">판매금액</div>
+      <div class="mtab" onclick="switchHeat('purchases',this)">판매개수</div>
+      <div class="mtab" onclick="switchHeat('ctr',this)">CTR</div>
+      <div class="mtab" onclick="switchHeat('cpm',this)">CPM</div>
+    </div>
+    <div class="heat-wrap">
+      <table class="heat">
+        <thead id="heatHead"></thead>
+        <tbody id="heatBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 특정 시점 스냅샷 -->
+  <div class="sec">
+    <div class="sec-hdr">
+      <span class="sec-title">🔍 특정 시점 스냅샷 상세</span>
+    </div>
+    <div class="slider-row">
+      <label>시간 선택:</label>
+      <input type="range" min="0" max="23" value="0" id="slider" oninput="renderSnap(+this.value)">
+      <div class="slider-val" id="sliderVal">00:00</div>
+    </div>
+    <div class="snap-grid" id="snapArea">
+      <div class="no-data">날짜를 선택하면 스냅샷이 표시됩니다.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── 지표 메타 ──────────────────────────────────────────────────
+const META = {
+  spend:     { lbl:'지출',     color:'#4f6ef7', fmt: v => wFmt(v),            axis:'y1' },
+  roas:      { lbl:'ROAS',     color:'#22c55e', fmt: v => v.toFixed(2)+'x',   axis:'y2' },
+  revenue:   { lbl:'판매금액', color:'#a855f7', fmt: v => wFmt(v),            axis:'y1' },
+  purchases: { lbl:'판매개수', color:'#f59e0b', fmt: v => v+'건',             axis:'y2' },
+  ctr:       { lbl:'CTR',      color:'#06b6d4', fmt: v => v.toFixed(2)+'%',   axis:'y2' },
+  cpm:       { lbl:'CPM',      color:'#f472b6', fmt: v => wFmt(v),            axis:'y1' },
+};
+
+function wFmt(v) {
+  v = v || 0;
+  if (v >= 100000000) return (v/100000000).toFixed(1)+'억';
+  if (v >= 10000)     return (v/10000).toFixed(1)+'만';
+  if (v >= 1000)      return (v/1000).toFixed(1)+'천';
+  return Math.round(v).toLocaleString();
+}
+
+// ── 전역 상태 ──────────────────────────────────────────────────
+let allSnaps = [];          // hourly_snapshots.json 전체
+let dateSnaps = [];         // 현재 선택된 날짜의 스냅샷 배열 (hour 순)
+let selectedDate = '';
+let curHeatMetric = 'spend';
+let activeMetrics = new Set(['spend','roas','revenue']);
+let mainChart = null;
+
+// hour → snap 맵 (현재 날짜)
+function buildHourMap() {
+  const m = {};
+  dateSnaps.forEach(s => { m[s.hour] = s; });
+  return m;
+}
+
+// ── 날짜 유틸 ─────────────────────────────────────────────────
+function dateOffset(offset) {
+  const d = new Date();
+  d.setDate(d.getDate() - offset);
+  return d.toISOString().slice(0,10);
+}
+
+function quickDate(offset, btn) {
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  setDate(dateOffset(offset));
+}
+
+function shiftDate(delta) {
+  const d = new Date(selectedDate + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
+  setDate(d.toISOString().slice(0,10));
+}
+
+function setDate(dateStr) {
+  selectedDate = dateStr;
+  document.getElementById('dateDisplay').textContent = dateStr;
+  dateSnaps = allSnaps.filter(s => s.date === dateStr).sort((a,b)=>a.hour-b.hour);
+  document.getElementById('snapCount').textContent =
+    dateSnaps.length ? `스냅샷 ${dateSnaps.length}회 수집` : '수집된 데이터 없음';
+
+  // 슬라이더 범위 조정
+  const slider = document.getElementById('slider');
+  if (dateSnaps.length) {
+    slider.min = dateSnaps[0].hour;
+    slider.max = dateSnaps[dateSnaps.length-1].hour;
+    slider.value = dateSnaps[dateSnaps.length-1].hour;
+  }
+
+  updateKPI();
+  renderChart();
+  renderHeat();
+  renderSnap(+slider.value);
+}
+
+// ── KPI ────────────────────────────────────────────────────────
+function updateKPI() {
+  if (!dateSnaps.length) {
+    Object.keys(META).forEach(k => {
+      document.getElementById('kpi-'+k).textContent = '—';
+      document.getElementById('kpisub-'+k).innerHTML = '';
+    });
+    return;
+  }
+  // 마지막 스냅샷 기준
+  const last = dateSnaps[dateSnaps.length-1].totals || {};
+  const prev = dateSnaps.length > 1 ? (dateSnaps[dateSnaps.length-2].totals || {}) : {};
+
+  const vals = {
+    spend:     last.spend     || 0,
+    roas:      last.roas      || 0,
+    revenue:   last.purchase_value || 0,
+    purchases: last.purchases || 0,
+    ctr:       last.ctr       || 0,
+    cpm:       last.cpm       || 0,
+  };
+  const prevVals = {
+    spend:     prev.spend     || 0,
+    roas:      prev.roas      || 0,
+    revenue:   prev.purchase_value || 0,
+    purchases: prev.purchases || 0,
+    ctr:       prev.ctr       || 0,
+    cpm:       prev.cpm       || 0,
+  };
+
+  Object.entries(vals).forEach(([k, v]) => {
+    document.getElementById('kpi-'+k).textContent = META[k].fmt(v);
+    const pv = prevVals[k];
+    if (pv > 0 && v !== pv) {
+      const diff = v - pv;
+      const pct  = Math.abs(Math.round(diff/pv*100));
+      const cls  = diff > 0 ? 'up' : 'dn';
+      const arr  = diff > 0 ? '▲' : '▼';
+      document.getElementById('kpisub-'+k).innerHTML =
+        `<span class="${cls}">${arr}${pct}%</span> <span style="color:var(--muted)">직전 대비</span>`;
+    } else {
+      document.getElementById('kpisub-'+k).innerHTML = '';
+    }
+  });
+}
+
+// ── 차트 ──────────────────────────────────────────────────────
+function getChartData(m) {
+  return Array.from({length:24}, (_, h) => {
+    const s = dateSnaps.find(x => x.hour === h);
+    if (!s) return null;
+    const t = s.totals || {};
+    const raw = {
+      spend: t.spend || 0,
+      roas:  t.roas  || 0,
+      revenue:   t.purchase_value || 0,
+      purchases: t.purchases || 0,
+      ctr:  t.ctr || 0,
+      cpm:  t.cpm || 0,
+    }[m];
+    // 금액은 만원 단위로 변환
+    if (META[m].axis === 'y1') return +(raw/10000).toFixed(2);
+    return raw;
+  });
+}
+
+function buildDatasets() {
+  return [...activeMetrics].map(m => ({
+    label: META[m].lbl + (META[m].axis==='y1' ? '(만원)' : ''),
+    data:  getChartData(m),
+    borderColor: META[m].color,
+    backgroundColor: META[m].color+'22',
+    yAxisID: META[m].axis,
+    tension: 0.4,
+    pointRadius: 4,
+    pointBackgroundColor: META[m].color,
+    borderWidth: 2,
+    fill: false,
+    spanGaps: false,
+  }));
+}
+
+function updateAxisHint() {
+  const y1 = [...activeMetrics].filter(m=>META[m].axis==='y1').map(m=>META[m].lbl);
+  const y2 = [...activeMetrics].filter(m=>META[m].axis==='y2').map(m=>META[m].lbl);
+  const parts = [];
+  if (y1.length) parts.push(`왼쪽(만원): ${y1.join(', ')}`);
+  if (y2.length) parts.push(`오른쪽: ${y2.join(', ')}`);
+  document.getElementById('axisHint').textContent = parts.length ? '— '+parts.join(' · ') : '';
+}
+
+function renderChart() {
+  const labels = Array.from({length:24}, (_,h)=>h+'시');
+  const datasets = buildDatasets();
+
+  if (mainChart) { mainChart.destroy(); mainChart = null; }
+  const ctx = document.getElementById('mainChart').getContext('2d');
+  mainChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: { legend: { labels: { color:'#94a3b8', font:{size:11} } } },
+      scales: {
+        x:  { grid:{color:'#2a2d3e'}, ticks:{color:'#64748b',font:{size:10}} },
+        y1: { position:'left',  grid:{color:'#2a2d3e'}, ticks:{color:'#64748b',font:{size:10}},
+              title:{display:true,text:'금액 (만원)',color:'#64748b',font:{size:10}} },
+        y2: { position:'right', grid:{display:false},   ticks:{color:'#64748b',font:{size:10}},
+              title:{display:true,text:'비율(%) · 건수',color:'#64748b',font:{size:10}} },
+      }
+    }
+  });
+  updateAxisHint();
+}
+
+function toggleM(m, btn) {
+  if (activeMetrics.has(m)) { if(activeMetrics.size>1) activeMetrics.delete(m); }
+  else activeMetrics.add(m);
+  btn.classList.toggle('on', activeMetrics.has(m));
+  if (mainChart) { mainChart.data.datasets = buildDatasets(); mainChart.update(); }
+  updateAxisHint();
+}
+
+function pickMetric(m, el) {
+  document.querySelectorAll('.kpi').forEach(k=>k.classList.remove('sel'));
+  el.classList.add('sel');
+  activeMetrics = new Set([m]);
+  document.querySelectorAll('.mtog').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
+  if (mainChart) { mainChart.data.datasets = buildDatasets(); mainChart.update(); }
+  updateAxisHint();
+}
+
+// ── 히트맵 ────────────────────────────────────────────────────
+function switchHeat(m, tab) {
+  curHeatMetric = m;
+  document.querySelectorAll('.mtab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  renderHeat();
+}
+
+function getCampVal(camp, m) {
+  if (!camp) return 0;
+  return {
+    spend:     camp.spend || 0,
+    roas:      camp.roas  || 0,
+    revenue:   camp.purchase_value || 0,
+    purchases: camp.purchases || 0,
+    ctr:       camp.ctr   || 0,
+    cpm:       camp.cpm   || 0,
+  }[m] || 0;
+}
+
+function heatCls(v, m, maxV, minV) {
+  if (!v) return 'h0';
+  if (m === 'roas') {
+    if (v < 1.0) return 'ra'; if (v < 1.8) return 'rb';
+    if (v < 2.5) return 'rc'; return 'rd';
+  }
+  const r = maxV > minV ? (v-minV)/(maxV-minV) : 0.5;
+  if (r < 0.1) return 'h1'; if (r < 0.3) return 'h2';
+  if (r < 0.55) return 'h3'; if (r < 0.8) return 'h4';
+  return 'h5';
+}
+
+function renderHeat() {
+  const m   = curHeatMetric;
+  const now = new Date().getHours();
+
+  // 모든 캠페인명 수집
+  const campNames = [];
+  const campMap   = {}; // name → hour → val
+  dateSnaps.forEach(s => {
+    (s.campaigns||[]).forEach(c => {
+      if (!campMap[c.campaign_name]) { campMap[c.campaign_name] = {}; campNames.push(c.campaign_name); }
+      campMap[c.campaign_name][s.hour] = c;
+    });
+  });
+  // 중복 제거
+  const uniqNames = [...new Set(campNames)];
+
+  // 전체값 범위 계산
+  const allVals = [];
+  uniqNames.forEach(n => Object.values(campMap[n]||{}).forEach(c => { const v=getCampVal(c,m); if(v) allVals.push(v); }));
+  const maxV = allVals.length ? Math.max(...allVals) : 1;
+  const minV = allVals.length ? Math.min(...allVals) : 0;
+
+  // 헤더
+  const head = document.getElementById('heatHead');
+  head.innerHTML = '<tr><th class="ncol" style="text-align:left">캠페인</th>' +
+    Array.from({length:24},(_,h)=>`<th>${h}시</th>`).join('') + '<th>합계/평균</th></tr>';
+
+  // 바디
+  const body = document.getElementById('heatBody');
+  body.innerHTML = '';
+
+  if (!uniqNames.length) {
+    body.innerHTML = '<tr><td colspan="26" class="no-data">선택한 날짜의 데이터가 없습니다.</td></tr>';
+    return;
+  }
+
+  const colors = ['#4f6ef7','#a855f7','#f59e0b','#22c55e','#06b6d4','#f472b6','#ec4899'];
+  uniqNames.forEach((name, ni) => {
+    const tr = document.createElement('tr');
+    let html = `<td class="ncol"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${colors[ni%colors.length]};margin-right:5px;"></span>${name.length>18?name.slice(0,18)+'…':name}</td>`;
+    let sum = 0; let cnt = 0;
+    for (let h=0; h<24; h++) {
+      const camp = (campMap[name]||{})[h];
+      const v    = getCampVal(camp, m);
+      if (v) { sum += v; cnt++; }
+      const isCur = (h === now);
+      const cls   = heatCls(v, m, maxV, minV) + (isCur?' cur-h':'');
+      const disp  = v ? META[m].fmt(v) : '-';
+      html += `<td><span class="hc ${cls}" title="${h}시 ${META[m].lbl}: ${disp}">${disp}</span></td>`;
+    }
+    const agg = (m==='roas'||m==='ctr') ? (cnt?META[m].fmt(sum/cnt):'-') : META[m].fmt(sum);
+    html += `<td style="font-weight:700;color:${colors[ni%colors.length]};font-size:11px;">${agg}</td>`;
+    tr.innerHTML = html;
+    body.appendChild(tr);
+  });
+
+  // 전체 합산 행
+  const tr2 = document.createElement('tr');
+  tr2.className = 'total-row';
+  let html2 = `<td class="ncol" style="color:var(--accent);">▶ 전체</td>`;
+  for (let h=0; h<24; h++) {
+    const snap = dateSnaps.find(s=>s.hour===h);
+    const t    = snap ? snap.totals || {} : {};
+    const v    = {spend:t.spend||0,roas:t.roas||0,revenue:t.purchase_value||0,purchases:t.purchases||0,ctr:t.ctr||0,cpm:t.cpm||0}[m];
+    const disp = v ? META[m].fmt(v) : '-';
+    html2 += `<td style="font-size:10px;font-weight:700;color:var(--accent);">${disp}</td>`;
+  }
+  const totSum = dateSnaps.reduce((a,s)=>{
+    const t=s.totals||{}; const v={spend:t.spend||0,roas:t.roas||0,revenue:t.purchase_value||0,purchases:t.purchases||0,ctr:t.ctr||0,cpm:t.cpm||0}[m];
+    return a+v;
+  }, 0);
+  const totAgg = (m==='roas'||m==='ctr') ? META[m].fmt(dateSnaps.length?totSum/dateSnaps.length:0) : META[m].fmt(totSum);
+  html2 += `<td style="font-weight:700;color:var(--accent);font-size:11px;">${totAgg}</td>`;
+  tr2.innerHTML = html2;
+  body.appendChild(tr2);
+}
+
+// ── 스냅샷 ────────────────────────────────────────────────────
+function renderSnap(h) {
+  document.getElementById('sliderVal').textContent = String(h).padStart(2,'0')+':00';
+  const snap     = dateSnaps.find(s=>s.hour===h);
+  const prevSnap = dateSnaps.find(s=>s.hour===h-1);
+
+  function mkCard(s, label) {
+    if (!s) return `<div class="snap-card"><div class="snap-time">${label}</div><div class="no-data" style="padding:20px 0;">해당 시간 수집된 데이터 없음</div></div>`;
+    const t = s.totals || {};
+    const vals = {spend:t.spend||0,roas:t.roas||0,revenue:t.purchase_value||0,purchases:t.purchases||0,ctr:t.ctr||0,cpm:t.cpm||0};
+
+    function diffBadge(k, pSnap) {
+      if (!pSnap) return '';
+      const pt = pSnap.totals || {};
+      const pv = {spend:pt.spend||0,roas:pt.roas||0,revenue:pt.purchase_value||0,purchases:pt.purchases||0,ctr:pt.ctr||0,cpm:pt.cpm||0}[k];
+      const cv = vals[k];
+      if (!pv || cv===pv) return '';
+      const d   = cv - pv;
+      const pct = Math.abs(Math.round(d/pv*100));
+      const cls = d>0?'diff-up':'diff-dn';
+      return `<span class="diff ${cls}">${d>0?'▲':'▼'}${pct}%</span>`;
+    }
+
+    const mHtml = Object.entries(META).map(([k,mt])=>
+      `<div class="snap-m">
+        <div class="snap-m-lbl">${mt.lbl}</div>
+        <div class="snap-m-val" style="color:${mt.color};">${mt.fmt(vals[k])}${label.includes('선택')?diffBadge(k,prevSnap):''}</div>
+      </div>`
+    ).join('');
+
+    const campHtml = (s.campaigns||[]).slice(0,5).map((c,i)=>{
+      const clr = ['#4f6ef7','#a855f7','#f59e0b','#22c55e','#06b6d4'][i%5];
+      const nm  = (c.campaign_name||'').length>16?(c.campaign_name||'').slice(0,16)+'…':c.campaign_name||'-';
+      return `<div class="camp-row">
+        <span class="camp-name" style="color:${clr};" title="${c.campaign_name||''}">${nm}</span>
+        <span class="camp-vals">
+          <span style="color:#4f6ef7;">${wFmt(c.spend||0)}</span>
+          <span style="color:#22c55e;">ROAS ${(c.roas||0).toFixed(2)}x</span>
+          <span style="color:#a855f7;">${wFmt(c.purchase_value||0)}</span>
+          <span style="color:#f59e0b;">${c.purchases||0}건</span>
+          <span style="color:#f472b6;">CPM ${wFmt(c.cpm||0)}</span>
+        </span>
+      </div>`;
+    }).join('') || '<div class="no-data" style="padding:8px 0;font-size:11px;">캠페인 데이터 없음</div>';
+
+    return `<div class="snap-card">
+      <div class="snap-time">${String(s.hour).padStart(2,'0')}:00 스냅샷
+        <span style="font-size:11px;color:var(--muted);font-weight:400;">${label}</span>
+      </div>
+      <div class="snap-m-grid">${mHtml}</div>
+      <div style="font-size:11px;color:var(--muted);margin:6px 0 4px;font-weight:600;">캠페인별 상세</div>
+      <div class="camp-list">${campHtml}</div>
+    </div>`;
+  }
+
+  document.getElementById('snapArea').innerHTML =
+    mkCard(snap, '(선택 시간)') + mkCard(prevSnap, '(직전 시간 비교)');
+}
+
+// ── 데이터 로드 ────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const base = location.pathname.includes('/dashboard/') ? '../' : './';
+    const r = await fetch(base + 'data/hourly_snapshots.json?t=' + Date.now());
+    if (!r.ok) throw new Error('fetch failed');
+    const json = await r.json();
+    allSnaps = json.snapshots || [];
+    // 오늘 날짜로 초기화
+    const today = new Date().toISOString().slice(0,10);
+    setDate(today);
+  } catch(e) {
+    document.querySelector('.page').innerHTML =
+      `<div class="loading">⚠️ 데이터를 불러올 수 없습니다.<br><small style="color:var(--muted)">hourly_snapshots.json이 아직 생성되지 않았거나 네트워크 오류입니다.<br>다음 정각 이후에 다시 확인해 주세요.</small></div>`;
+  }
+}
+
+loadData();
+</script>
+</body>
+</html>
