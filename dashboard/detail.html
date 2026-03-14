@@ -193,14 +193,14 @@
 
 <!-- DATE BAR -->
 <div class="date-bar">
-  <button class="dbtn active">오늘</button>
-  <button class="dbtn">어제</button>
-  <button class="dbtn">최근 7일</button>
-  <button class="dbtn">최근 30일</button>
-  <button class="dbtn">이번 달</button>
+  <button class="dbtn active" onclick="selectPeriod('today',this)">오늘</button>
+  <button class="dbtn" onclick="selectPeriod('yesterday',this)">어제</button>
+  <button class="dbtn" onclick="selectPeriod('7d',this)">최근 7일</button>
+  <button class="dbtn" onclick="selectPeriod('30d',this)">최근 30일</button>
+  <button class="dbtn" onclick="selectPeriod('month',this)">이번 달</button>
   <span class="dsep">|</span>
-  <button class="dbtn">일별</button>
-  <button class="dbtn">주별</button>
+  <button class="dbtn" data-grain="daily" onclick="selectGrain('daily',this)">일별</button>
+  <button class="dbtn" data-grain="weekly" onclick="selectGrain('weekly',this)">주별</button>
 </div>
 
 <div id="main-content" class="main">
@@ -214,6 +214,94 @@ const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e','#06b6d4','#f472b6']
 
 let mainChart = null;
 let activeMetrics = ['roas','cpa','spend'];
+let currentPeriod = 'today';
+let currentGrain  = 'daily';
+
+// ── 날짜 선택 ──────────────────────────────────────────────
+function selectPeriod(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('.dbtn:not([data-grain])').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c);
+}
+function selectGrain(grain, btn) {
+  currentGrain = grain;
+  document.querySelectorAll('.dbtn[data-grain]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c);
+}
+
+// ── 기간 집계 헬퍼 ────────────────────────────────────────
+function aggregateDays(rows) {
+  if (!rows || !rows.length) return {};
+  const spend          = rows.reduce((a, x) => a + (x.spend||0), 0);
+  const purchases      = rows.reduce((a, x) => a + (x.purchases||0), 0);
+  const purchase_value = rows.reduce((a, x) => a + (x.purchase_value||0), 0);
+  const impressions    = rows.reduce((a, x) => a + (x.impressions||0), 0);
+  const clicks         = rows.reduce((a, x) => a + (x.clicks||0), 0);
+  const roas = spend > 0 ? Math.round(purchase_value / spend * 100) / 100 : 0;
+  const cpa  = purchases > 0 ? Math.round(spend / purchases) : 0;
+  const ctr  = impressions > 0 ? Math.round(clicks / impressions * 10000) / 100 : 0;
+  return { spend, purchases, purchase_value, impressions, clicks, roas, cpa, ctr };
+}
+
+// ── 기간에 맞는 KPI 반환 ────────────────────────────────
+function getKpiForPeriod(s, d) {
+  const allData = (d && d.data) || [];
+  const now = new Date();
+  const thisMonth = now.toISOString().slice(0, 7);
+  switch (currentPeriod) {
+    case 'today':
+      return { cur: s.today||{}, prev: s.yesterday||{}, label: 'vs 어제' };
+    case 'yesterday':
+      return { cur: s.yesterday||{}, prev: {}, label: '' };
+    case '7d': {
+      const cur  = s.last_7d || aggregateDays(allData.slice(-7));
+      const prev = aggregateDays(allData.slice(-14, -7));
+      return { cur, prev, label: 'vs 이전 7일' };
+    }
+    case '30d': {
+      const cur  = aggregateDays(allData.slice(-30));
+      const prev = aggregateDays(allData.slice(-60, -30));
+      return { cur, prev, label: 'vs 이전 30일' };
+    }
+    case 'month': {
+      const rows = allData.filter(x => x.date && x.date.startsWith(thisMonth));
+      const cur  = rows.length ? aggregateDays(rows) : (s.monthly||s.month||{});
+      return { cur, prev: {}, label: '' };
+    }
+    default:
+      return { cur: s.today||{}, prev: s.yesterday||{}, label: 'vs 어제' };
+  }
+}
+
+// ── 기간에 맞는 차트용 일별 데이터 반환 ──────────────────
+function getChartDays(d) {
+  const allData = (d && d.data) || [];
+  const now = new Date();
+  const thisMonth = now.toISOString().slice(0, 7);
+  switch (currentPeriod) {
+    case 'today':
+    case 'yesterday': return allData.slice(-14);
+    case '7d':        return allData.slice(-7);
+    case '30d':       return allData.slice(-30);
+    case 'month':     return allData.filter(x => x.date && x.date.startsWith(thisMonth));
+    default:          return allData.slice(-14);
+  }
+}
+
+// ── 주별 집계 ────────────────────────────────────────────
+function groupByWeek(rows) {
+  const weeks = {};
+  rows.forEach(r => {
+    const d = new Date(r.date);
+    const mon = new Date(d); mon.setDate(d.getDate() - d.getDay() + 1);
+    const key = mon.toISOString().slice(5, 10);
+    if (!weeks[key]) weeks[key] = [];
+    weeks[key].push(r);
+  });
+  return Object.entries(weeks).map(([label, rs]) => ({ label, ...aggregateDays(rs) }));
+}
 
 function wFmt(n) {
   n = Math.round(+n || 0);
@@ -223,10 +311,10 @@ function wFmt(n) {
 }
 
 function render(s, d, c) {
-  const today     = s.today     || {};
-  const yesterday = s.yesterday || {};
-  const camps     = s.campaigns || [];
-  const goals     = s.goals     || { roas: 2.5 };
+  window._lastData = {s, d, c};
+  const {cur: today, prev: yesterday, label: periodLabel} = getKpiForPeriod(s, d);
+  const camps = (c && (c.data || c.campaigns)) || s.campaigns || [];
+  const goals = s.goals || { roas: 2.5 };
 
   // KPI 델타
   function delta(cur, prev, isRoas) {
@@ -244,7 +332,7 @@ function render(s, d, c) {
   const slotNames = ['00~06시','06~12시','12~18시','18~00시'];
 
   // 일별 차트 데이터 (최근 14일)
-  const dailyArr  = (d.data || []).slice(-14);
+  const dailyArr  = getChartDays(d);
   const labels    = dailyArr.map(x => (x.date||'').slice(5));
   const dsRoas    = dailyArr.map(x => x.roas||0);
   const dsCpa     = dailyArr.map(x => Math.round((x.cpa||0)/1000));  // 천원 단위
@@ -330,32 +418,32 @@ function render(s, d, c) {
         <div class="sel-dot"></div>
         <div class="kpi-label">ROAS</div>
         <div class="kpi-value">${(today.roas||0).toFixed(2)}x</div>
-        <div class="kpi-sub">${delta(today.roas, yesterday.roas, true)}<span class="nt">vs 어제</span></div>
+        <div class="kpi-sub">${delta(today.roas, yesterday.roas, true)}${periodLabel ? `<span class="nt">${periodLabel}</span>` : ''}</div>
       </div>
       <div class="kpi-card selected" onclick="toggleCard(this,'cpa')">
         <div class="sel-dot"></div>
         <div class="kpi-label">CPA (결과당 비용)</div>
         <div class="kpi-value">${wFmt(today.cpa||0)}</div>
-        <div class="kpi-sub">${delta(today.cpa, yesterday.cpa, false)}<span class="nt">vs 어제</span></div>
+        <div class="kpi-sub">${delta(today.cpa, yesterday.cpa, false)}${periodLabel ? `<span class="nt">${periodLabel}</span>` : ''}</div>
       </div>
       <div class="kpi-card selected" onclick="toggleCard(this,'spend')">
         <div class="sel-dot"></div>
-        <div class="kpi-label">오늘 총 지출</div>
+        <div class="kpi-label">총 지출</div>
         <div class="kpi-value">${wFmt(today.spend||0)}</div>
-        <div class="kpi-sub">${delta(today.spend, yesterday.spend, false)}<span class="nt">vs 어제</span></div>
+        <div class="kpi-sub">${delta(today.spend, yesterday.spend, false)}${periodLabel ? `<span class="nt">${periodLabel}</span>` : ''}</div>
       </div>
       <div class="kpi-card" onclick="toggleCard(this,'ctr')">
         <div class="sel-dot"></div>
         <div class="kpi-label">CTR (클릭률)</div>
         <div class="kpi-value">${(today.ctr||0).toFixed(2)}%</div>
-        <div class="kpi-sub">${delta(today.ctr, yesterday.ctr, true)}<span class="nt">vs 어제</span></div>
+        <div class="kpi-sub">${delta(today.ctr, yesterday.ctr, true)}${periodLabel ? `<span class="nt">${periodLabel}</span>` : ''}</div>
       </div>
     </div>
 
     <!-- 성과 추이 차트 -->
     <div class="chart-section">
       <div class="sec-hdr">
-        <div class="sec-title">성과 추이 그래프 (최근 14일)</div>
+        <div class="sec-title">성과 추이 그래프</div>
         <div class="metric-toggles">
           <button class="mtog on"  data-m="roas"  onclick="toggleMetric(this)">ROAS</button>
           <button class="mtog on"  data-m="cpa"   onclick="toggleMetric(this)">CPA</button>

@@ -196,10 +196,10 @@ function makeGauge(id, pct, color) {
   });
 }
 
-function render(s, d) {
+function render(s, d, c) {
   const goals   = s.goals   || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
   const today   = s.today   || {};
-  const camps   = s.campaigns || [];
+  const camps   = (c && (c.data || c.campaigns)) || s.campaigns || [];
 
   const revenuePct = goals.revenue > 0 ? Math.round((today.purchase_value||0) / goals.revenue * 100) : 0;
   const roasPct    = goals.roas    > 0 ? Math.round((today.roas||0) / goals.roas * 100) : 0;
