@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-15T02:21:56.172454+09:00",
+  "last_updated": "2026-03-15T03:28:46.833689+09:00",
   "snapshots": [
     {
       "key": "2026-03-14T23",
@@ -316,6 +316,87 @@
           "ctr": 0.0,
           "cpc": 0.0,
           "cpm": 64194.0,
+          "purchases": 0,
+          "purchase_value": 0.0,
+          "roas": 0.0,
+          "cpa": 0.0,
+          "campaign_id": "120243575177020020",
+          "campaign_name": "260307_ASC_2차광고"
+        }
+      ]
+    },
+    {
+      "key": "2026-03-15T03",
+      "datetime": "2026-03-15T03:28:46.833689+09:00",
+      "date": "2026-03-15",
+      "hour": 3,
+      "totals": {
+        "spend": 119974.0,
+        "impressions": 4114,
+        "clicks": 87,
+        "reach": 3784,
+        "ctr": 2.11,
+        "cpc": 1379.0,
+        "cpm": 29162.0,
+        "purchases": 2,
+        "purchase_value": 159514.0,
+        "roas": 1.33,
+        "cpa": 59987.0
+      },
+      "campaigns": [
+        {
+          "spend": 75773.0,
+          "impressions": 3200,
+          "clicks": 51,
+          "reach": 3049,
+          "ctr": 1.59,
+          "cpc": 1486.0,
+          "cpm": 23679.0,
+          "purchases": 2,
+          "purchase_value": 159514.0,
+          "roas": 2.11,
+          "cpa": 37886.0,
+          "campaign_id": "120243403518660020",
+          "campaign_name": "260303 일반 전환 캠페인"
+        },
+        {
+          "spend": 28311.0,
+          "impressions": 532,
+          "clicks": 17,
+          "reach": 492,
+          "ctr": 3.2,
+          "cpc": 1665.0,
+          "cpm": 53216.0,
+          "purchases": 0,
+          "purchase_value": 0.0,
+          "roas": 0.0,
+          "cpa": 0.0,
+          "campaign_id": "120242695180060020",
+          "campaign_name": "260216_ASC_1차광고"
+        },
+        {
+          "spend": 8542.0,
+          "impressions": 286,
+          "clicks": 19,
+          "reach": 263,
+          "ctr": 6.64,
+          "cpc": 450.0,
+          "cpm": 29867.0,
+          "purchases": 0,
+          "purchase_value": 0.0,
+          "roas": 0.0,
+          "cpa": 0.0,
+          "campaign_id": "120242416319530020",
+          "campaign_name": "이어리프트 전환 메신저"
+        },
+        {
+          "spend": 7348.0,
+          "impressions": 96,
+          "clicks": 0,
+          "reach": 86,
+          "ctr": 0.0,
+          "cpc": 0.0,
+          "cpm": 76542.0,
           "purchases": 0,
           "purchase_value": 0.0,
           "roas": 0.0,
