@@ -123,6 +123,20 @@ def main():
         daily_rows.append(parsed)
     daily_rows.sort(key=lambda x: x['date'])
 
+    # Meta API 일별 데이터는 3~5일 지연이 있으므로
+    # today / yesterday 실시간 데이터를 daily_rows에 직접 보완
+    today_str     = now_kst.strftime('%Y-%m-%d')
+    yesterday_str = (now_kst - timedelta(days=1)).strftime('%Y-%m-%d')
+    existing_dates = {r['date'] for r in daily_rows}
+
+    for date_str, preset in [(yesterday_str, 'yesterday'), (today_str, 'today')]:
+        if date_str not in existing_dates and summary.get(preset):
+            row = dict(summary[preset])
+            row['date'] = date_str
+            daily_rows.append(row)
+
+    daily_rows.sort(key=lambda x: x['date'])
+
     # ③ 캠페인별
     camp_resp = get_campaign_insights()
     campaigns = []
