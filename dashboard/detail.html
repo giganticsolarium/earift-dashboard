@@ -76,7 +76,7 @@
     .loading { display: flex; align-items: center; justify-content: center; min-height: 60vh; font-size: 15px; color: var(--muted); flex-direction: column; gap: 12px; }
 
     /* ── KPI ── */
-    .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; }
     .kpi-card {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--card-radius); padding: 20px;
@@ -87,6 +87,7 @@
     .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background: var(--ca, var(--accent)); }
     .kpi-card:nth-child(1){--ca:#4f6ef7} .kpi-card:nth-child(2){--ca:#7c3aed}
     .kpi-card:nth-child(3){--ca:#f59e0b} .kpi-card:nth-child(4){--ca:#22c55e}
+    .kpi-card:nth-child(5){--ca:#f472b6}
     .kpi-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
     .kpi-value { font-size: 28px; font-weight: 700; margin: 8px 0 4px; }
     .kpi-sub { font-size: 12px; display: flex; align-items: center; gap: 4px; }
@@ -108,8 +109,9 @@
     .mtog[data-m="cpa"].on{background:#7c3aed;border-color:#7c3aed}
     .mtog[data-m="spend"].on{background:#f59e0b;border-color:#f59e0b}
     .mtog[data-m="ctr"].on{background:#22c55e;border-color:#22c55e}
+    .mtog[data-m="cpm"].on{background:#f472b6;border-color:#f472b6}
     .mtog[data-m="imp"].on{background:#06b6d4;border-color:#06b6d4}
-    .mtog[data-m="click"].on{background:#f472b6;border-color:#f472b6}
+    .mtog[data-m="click"].on{background:#ec4899;border-color:#ec4899}
     .chart-wrap { position:relative; height:260px; }
 
     /* ── TIME SPEND ── */
@@ -340,14 +342,16 @@ function render(s, d, c) {
   const dsImp     = dailyArr.map(x => Math.round((x.impressions||0)/1000)); // 천 단위
   const dsClick   = dailyArr.map(x => Math.round((x.clicks||0)/100)*100/1000);
   const dsCtr     = dailyArr.map(x => x.ctr||0);
+  const dsCpm     = dailyArr.map(x => Math.round((x.cpm||0)/1000)); // 천원 단위
 
   const dsMap = {
     roas:  { label:'ROAS',        data: dsRoas,  color:'#4f6ef7', y:'y1' },
     cpa:   { label:'CPA(천원)',   data: dsCpa,   color:'#7c3aed', y:'y1' },
     spend: { label:'지출(만원)',  data: dsSpend, color:'#f59e0b', y:'y2' },
     ctr:   { label:'CTR(%)',      data: dsCtr,   color:'#22c55e', y:'y1' },
+    cpm:   { label:'CPM(천원)',   data: dsCpm,   color:'#f472b6', y:'y1' },
     imp:   { label:'노출(천)',    data: dsImp,   color:'#06b6d4', y:'y2' },
-    click: { label:'클릭(천)',    data: dsClick, color:'#f472b6', y:'y1' },
+    click: { label:'클릭(천)',    data: dsClick, color:'#ec4899', y:'y1' },
   };
 
   // 캠페인 테이블 행
@@ -361,13 +365,14 @@ function render(s, d, c) {
           <td>${(c.impressions||0).toLocaleString()}</td>
           <td>${(c.clicks||0).toLocaleString()}</td>
           <td>${((c.ctr||0)).toFixed(1)}%</td>
+          <td>${wFmt(c.cpm||0)}</td>
           <td>${wFmt(c.spend||0)}</td>
           <td>${c.purchases||0}</td>
           <td class="${cpaCls}">${wFmt(c.cpa||0)}</td>
           <td class="${roasCls}">${(c.roas||0).toFixed(2)}x</td>
         </tr>`;
       }).join('')
-    : `<tr><td colspan="9" style="color:var(--muted);text-align:center;padding:20px;">캠페인 데이터가 없습니다.</td></tr>`;
+    : `<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:20px;">캠페인 데이터가 없습니다.</td></tr>`;
 
   // 캠페인별 시간대 테이블 (campaigns의 월간 spend를 시간대 비율로 추정)
   const slotRatios = [0.08, 0.28, 0.42, 0.22]; // 00~06 / 06~12 / 12~18 / 18~24 일반적 배분
@@ -438,6 +443,12 @@ function render(s, d, c) {
         <div class="kpi-value">${(today.ctr||0).toFixed(2)}%</div>
         <div class="kpi-sub">${delta(today.ctr, yesterday.ctr, true)}${periodLabel ? `<span class="nt">${periodLabel}</span>` : ''}</div>
       </div>
+      <div class="kpi-card" onclick="toggleCard(this,'cpm')">
+        <div class="sel-dot"></div>
+        <div class="kpi-label">CPM (1천 노출당 비용)</div>
+        <div class="kpi-value">${wFmt(today.cpm||0)}</div>
+        <div class="kpi-sub">${delta(today.cpm, yesterday.cpm, false)}${periodLabel ? `<span class="nt">${periodLabel}</span>` : ''}</div>
+      </div>
     </div>
 
     <!-- 성과 추이 차트 -->
@@ -449,6 +460,7 @@ function render(s, d, c) {
           <button class="mtog on"  data-m="cpa"   onclick="toggleMetric(this)">CPA</button>
           <button class="mtog on"  data-m="spend" onclick="toggleMetric(this)">지출</button>
           <button class="mtog"     data-m="ctr"   onclick="toggleMetric(this)">CTR</button>
+          <button class="mtog"     data-m="cpm"   onclick="toggleMetric(this)">CPM</button>
           <button class="mtog"     data-m="imp"   onclick="toggleMetric(this)">노출</button>
           <button class="mtog"     data-m="click" onclick="toggleMetric(this)">클릭</button>
         </div>
@@ -515,7 +527,7 @@ function render(s, d, c) {
           <thead>
             <tr>
               <th>캠페인명</th><th>상태</th><th>노출</th><th>클릭</th>
-              <th>CTR</th><th>지출</th><th>결과</th><th>CPA</th><th>ROAS</th>
+              <th>CTR</th><th>CPM</th><th>지출</th><th>결과</th><th>CPA</th><th>ROAS</th>
             </tr>
           </thead>
           <tbody>${campRows}</tbody>

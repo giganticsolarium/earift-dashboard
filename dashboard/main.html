@@ -237,6 +237,7 @@ function render(s, d, c) {
             <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${(c.roas||0).toFixed(2)}x</span></div>
             <div class="asc-kpi"><span class="asc-kpi-lbl">구매</span><span class="asc-kpi-val">${(c.purchases||0)}건</span></div>
             <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(c.cpa||0)}</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">CPM</span><span class="asc-kpi-val">${wFmt(c.cpm||0)}</span></div>
           </div>
           <div class="asc-spend-bar">
             <div class="asc-bar-row"><span>이번 달 광고비</span><span>${wFmt(c.spend||0)}</span></div>
