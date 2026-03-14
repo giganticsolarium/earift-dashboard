@@ -108,6 +108,7 @@ def main():
         'last_updated':     now_kst.isoformat(),
         'last_updated_kst': now_kst.strftime('%Y-%m-%d %H:%M KST'),
         'monthly':   monthly,
+        'month':     monthly,   # HTML 호환용 alias
         'today':     today,
         'yesterday': yesterday,
         'last_7d':   last_7d,
@@ -153,9 +154,18 @@ def main():
             json.dump(obj, f, ensure_ascii=False, indent=2)
         print(f"  ✓ {path} 저장 완료")
 
+    # summary에 캠페인·목표 포함 (HTML에서 s.campaigns, s.goals 사용)
+    summary['campaigns'] = campaigns
+    summary['goals'] = {
+        'budget':  3000000,
+        'roas':    2.5,
+        'revenue': 7500000,
+        'spend':   3000000,
+    }
+
     save('summary.json',       summary)
     save('daily_history.json', {'last_updated': now_kst.isoformat(), 'data': daily_rows})
-    save('campaigns.json',     {'last_updated': now_kst.isoformat(), 'data': campaigns})
+    save('campaigns.json',     {'last_updated': now_kst.isoformat(), 'campaigns': campaigns, 'data': campaigns})
     save('ads.json',           {'last_updated': now_kst.isoformat(), 'data': ads[:10]})
 
     print(f"\n✅ 수집 완료 | 이번달 지출: {monthly.get('spend',0):,.0f}원 | ROAS: {monthly.get('roas',0)}")
