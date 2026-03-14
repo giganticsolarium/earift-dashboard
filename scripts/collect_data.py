@@ -41,9 +41,19 @@ def get_daily_insights():
 
 def get_campaign_insights():
     return api_get(AD_ACCOUNT_ID + '/insights', {
-        'fields': 'campaign_id,campaign_name,spend,impressions,clicks,reach,ctr,cpc,actions,action_values',
+        'fields': 'campaign_id,campaign_name,spend,impressions,clicks,reach,ctr,cpc,cpm,actions,action_values',
         'level': 'campaign',
         'date_preset': 'this_month',
+        'limit': 25,
+    })
+
+
+def get_campaign_insights_today():
+    """시간별 스냅샷용: 오늘 캠페인별 실시간 데이터"""
+    return api_get(AD_ACCOUNT_ID + '/insights', {
+        'fields': 'campaign_id,campaign_name,spend,impressions,clicks,reach,ctr,cpc,cpm,actions,action_values',
+        'level': 'campaign',
+        'date_preset': 'today',
         'limit': 25,
     })
 
@@ -159,6 +169,16 @@ def main():
         ads.append(parsed)
     ads.sort(key=lambda x: x['spend'], reverse=True)
 
+    # ⑤ 오늘 캠페인별 실시간 (시간별 스냅샷용)
+    today_camp_resp = get_campaign_insights_today()
+    today_campaigns = []
+    for row in today_camp_resp.get('data', []):
+        parsed = parse_row(row)
+        parsed['campaign_id']   = row.get('campaign_id', '')
+        parsed['campaign_name'] = row.get('campaign_name', '')
+        today_campaigns.append(parsed)
+    today_campaigns.sort(key=lambda x: x['spend'], reverse=True)
+
     # ── 파일 저장 ────────────────────────────────────────────
     os.makedirs('data', exist_ok=True)
 
@@ -167,6 +187,16 @@ def main():
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(obj, f, ensure_ascii=False, indent=2)
         print(f"  ✓ {path} 저장 완료")
+
+    def load_json(filename, default):
+        path = f'data/{filename}'
+        if os.path.exists(path):
+            try:
+                with open(path, encoding='utf-8') as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return default
 
     # summary에 캠페인·목표 포함 (HTML에서 s.campaigns, s.goals 사용)
     summary['campaigns'] = campaigns
@@ -177,10 +207,33 @@ def main():
         'spend':   3000000,
     }
 
-    save('summary.json',       summary)
-    save('daily_history.json', {'last_updated': now_kst.isoformat(), 'data': daily_rows})
-    save('campaigns.json',     {'last_updated': now_kst.isoformat(), 'campaigns': campaigns, 'data': campaigns})
-    save('ads.json',           {'last_updated': now_kst.isoformat(), 'data': ads[:10]})
+    # ── 일별 히스토리 장기 누적 (30일 이상 보관) ──────────────
+    cutoff_date = (now_kst - timedelta(days=5)).strftime('%Y-%m-%d')
+    old_daily   = load_json('daily_history.json', {}).get('data', [])
+    merged_daily = {r['date']: r for r in old_daily if r.get('date', '') < cutoff_date}
+    for r in daily_rows:                          # 최근 5일은 항상 최신으로 덮어씌움
+        merged_daily[r['date']] = r
+    merged_daily_list = sorted(merged_daily.values(), key=lambda x: x['date'])
+
+    # ── 시간별 스냅샷 누적 ────────────────────────────────────
+    snapshot_key = f"{today_str}T{now_kst.hour:02d}"
+    old_snaps    = load_json('hourly_snapshots.json', {}).get('snapshots', [])
+    snap_dict    = {s['key']: s for s in old_snaps}  # 중복 방지
+    snap_dict[snapshot_key] = {
+        'key':      snapshot_key,
+        'datetime': now_kst.isoformat(),
+        'date':     today_str,
+        'hour':     now_kst.hour,
+        'totals':   today,                  # 오늘 전체 실시간
+        'campaigns': today_campaigns,       # 오늘 캠페인별 실시간
+    }
+    snaps_list = sorted(snap_dict.values(), key=lambda x: x['key'])
+
+    save('summary.json',          summary)
+    save('daily_history.json',    {'last_updated': now_kst.isoformat(), 'data': merged_daily_list})
+    save('campaigns.json',        {'last_updated': now_kst.isoformat(), 'campaigns': campaigns, 'data': campaigns})
+    save('ads.json',              {'last_updated': now_kst.isoformat(), 'data': ads[:10]})
+    save('hourly_snapshots.json', {'last_updated': now_kst.isoformat(), 'snapshots': snaps_list})
 
     print(f"\n✅ 수집 완료 | 이번달 지출: {monthly.get('spend',0):,.0f}원 | ROAS: {monthly.get('roas',0)}")
 
