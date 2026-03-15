@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-15T08:21:40.569368+09:00",
+  "last_updated": "2026-03-15T10:49:50.181895+09:00",
   "snapshots": [
     {
       "key": "2026-03-14T23",
@@ -808,6 +808,87 @@
           "cpa": 0.0,
           "campaign_id": "120242416319530020",
           "campaign_name": "이어리프트 전환 메신저"
+        }
+      ]
+    },
+    {
+      "key": "2026-03-15T10",
+      "datetime": "2026-03-15T10:49:50.181895+09:00",
+      "date": "2026-03-15",
+      "hour": 10,
+      "totals": {
+        "spend": 500558.0,
+        "impressions": 14869,
+        "clicks": 373,
+        "reach": 13872,
+        "ctr": 2.51,
+        "cpc": 1342.0,
+        "cpm": 33665.0,
+        "purchases": 11,
+        "purchase_value": 872662.0,
+        "roas": 1.74,
+        "cpa": 45505.0
+      },
+      "campaigns": [
+        {
+          "spend": 339762.0,
+          "impressions": 12610,
+          "clicks": 284,
+          "reach": 11748,
+          "ctr": 2.25,
+          "cpc": 1196.0,
+          "cpm": 26944.0,
+          "purchases": 11,
+          "purchase_value": 872662.0,
+          "roas": 2.57,
+          "cpa": 30887.0,
+          "campaign_id": "120243403518660020",
+          "campaign_name": "260303 일반 전환 캠페인"
+        },
+        {
+          "spend": 94912.0,
+          "impressions": 1286,
+          "clicks": 40,
+          "reach": 1154,
+          "ctr": 3.11,
+          "cpc": 2373.0,
+          "cpm": 73804.0,
+          "purchases": 0,
+          "purchase_value": 0.0,
+          "roas": 0.0,
+          "cpa": 0.0,
+          "campaign_id": "120242695180060020",
+          "campaign_name": "260216_ASC_1차광고"
+        },
+        {
+          "spend": 45618.0,
+          "impressions": 397,
+          "clicks": 4,
+          "reach": 349,
+          "ctr": 1.01,
+          "cpc": 11404.0,
+          "cpm": 114907.0,
+          "purchases": 0,
+          "purchase_value": 0.0,
+          "roas": 0.0,
+          "cpa": 0.0,
+          "campaign_id": "120243575177020020",
+          "campaign_name": "260307_ASC_2차광고"
+        },
+        {
+          "spend": 20266.0,
+          "impressions": 576,
+          "clicks": 45,
+          "reach": 509,
+          "ctr": 7.81,
+          "cpc": 450.0,
+          "cpm": 35184.0,
+          "purchases": 0,
+          "purchase_value": 0.0,
+          "roas": 0.0,
+          "cpa": 0.0,
+          "campaign_id": "120242416319530020",
+          "campaign_name": "전환 메신저 [대화수 극대화]"
         }
       ]
     }
