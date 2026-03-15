@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-16T04:23:02.969463+09:00",
+  "last_updated": "2026-03-16T05:21:12.337922+09:00",
   "data": [
     {
       "spend": 3287626.0,
@@ -19,25 +19,25 @@
       "campaign_name": "260216_ASC_1차광고"
     },
     {
-      "spend": 869622.0,
-      "impressions": 49983,
-      "clicks": 999,
+      "spend": 874426.0,
+      "impressions": 50377,
+      "clicks": 1004,
       "reach": 0,
       "ctr": 0.0,
       "cpc": 0.0,
       "cpm": 0.0,
       "purchases": 19,
       "purchase_value": 1313309.0,
-      "roas": 1.51,
-      "cpa": 45770.0,
+      "roas": 1.5,
+      "cpa": 46022.0,
       "ad_id": "120243876587730020",
       "ad_name": "260313 KTX 조금덜소프트 카카오_27 - 사본",
       "adset_name": "260313 KTX 전환",
       "campaign_name": "260303 일반 전환 캠페인"
     },
     {
-      "spend": 629399.0,
-      "impressions": 25920,
+      "spend": 630318.0,
+      "impressions": 25967,
       "clicks": 590,
       "reach": 0,
       "ctr": 0.0,
@@ -45,16 +45,16 @@
       "cpm": 0.0,
       "purchases": 21,
       "purchase_value": 1376598.0,
-      "roas": 2.19,
-      "cpa": 29971.0,
+      "roas": 2.18,
+      "cpa": 30015.0,
       "ad_id": "120243877242080020",
       "ad_name": "260313 KTX 조금덜소프트_27",
       "adset_name": "260313 KTX 전환",
       "campaign_name": "260303 일반 전환 캠페인"
     },
     {
-      "spend": 618333.0,
-      "impressions": 7320,
+      "spend": 618516.0,
+      "impressions": 7328,
       "clicks": 188,
       "reach": 0,
       "ctr": 0.0,
@@ -63,7 +63,7 @@
       "purchases": 12,
       "purchase_value": 1195558.0,
       "roas": 1.93,
-      "cpa": 51528.0,
+      "cpa": 51543.0,
       "ad_id": "120243403696300020",
       "ad_name": "260303 장윤주 브랜디드 슈링크",
       "adset_name": "260303 브랜디드 슈링크",
@@ -104,6 +104,23 @@
       "campaign_name": "260307_ASC_2차광고"
     },
     {
+      "spend": 210038.0,
+      "impressions": 7885,
+      "clicks": 478,
+      "reach": 0,
+      "ctr": 0.0,
+      "cpc": 0.0,
+      "cpm": 0.0,
+      "purchases": 0,
+      "purchase_value": 0.0,
+      "roas": 0.0,
+      "cpa": 0.0,
+      "ad_id": "120242715820950020",
+      "ad_name": "260217 제로제로 회춘_비밀",
+      "adset_name": "260217 제로제로 회춘-메신져",
+      "campaign_name": "전환 메신저 [대화수 목표]"
+    },
+    {
       "spend": 209705.0,
       "impressions": 2864,
       "clicks": 66,
@@ -119,23 +136,6 @@
       "ad_name": "ASC_1차_슈링크1_영상",
       "adset_name": "260216_ASC_1차광고_세트",
       "campaign_name": "260216_ASC_1차광고"
-    },
-    {
-      "spend": 209517.0,
-      "impressions": 7878,
-      "clicks": 477,
-      "reach": 0,
-      "ctr": 0.0,
-      "cpc": 0.0,
-      "cpm": 0.0,
-      "purchases": 0,
-      "purchase_value": 0.0,
-      "roas": 0.0,
-      "cpa": 0.0,
-      "ad_id": "120242715820950020",
-      "ad_name": "260217 제로제로 회춘_비밀",
-      "adset_name": "260217 제로제로 회춘-메신져",
-      "campaign_name": "전환 메신저 [대화수 목표]"
     },
     {
       "spend": 202141.0,
@@ -155,8 +155,8 @@
       "campaign_name": "260216_ASC_1차광고"
     },
     {
-      "spend": 164940.0,
-      "impressions": 1895,
+      "spend": 164991.0,
+      "impressions": 1897,
       "clicks": 54,
       "reach": 0,
       "ctr": 0.0,
@@ -165,7 +165,7 @@
       "purchases": 5,
       "purchase_value": 530200.0,
       "roas": 3.21,
-      "cpa": 32988.0,
+      "cpa": 32998.0,
       "ad_id": "120242695290790020",
       "ad_name": "ASC_1차_고밀도_단컷",
       "adset_name": "260216_ASC_1차광고_세트",
