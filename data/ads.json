@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-16T05:21:12.337922+09:00",
+  "last_updated": "2026-03-16T06:22:23.999670+09:00",
   "data": [
     {
       "spend": 3287626.0,
@@ -19,26 +19,26 @@
       "campaign_name": "260216_ASC_1차광고"
     },
     {
-      "spend": 874426.0,
-      "impressions": 50377,
-      "clicks": 1004,
+      "spend": 883129.0,
+      "impressions": 51065,
+      "clicks": 1014,
       "reach": 0,
       "ctr": 0.0,
       "cpc": 0.0,
       "cpm": 0.0,
       "purchases": 19,
       "purchase_value": 1313309.0,
-      "roas": 1.5,
-      "cpa": 46022.0,
+      "roas": 1.49,
+      "cpa": 46480.0,
       "ad_id": "120243876587730020",
       "ad_name": "260313 KTX 조금덜소프트 카카오_27 - 사본",
       "adset_name": "260313 KTX 전환",
       "campaign_name": "260303 일반 전환 캠페인"
     },
     {
-      "spend": 630318.0,
-      "impressions": 25967,
-      "clicks": 590,
+      "spend": 631379.0,
+      "impressions": 26041,
+      "clicks": 593,
       "reach": 0,
       "ctr": 0.0,
       "cpc": 0.0,
@@ -46,16 +46,16 @@
       "purchases": 21,
       "purchase_value": 1376598.0,
       "roas": 2.18,
-      "cpa": 30015.0,
+      "cpa": 30066.0,
       "ad_id": "120243877242080020",
       "ad_name": "260313 KTX 조금덜소프트_27",
       "adset_name": "260313 KTX 전환",
       "campaign_name": "260303 일반 전환 캠페인"
     },
     {
-      "spend": 618516.0,
-      "impressions": 7328,
-      "clicks": 188,
+      "spend": 619543.0,
+      "impressions": 7345,
+      "clicks": 189,
       "reach": 0,
       "ctr": 0.0,
       "cpc": 0.0,
@@ -63,7 +63,7 @@
       "purchases": 12,
       "purchase_value": 1195558.0,
       "roas": 1.93,
-      "cpa": 51543.0,
+      "cpa": 51629.0,
       "ad_id": "120243403696300020",
       "ad_name": "260303 장윤주 브랜디드 슈링크",
       "adset_name": "260303 브랜디드 슈링크",
@@ -104,8 +104,8 @@
       "campaign_name": "260307_ASC_2차광고"
     },
     {
-      "spend": 210038.0,
-      "impressions": 7885,
+      "spend": 210173.0,
+      "impressions": 7889,
       "clicks": 478,
       "reach": 0,
       "ctr": 0.0,
@@ -155,8 +155,8 @@
       "campaign_name": "260216_ASC_1차광고"
     },
     {
-      "spend": 164991.0,
-      "impressions": 1897,
+      "spend": 165086.0,
+      "impressions": 1898,
       "clicks": 54,
       "reach": 0,
       "ctr": 0.0,
@@ -165,7 +165,7 @@
       "purchases": 5,
       "purchase_value": 530200.0,
       "roas": 3.21,
-      "cpa": 32998.0,
+      "cpa": 33017.0,
       "ad_id": "120242695290790020",
       "ad_name": "ASC_1차_고밀도_단컷",
       "adset_name": "260216_ASC_1차광고_세트",
