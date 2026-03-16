@@ -284,8 +284,15 @@ function render(s, d, c, p) {
   const today = s.today || {};
 
   // p = period_campaigns.json 데이터. 현재 탭 기간에 맞는 캠페인 사용
-  const periodCamps = p && p[currentPeriod] ? p[currentPeriod] : null;
-  const camps = periodCamps || (c && (c.data || c.campaigns)) || s.campaigns || [];
+  // ※ JS에서 [] (빈배열)도 truthy이므로 length 체크 필수
+  let camps;
+  if (p && Array.isArray(p[currentPeriod])) {
+    // period_campaigns.json 로드 성공 → 기간별 데이터 사용 (비어있으면 "데이터 없음" 표시)
+    camps = p[currentPeriod];
+  } else {
+    // period_campaigns.json 미로드 → campaigns.json 폴백
+    camps = (c && (c.data || c.campaigns)) || s.campaigns || [];
+  }
 
   // 기간 표시 레이블
   const periodLabels = { this_month: '이번 달', last_month: '저번 달', this_week: '이번 주', last_week: '저번 주' };
