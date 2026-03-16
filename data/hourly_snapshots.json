@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-16T19:59:08.906583+09:00",
+  "last_updated": "2026-03-16T20:00:32.850635+09:00",
   "snapshots": [
     {
       "key": "2026-03-14T23",
@@ -3220,6 +3220,87 @@
           "ctr": 7.11,
           "cpc": 444.0,
           "cpm": 31618.0,
+          "purchases": 0,
+          "purchase_value": 0.0,
+          "roas": 0.0,
+          "cpa": 0.0,
+          "campaign_id": "120242416319530020",
+          "campaign_name": "전환 메신저 [대화수 목표]"
+        }
+      ]
+    },
+    {
+      "key": "2026-03-16T20",
+      "datetime": "2026-03-16T20:00:32.850635+09:00",
+      "date": "2026-03-16",
+      "hour": 20,
+      "totals": {
+        "spend": 1232769.0,
+        "impressions": 70052,
+        "clicks": 1258,
+        "reach": 63575,
+        "ctr": 1.8,
+        "cpc": 980.0,
+        "cpm": 17598.0,
+        "purchases": 22,
+        "purchase_value": 1390975.0,
+        "roas": 1.13,
+        "cpa": 56035.0
+      },
+      "campaigns": [
+        {
+          "spend": 1026772.0,
+          "impressions": 65468,
+          "clicks": 1072,
+          "reach": 60882,
+          "ctr": 1.64,
+          "cpc": 958.0,
+          "cpm": 15684.0,
+          "purchases": 18,
+          "purchase_value": 995075.0,
+          "roas": 0.97,
+          "cpa": 57043.0,
+          "campaign_id": "120243403518660020",
+          "campaign_name": "260303 일반 전환 캠페인"
+        },
+        {
+          "spend": 112490.0,
+          "impressions": 1912,
+          "clicks": 46,
+          "reach": 1406,
+          "ctr": 2.41,
+          "cpc": 2445.0,
+          "cpm": 58834.0,
+          "purchases": 3,
+          "purchase_value": 266300.0,
+          "roas": 2.37,
+          "cpa": 37497.0,
+          "campaign_id": "120242695180060020",
+          "campaign_name": "260216_ASC_1차광고"
+        },
+        {
+          "spend": 52992.0,
+          "impressions": 1391,
+          "clicks": 48,
+          "reach": 1267,
+          "ctr": 3.45,
+          "cpc": 1104.0,
+          "cpm": 38096.0,
+          "purchases": 1,
+          "purchase_value": 129600.0,
+          "roas": 2.45,
+          "cpa": 52992.0,
+          "campaign_id": "120243954678190020",
+          "campaign_name": "전환 메신저 [전환수 목표]"
+        },
+        {
+          "spend": 40515.0,
+          "impressions": 1281,
+          "clicks": 92,
+          "reach": 993,
+          "ctr": 7.18,
+          "cpc": 440.0,
+          "cpm": 31628.0,
           "purchases": 0,
           "purchase_value": 0.0,
           "roas": 0.0,
