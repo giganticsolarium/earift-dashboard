@@ -274,13 +274,14 @@ function switchPeriod(period, btn) {
   document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   if (window_lastData) {
-    render(window_lastData.s, window_lastData.d, window_lastData.c, window_lastData.p);
+    render(window_lastData.s, window_lastData.d, window_lastData.c, window_lastData.p, window_lastData.g);
   }
 }
 
-function render(s, d, c, p) {
-  window_lastData = {s, d, c, p};
-  const goals = s.goals || { budget: 3000000, roas: 2.5, revenue: 10000000, spend: 4500000 };
+function render(s, d, c, p, g) {
+  window_lastData = {s, d, c, p, g};
+  // goals.json(g) 우선 → summary.json(s.goals) → 하드코딩 기본값
+  const goals = g || s.goals || { budget: 3000000, roas: 2.5, revenue: 10000000, spend: 4500000 };
   const today = s.today || {};
 
   // p = period_campaigns.json 데이터. 현재 탭 기간에 맞는 캠페인 사용
@@ -559,13 +560,14 @@ function render(s, d, c, p) {
 
 async function loadData() {
   try {
-    const [s, d, c, p] = await Promise.all([
+    const [s, d, c, p, g] = await Promise.all([
       fetch(`${RAW}/summary.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/daily_history.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/campaigns.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/period_campaigns.json?t=${Date.now()}`).then(r => r.json()).catch(() => null),
+      fetch(`${RAW}/goals.json?t=${Date.now()}`).then(r => r.json()).catch(() => null),
     ]);
-    render(s, d, c, p);
+    render(s, d, c, p, g);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
       `<div class="loading" style="color:var(--red)">

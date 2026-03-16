@@ -68,6 +68,13 @@
     }
     .dbtn.active { background: var(--surface2); color: var(--text); border-color: var(--accent); }
     .dsep { color: var(--border); }
+    .date-input {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); padding: 4px 10px; font-size: 12px; cursor: pointer;
+      color-scheme: dark;
+    }
+    .date-input:focus { outline: none; border-color: var(--accent); }
+    .date-label { color: var(--muted); font-size: 12px; }
 
     /* ── MAIN ── */
     .main { padding: 24px 28px; display: flex; flex-direction: column; gap: 24px; }
@@ -188,14 +195,19 @@
 
 <!-- DATE BAR -->
 <div class="date-bar">
-  <button class="dbtn active" onclick="selectPeriod('today',this)">오늘</button>
-  <button class="dbtn" onclick="selectPeriod('yesterday',this)">어제</button>
-  <button class="dbtn" onclick="selectPeriod('7d',this)">최근 7일</button>
-  <button class="dbtn" onclick="selectPeriod('30d',this)">최근 30일</button>
-  <button class="dbtn" onclick="selectPeriod('month',this)">이번 달</button>
+  <button class="dbtn active" data-period="today"      onclick="selectPeriod('today',this)">오늘</button>
+  <button class="dbtn"        data-period="yesterday"  onclick="selectPeriod('yesterday',this)">어제</button>
+  <button class="dbtn"        data-period="this_week"  onclick="selectPeriod('this_week',this)">이번 주</button>
+  <button class="dbtn"        data-period="last_week"  onclick="selectPeriod('last_week',this)">저번 주</button>
+  <button class="dbtn"        data-period="month"      onclick="selectPeriod('month',this)">이번 달</button>
+  <button class="dbtn"        data-period="last_month" onclick="selectPeriod('last_month',this)">저번 달</button>
+  <button class="dbtn"        data-period="7d"         onclick="selectPeriod('7d',this)">최근 7일</button>
   <span class="dsep">|</span>
-  <button class="dbtn" data-grain="daily" onclick="selectGrain('daily',this)">일별</button>
-  <button class="dbtn" data-grain="weekly" onclick="selectGrain('weekly',this)">주별</button>
+  <span class="date-label">직접 선택</span>
+  <input type="date" id="date-from" class="date-input">
+  <span class="date-label">~</span>
+  <input type="date" id="date-to" class="date-input">
+  <button class="dbtn" onclick="applyCustomRange()">적용</button>
 </div>
 
 <div id="main-content" class="main">
@@ -210,7 +222,7 @@ const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e','#06b6d4','#f472b6']
 let mainChart = null;
 let activeMetrics = ['roas','cpa','spend'];
 let currentPeriod = 'today';
-let currentGrain  = 'daily';
+let customStart = '', customEnd = '';
 
 // ── hourly_snapshots.json에서 전날 데이터 숨김 ──────────────────────────────────────────────
 async function checkAndHideYesterdayData() {
@@ -221,24 +233,53 @@ async function checkAndHideYesterdayData() {
     const now = new Date();
     const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     const todaySnapshots = snapshots.filter(s => s.date === todayStr);
-    const yesterdayBtn = Array.from(document.querySelectorAll('.dbtn')).find(b => b.textContent.includes('어제'));
+    const yesterdayBtn = document.querySelector('.dbtn[data-period="yesterday"]');
     if (todaySnapshots.length > 0 && yesterdayBtn) {
       yesterdayBtn.style.display = 'none';
     }
   } catch(e) {}
 }
 
+// ── 기간 헬퍼 ────────────────────────────────────────────────────────────────
+function getPeriodDatesDetail(p) {
+  const now = new Date();
+  const y = now.getFullYear(), mo = now.getMonth(), da = now.getDate();
+  const fmt = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+  const today = fmt(now);
+  switch(p) {
+    case 'this_week': {
+      const dow = now.getDay(), diff = dow === 0 ? -6 : 1 - dow;
+      return { start: fmt(new Date(y, mo, da + diff)), end: today };
+    }
+    case 'last_week': {
+      const dow = now.getDay(), diff = dow === 0 ? -6 : 1 - dow;
+      const thisMon = new Date(y, mo, da + diff);
+      return { start: fmt(new Date(thisMon.getTime() - 7*86400000)), end: fmt(new Date(thisMon.getTime() - 86400000)) };
+    }
+    case 'last_month': {
+      const lm = mo === 0 ? 11 : mo - 1, ly = mo === 0 ? y - 1 : y;
+      return { start: fmt(new Date(ly, lm, 1)), end: fmt(new Date(y, mo, 0)) };
+    }
+    case 'month': return { start: fmt(new Date(y, mo, 1)), end: today };
+    default:       return { start: today, end: today };
+  }
+}
+
 function selectPeriod(period, btn) {
   currentPeriod = period;
-  document.querySelectorAll('.dbtn:not([data-grain])').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c, window._lastData.a, window._lastData.h);
+  document.querySelectorAll('.dbtn[data-period]').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c, window._lastData.a, window._lastData.h, window._lastData.p, window._lastData.g);
 }
-function selectGrain(grain, btn) {
-  currentGrain = grain;
-  document.querySelectorAll('.dbtn[data-grain]').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c, window._lastData.a, window._lastData.h);
+
+function applyCustomRange() {
+  const from = document.getElementById('date-from').value;
+  const to   = document.getElementById('date-to').value;
+  if (!from || !to) { alert('날짜를 선택해 주세요.'); return; }
+  if (from > to)    { alert('시작일이 종료일보다 늦을 수 없습니다.'); return; }
+  customStart = from;
+  customEnd   = to;
+  selectPeriod('custom', null);
 }
 
 function aggregateDays(rows) {
@@ -278,6 +319,31 @@ function getKpiForPeriod(s, d) {
       const cur  = rows.length ? aggregateDays(rows) : (s.monthly||s.month||{});
       return { cur, prev: {}, label: '' };
     }
+    case 'this_week': {
+      const { start, end } = getPeriodDatesDetail('this_week');
+      const { start: lwS, end: lwE } = getPeriodDatesDetail('last_week');
+      const curRows  = allData.filter(x => x.date >= start && x.date <= end);
+      const prevRows = allData.filter(x => x.date >= lwS   && x.date <= lwE);
+      return { cur: aggregateDays(curRows), prev: aggregateDays(prevRows), label: 'vs 저번 주' };
+    }
+    case 'last_week': {
+      const { start, end } = getPeriodDatesDetail('last_week');
+      const { start: twS, end: twE } = getPeriodDatesDetail('this_week');
+      const curRows  = allData.filter(x => x.date >= start && x.date <= end);
+      const prevRows = allData.filter(x => x.date >= twS   && x.date <= twE);
+      return { cur: aggregateDays(curRows), prev: aggregateDays(prevRows), label: 'vs 이번 주' };
+    }
+    case 'last_month': {
+      const { start, end } = getPeriodDatesDetail('last_month');
+      const { start: tmS, end: tmE } = getPeriodDatesDetail('month');
+      const curRows  = allData.filter(x => x.date >= start && x.date <= end);
+      const prevRows = allData.filter(x => x.date >= tmS   && x.date <= tmE);
+      return { cur: aggregateDays(curRows), prev: aggregateDays(prevRows), label: 'vs 이번 달' };
+    }
+    case 'custom': {
+      const curRows = allData.filter(x => x.date >= customStart && x.date <= customEnd);
+      return { cur: aggregateDays(curRows), prev: {}, label: `${customStart.slice(5)} ~ ${customEnd.slice(5)}` };
+    }
     default:
       return { cur: s.today||{}, prev: s.yesterday||{}, label: 'vs 어제' };
   }
@@ -293,6 +359,10 @@ function getChartDays(d) {
     case '7d':        return allData.slice(-7);
     case '30d':       return allData.slice(-30);
     case 'month':     return allData.filter(x => x.date && x.date.startsWith(thisMonth));
+    case 'this_week': { const { start, end } = getPeriodDatesDetail('this_week'); return allData.filter(x => x.date >= start && x.date <= end); }
+    case 'last_week': { const { start, end } = getPeriodDatesDetail('last_week'); return allData.filter(x => x.date >= start && x.date <= end); }
+    case 'last_month': { const { start, end } = getPeriodDatesDetail('last_month'); return allData.filter(x => x.date >= start && x.date <= end); }
+    case 'custom':    return allData.filter(x => x.date >= customStart && x.date <= customEnd);
     default:          return allData.slice(-14);
   }
 }
@@ -316,12 +386,26 @@ function wFmt(n) {
   return n.toLocaleString()+'원';
 }
 
-function render(s, d, c, a, h) {
-  window._lastData = {s, d, c, a, h};
+function render(s, d, c, a, h, p, g) {
+  window._lastData = {s, d, c, a, h, p, g};
   const {cur: today, prev: yesterday, label: periodLabel} = getKpiForPeriod(s, d);
-  const camps = (c && (c.data || c.campaigns)) || s.campaigns || [];
+  // 기간에 맞는 캠페인 데이터 선택
+  const periodCampData = {
+    this_week:  (p && Array.isArray(p.this_week))  ? p.this_week  : null,
+    last_week:  (p && Array.isArray(p.last_week))  ? p.last_week  : null,
+    last_month: (p && Array.isArray(p.last_month)) ? p.last_month : null,
+  };
+  const camps = periodCampData[currentPeriod] !== null && periodCampData[currentPeriod] !== undefined
+    ? periodCampData[currentPeriod]
+    : (c && (c.data || c.campaigns)) || s.campaigns || [];
+  const campPeriodLabel = { today:'오늘 (이번 달 기준)', yesterday:'어제 (이번 달 기준)',
+    this_week:'이번 주', last_week:'저번 주', month:'이번 달', last_month:'저번 달',
+    '7d':'최근 7일 (이번 달 기준)', '30d':'최근 30일 (이번 달 기준)',
+    custom: customStart ? `${customStart} ~ ${customEnd}` : '직접 선택 (이번 달 기준)'
+  }[currentPeriod] || '이번 달';
   const ads = (a && a.data) || [];
-  const goals = s.goals || { roas: 2.5 };
+  // goals.json(g) 우선 → summary.json(s.goals) → 하드코딩 기본값
+  const goals = g || s.goals || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
 
   function delta(cur, prev, isRoas) {
     const diff = (cur||0) - (prev||0);
@@ -569,7 +653,7 @@ function render(s, d, c, a, h) {
 
     <!-- 캠페인 상세 전체 테이블 -->
     <div class="table-section">
-      <div class="sec-hdr"><div class="sec-title">캠페인 상세 성과 (이번 달)</div></div>
+      <div class="sec-hdr"><div class="sec-title">캠페인 상세 성과 (${campPeriodLabel})</div></div>
       <div class="table-wrap">
         <table>
           <thead>
@@ -682,14 +766,16 @@ function toggleCard(card, metric) {
 
 async function loadData() {
   try {
-    const [s, d, c, a, h] = await Promise.all([
+    const [s, d, c, a, h, p, g] = await Promise.all([
       fetch(`${RAW}/summary.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/daily_history.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/campaigns.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/ads.json?t=${Date.now()}`).then(r => r.json()).catch(() => ({data:[]})),
       fetch(`${RAW}/hourly_snapshots.json?t=${Date.now()}`).then(r => r.json()).catch(() => ({snapshots:[]})),
+      fetch(`${RAW}/period_campaigns.json?t=${Date.now()}`).then(r => r.json()).catch(() => null),
+      fetch(`${RAW}/goals.json?t=${Date.now()}`).then(r => r.json()).catch(() => null),
     ]);
-    render(s, d, c, a, h);
+    render(s, d, c, a, h, p, g);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
       `<div class="loading" style="color:var(--red)">
