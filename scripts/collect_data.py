@@ -69,6 +69,16 @@ def get_campaign_insights_daily():
     })
 
 
+def get_campaign_insights_for_period(date_preset):
+    """기간별 캠페인 성과 (탭 기능용: last_month, this_week, last_week)"""
+    return api_get(AD_ACCOUNT_ID + '/insights', {
+        'fields': 'campaign_id,campaign_name,spend,impressions,clicks,reach,ctr,cpc,cpm,actions,action_values',
+        'level': 'campaign',
+        'date_preset': date_preset,
+        'limit': 25,
+    })
+
+
 def get_ad_insights():
     return api_get(AD_ACCOUNT_ID + '/insights', {
         'fields': 'ad_id,ad_name,adset_name,campaign_name,spend,impressions,clicks,ctr,cpm,actions,action_values',
@@ -240,7 +250,24 @@ def main():
     }
     snaps_list = sorted(snap_dict.values(), key=lambda x: x['key'])
 
-    # ⑥ 캠페인별 일별 성과 (보고서용) - 실패해도 기존 수집에 영향 없음
+    # ⑥ 기간별 캠페인 데이터 (period_campaigns.json) - 탭 기능용
+    period_camps = {'this_month': campaigns}   # 이미 수집된 이번달 데이터 재활용
+    for preset in ['last_month', 'this_week', 'last_week']:
+        try:
+            resp = get_campaign_insights_for_period(preset)
+            plist = []
+            for row in resp.get('data', []):
+                parsed = parse_row(row)
+                parsed['campaign_id']   = row.get('campaign_id', '')
+                parsed['campaign_name'] = row.get('campaign_name', '')
+                plist.append(parsed)
+            plist.sort(key=lambda x: x['spend'], reverse=True)
+            period_camps[preset] = plist
+        except Exception as e:
+            print(f"  ⚠️ {preset} 캠페인 수집 실패 (대시보드 영향 없음): {e}")
+            period_camps[preset] = []
+
+    # ⑦ 캠페인별 일별 성과 (보고서용) - 실패해도 기존 수집에 영향 없음
     camp_daily_rows = []
     try:
         camp_daily_resp = get_campaign_insights_daily()
@@ -260,6 +287,7 @@ def main():
     save('campaigns.json',        {'last_updated': now_kst.isoformat(), 'campaigns': campaigns, 'data': campaigns})
     save('ads.json',              {'last_updated': now_kst.isoformat(), 'data': ads[:10]})
     save('hourly_snapshots.json', {'last_updated': now_kst.isoformat(), 'snapshots': snaps_list})
+    save('period_campaigns.json', {'last_updated': now_kst.isoformat(), **period_camps})
 
     # campaign_daily는 별도 try-except (실패해도 기존 데이터에 영향 없음)
     try:
