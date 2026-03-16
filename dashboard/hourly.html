@@ -136,18 +136,7 @@ table.heat td{padding:3px;text-align:center;border-bottom:1px solid rgba(46,50,8
 .cur-h{outline:2px solid var(--yellow);outline-offset:-2px;}
 .total-row td{border-top:2px solid var(--border);}
 
-/* ── 콘텐츠별 뷰 테이블 ── */
-.content-table{width:100%;border-collapse:collapse;font-size:12px;}
-.content-table th{
-  padding:9px 12px;color:var(--muted);font-size:10px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);text-align:center;
-}
-.content-table th.left-col{text-align:left;}
-.content-table td{padding:11px 12px;border-bottom:1px solid rgba(46,50,80,.4);text-align:center;vertical-align:middle;}
-.content-table td.left-col{text-align:left;}
-.content-table tr:last-child td{border-bottom:none;}
-.content-table tr:hover td{background:var(--surface2);}
-.ad-name-cell{display:block;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;cursor:default;}
+/* ── 콘텐츠별 뷰 ── */
 .rg{color:var(--green);font-weight:700;} .ry{color:var(--yellow);font-weight:700;} .rr{color:var(--red);font-weight:700;}
 
 /* ── 슬라이더 & 스냅샷 ── */
@@ -301,10 +290,23 @@ input[type=range]{flex:1;accent-color:var(--accent);}
   <div id="contentView" style="display:none;">
     <div class="sec">
       <div class="sec-hdr">
-        <span class="sec-title">🎨 콘텐츠별 오늘 성과 랭킹</span>
-        <span style="font-size:11px;color:var(--muted);">오늘 누적 기준 · 지출 정렬</span>
+        <span class="sec-title">🎨 콘텐츠별 시간대 히트맵</span>
+        <span style="font-size:11px;color:var(--muted);">노란 테두리 = 현재 시간대 · 시간별 증분값</span>
       </div>
-      <div id="contentTableWrap"><div class="no-data">데이터 로딩 중...</div></div>
+      <div class="metric-tabs" id="adHeatTabs">
+        <div class="mtab active" onclick="switchAdHeat('spend',this)">지출</div>
+        <div class="mtab" onclick="switchAdHeat('roas',this)">ROAS</div>
+        <div class="mtab" onclick="switchAdHeat('revenue',this)">판매금액</div>
+        <div class="mtab" onclick="switchAdHeat('purchases',this)">판매개수</div>
+        <div class="mtab" onclick="switchAdHeat('ctr',this)">CTR</div>
+        <div class="mtab" onclick="switchAdHeat('cpm',this)">CPM</div>
+      </div>
+      <div class="heat-wrap">
+        <table class="heat">
+          <thead id="adHeatHead"></thead>
+          <tbody id="adHeatBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -346,10 +348,10 @@ function wFmt(v) {
 
 // ── 전역 상태 ──────────────────────────────────────────────────
 let allSnaps = [];
-let allAdsData = [];
 let dateSnaps = [];
 let selectedDate = '';
 let curHeatMetric = 'spend';
+let curAdHeatMetric = 'spend';
 let activeMetrics = new Set(['spend','roas','revenue']);
 let mainChart = null;
 let currentView = 'campaign';
@@ -430,7 +432,7 @@ function setDate(dateStr) {
   renderSnap(+slider.value);
 
   // 콘텐츠별 뷰가 열려있으면 업데이트
-  if (currentView === 'content') renderContentView();
+  if (currentView === 'content') renderAdHeat();
 }
 
 // ── 뷰 전환 ─────────────────────────────────────────────────
@@ -440,58 +442,111 @@ function switchView(view, btn) {
   btn.classList.add('active');
   document.getElementById('campaignView').style.display = view === 'campaign' ? '' : 'none';
   document.getElementById('contentView').style.display = view === 'content' ? '' : 'none';
-  if (view === 'content') renderContentView();
+  if (view === 'content') renderAdHeat();
 }
 
-// ── 콘텐츠별 뷰 렌더 ─────────────────────────────────────────
-function renderContentView() {
-  const wrap = document.getElementById('contentTableWrap');
-  if (!wrap) return;
-  if (!allAdsData.length) {
-    wrap.innerHTML = '<div class="no-data">광고 데이터가 없습니다.<br><small style="color:var(--muted);margin-top:6px;display:block;">오늘 데이터 수집 후 표시됩니다.</small></div>';
+// ── 콘텐츠별 히트맵 메트릭 전환 ─────────────────────────────
+function switchAdHeat(m, tab) {
+  curAdHeatMetric = m;
+  document.querySelectorAll('#adHeatTabs .mtab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  renderAdHeat();
+}
+
+// ── 광고 시간별 증분값 ─────────────────────────────────────
+function getIncrAdVal(adMap, name, h, m) {
+  const ad = (adMap[name]||{})[h];
+  if (!ad) return 0;
+  if (m === 'ctr' || m === 'cpm') return getCampVal(ad, m);
+  let prevAd = null;
+  for (let ph = h-1; ph >= 0; ph--) {
+    if ((adMap[name]||{})[ph]) { prevAd = (adMap[name]||{})[ph]; break; }
+  }
+  if (m === 'roas') {
+    const incrS = (ad.spend||0) - (prevAd ? prevAd.spend||0 : 0);
+    const incrR = (ad.purchase_value||0) - (prevAd ? prevAd.purchase_value||0 : 0);
+    if (incrS > 500) return Math.max(0, incrR / incrS);
+    return ad.roas || 0;
+  }
+  const cur  = getCampVal(ad, m);
+  const prev = prevAd ? getCampVal(prevAd, m) : 0;
+  return Math.max(0, cur - prev);
+}
+
+// ── 콘텐츠별 히트맵 렌더 ──────────────────────────────────
+function renderAdHeat() {
+  const m   = curAdHeatMetric;
+  const now = new Date().getHours();
+
+  // 스냅샷에서 광고별 시간 맵 구성
+  const adNames = [];
+  const adMap   = {};
+  dateSnaps.forEach(s => {
+    (s.ads||[]).forEach(ad => {
+      const key = ad.ad_name || ad.ad_id || '알수없음';
+      if (!adMap[key]) { adMap[key] = {}; adNames.push(key); }
+      adMap[key][s.hour] = ad;
+    });
+  });
+  const uniqAdNames = [...new Set(adNames)];
+
+  const head = document.getElementById('adHeatHead');
+  const body = document.getElementById('adHeatBody');
+  if (!head || !body) return;
+
+  if (!uniqAdNames.length) {
+    head.innerHTML = '';
+    body.innerHTML = `<tr><td colspan="26" class="no-data" style="padding:30px;text-align:center;">
+      ${dateSnaps.length
+        ? '스냅샷에 광고 데이터가 없습니다.<br><small style="color:var(--muted)">collect_data.py 업데이트 후 수집된 스냅샷부터 콘텐츠 데이터가 포함됩니다.</small>'
+        : '선택한 날짜의 데이터가 없습니다.'}
+    </td></tr>`;
     return;
   }
-  const sorted = [...allAdsData].sort((a,b) => (b.spend||0)-(a.spend||0));
-  wrap.innerHTML = `
-    <div style="overflow-x:auto;">
-      <table class="content-table">
-        <thead>
-          <tr>
-            <th class="left-col" style="width:30px;">#</th>
-            <th class="left-col" style="min-width:180px;">콘텐츠명</th>
-            <th>지출</th>
-            <th>구매</th>
-            <th>ROAS</th>
-            <th>CTR</th>
-            <th>CPM</th>
-            <th>CPA</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${sorted.map((ad, i) => {
-            const name = ad.ad_name || `광고 ${i+1}`;
-            const roas = ad.roas || 0;
-            const roasCls = roas >= 2.5 ? 'rg' : roas >= 1.5 ? 'ry' : 'rr';
-            return `<tr>
-              <td class="left-col" style="color:var(--muted);font-size:11px;">${i+1}</td>
-              <td class="left-col">
-                <span class="ad-name-cell" title="${name}">${name}</span>
-              </td>
-              <td>${wFmt(ad.spend||0)}</td>
-              <td>${ad.purchases||0}건</td>
-              <td class="${roasCls}">${roas.toFixed(2)}x</td>
-              <td>${(ad.ctr||0).toFixed(2)}%</td>
-              <td>${wFmt(ad.cpm||0)}</td>
-              <td>${wFmt(ad.cpa||0)}</td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-      <div style="margin-top:12px;padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:11px;color:var(--muted);border:1px solid var(--border);">
-        💡 현재는 오늘 기준 일별 총합을 표시합니다. 시간별 콘텐츠 데이터는 향후 업데이트 예정입니다.
-      </div>
-    </div>
-  `;
+
+  // 증분값 기준 색상 스케일 계산
+  const allVals = [];
+  uniqAdNames.forEach(n => {
+    for (let h=0; h<24; h++) {
+      const v = getIncrAdVal(adMap, n, h, m);
+      if (v) allVals.push(v);
+    }
+  });
+  const maxV = allVals.length ? Math.max(...allVals) : 1;
+  const minV = allVals.length ? Math.min(...allVals) : 0;
+
+  head.innerHTML = '<tr><th class="ncol" style="text-align:left">콘텐츠</th>' +
+    Array.from({length:24},(_,h)=>`<th>${h}시</th>`).join('') +
+    '<th style="color:var(--accent)">누적합계</th></tr>';
+
+  body.innerHTML = '';
+  const colors = ['#4f6ef7','#a855f7','#f59e0b','#22c55e','#06b6d4','#f472b6','#ec4899'];
+
+  uniqAdNames.forEach((name, ni) => {
+    const tr = document.createElement('tr');
+    const shortName = name.length > 20 ? name.slice(0,20)+'…' : name;
+    let html = `<td class="ncol" title="${name}">
+      <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${colors[ni%colors.length]};margin-right:5px;"></span>${shortName}
+    </td>`;
+
+    for (let h=0; h<24; h++) {
+      const v     = getIncrAdVal(adMap, name, h, m);
+      const isCur = (h === now);
+      const cls   = heatCls(v, m, maxV, minV) + (isCur?' cur-h':'');
+      const disp  = v ? META[m].fmt(v) : '-';
+      html += `<td><span class="hc ${cls}" title="${h}시 증분 ${META[m].lbl}: ${disp}">${disp}</span></td>`;
+    }
+
+    // 누적합계: 해당 광고의 가장 마지막 스냅샷 값
+    let latestAd = null;
+    for (let hh = 23; hh >= 0; hh--) {
+      if ((adMap[name]||{})[hh]) { latestAd = (adMap[name]||{})[hh]; break; }
+    }
+    const agg = latestAd ? META[m].fmt(getCampVal(latestAd, m)) : '-';
+    html += `<td style="font-weight:700;color:${colors[ni%colors.length]};font-size:11px;border-left:1px solid var(--border);">${agg}</td>`;
+    tr.innerHTML = html;
+    body.appendChild(tr);
+  });
 }
 
 // ── KPI ────────────────────────────────────────────────────────
@@ -857,19 +912,15 @@ function renderSnap(h) {
 async function loadData() {
   try {
     const base = location.pathname.includes('/dashboard/') ? '../' : './';
-    const [jsonH, jsonA] = await Promise.all([
-      fetch(base + 'data/hourly_snapshots.json?t=' + Date.now()).then(r => {
-        if (!r.ok) throw new Error('fetch failed');
-        return r.json();
-      }),
-      fetch(base + 'data/ads.json?t=' + Date.now()).then(r => r.json()).catch(() => ({data:[]})),
-    ]);
+    const jsonH = await fetch(base + 'data/hourly_snapshots.json?t=' + Date.now()).then(r => {
+      if (!r.ok) throw new Error('fetch failed');
+      return r.json();
+    });
     allSnaps = jsonH.snapshots || [];
-    allAdsData = jsonA.data || [];
     hideYesterdayIfTodayExists();
     const today = toLocalStr(new Date()); // KST 기준 오늘
     setDate(today);
-    if (currentView === 'content') renderContentView();
+    if (currentView === 'content') renderAdHeat();
   } catch(e) {
     document.querySelector('.page').innerHTML =
       `<div class="loading">⚠️ 데이터를 불러올 수 없습니다.<br><small style="color:var(--muted)">hourly_snapshots.json이 아직 생성되지 않았거나 네트워크 오류입니다.<br>다음 정각 이후에 다시 확인해 주세요.</small></div>`;
