@@ -274,15 +274,22 @@ function switchPeriod(period, btn) {
   document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   if (window_lastData) {
-    render(window_lastData.s, window_lastData.d, window_lastData.c);
+    render(window_lastData.s, window_lastData.d, window_lastData.c, window_lastData.p);
   }
 }
 
-function render(s, d, c) {
-  window_lastData = {s, d, c};
+function render(s, d, c, p) {
+  window_lastData = {s, d, c, p};
   const goals = s.goals || { budget: 3000000, roas: 2.5, revenue: 10000000, spend: 4500000 };
   const today = s.today || {};
-  const camps = (c && (c.data || c.campaigns)) || s.campaigns || [];
+
+  // p = period_campaigns.json 데이터. 현재 탭 기간에 맞는 캠페인 사용
+  const periodCamps = p && p[currentPeriod] ? p[currentPeriod] : null;
+  const camps = periodCamps || (c && (c.data || c.campaigns)) || s.campaigns || [];
+
+  // 기간 표시 레이블
+  const periodLabels = { this_month: '이번 달', last_month: '저번 달', this_week: '이번 주', last_week: '저번 주' };
+  const periodSpendLabel = periodLabels[currentPeriod] || '기간';
 
   // ── 기간 필터 데이터 ──
   const periodRows = getPeriodFilteredData(d.data || []);
@@ -307,67 +314,35 @@ function render(s, d, c) {
       }).join('')
     : `<div style="color:var(--muted);font-size:13px;padding:8px 0;">캠페인 데이터 없음</div>`;
 
-  // ── ASC 카드: 이번달 → 캠페인별, 나머지 → 기간 집계 ──
+  // ── ASC 카드: 모든 기간 → 캠페인별 실제 데이터 (period_campaigns.json 기반) ──
   let ascCards;
-  if (currentPeriod === 'this_month') {
-    ascCards = camps.length > 0
-      ? camps.map((c, i) => {
-          const pct = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(camps.length,1)) * 100) : 0;
-          const badgeCls = c.roas >= goals.roas ? 'badge-reach' : c.roas >= goals.roas * 0.7 ? 'badge-near' : 'badge-low';
-          const badgeTxt = c.roas >= goals.roas ? '목표 달성' : `${Math.round((c.roas||0)/goals.roas*100)}% 달성`;
-          const name = c.campaign_name || `캠페인 ${i+1}`;
-          const roasColor = c.roas >= goals.roas ? 'var(--green)' : c.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
-          return `<div class="asc-card active" style="--ac:${campColors[i]}">
-            <div class="goal-badge ${badgeCls}">${badgeTxt}</div>
-            <div class="asc-num">캠페인 ${i+1}</div>
-            <div class="asc-type">${name.length > 14 ? name.slice(0,14)+'…' : name}</div>
-            <div class="asc-status"><span class="sdot son"></span>활동 중</div>
-            <div class="asc-kpi-row">
-              <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${(c.roas||0).toFixed(2)}x</span></div>
-              <div class="asc-kpi"><span class="asc-kpi-lbl">구매</span><span class="asc-kpi-val">${(c.purchases||0)}건</span></div>
-              <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(c.cpa||0)}</span></div>
-              <div class="asc-kpi"><span class="asc-kpi-lbl">CPM</span><span class="asc-kpi-val">${wFmt(c.cpm||0)}</span></div>
-            </div>
-            <div class="asc-spend-bar">
-              <div class="asc-bar-row"><span>이번 달 광고비</span><span>${wFmt(c.spend||0)}</span></div>
-              <div class="asc-bar-bg"><div class="asc-bar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
-            </div>
-          </div>`;
-        }).join('')
-      : `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">캠페인 데이터가 아직 없습니다.</div>`;
-  } else {
-    // 기간 집계 카드
-    const pd = periodData;
-    const rowCount = periodRows.length;
-    const roasColor = pd.roas >= goals.roas ? 'var(--green)' : pd.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
-    ascCards = rowCount > 0
-      ? `<div class="asc-card active" style="--ac:#4f6ef7;">
-          <div class="asc-num">${periodFullLabel} · 계정 전체</div>
-          <div class="asc-type" style="font-size:14px;margin-bottom:10px;">전체 광고 집계</div>
-          <div class="asc-status"><span class="sdot son"></span>기간 합산</div>
-          <div class="asc-kpi-row">
-            <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${pd.roas.toFixed(2)}x</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">총 매출</span><span class="asc-kpi-val">${wFmt(pd.purchase_value)}</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">총 광고비</span><span class="asc-kpi-val">${wFmt(pd.spend)}</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">구매 건수</span><span class="asc-kpi-val">${pd.purchases}건</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(pd.cpa)}</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">CPM</span><span class="asc-kpi-val">${wFmt(pd.cpm)}</span></div>
-          </div>
-          <div style="margin-top:12px;padding:8px;background:var(--surface3);border-radius:8px;font-size:11px;color:var(--muted);">
-            📌 캠페인별 세부 데이터는 <strong style="color:var(--accent)">이번 달</strong>만 지원됩니다
-          </div>
+  if (camps.length > 0) {
+    const maxCampSpend = Math.max(...camps.map(cp => cp.spend||0), 1);
+    ascCards = camps.map((cp, i) => {
+      const pct       = Math.round((cp.spend||0) / maxCampSpend * 100);
+      const badgeCls  = cp.roas >= goals.roas ? 'badge-reach' : cp.roas >= goals.roas * 0.7 ? 'badge-near' : 'badge-low';
+      const badgeTxt  = cp.roas >= goals.roas ? '목표 달성' : `${Math.round((cp.roas||0)/goals.roas*100)}% 달성`;
+      const name      = cp.campaign_name || `캠페인 ${i+1}`;
+      const roasColor = cp.roas >= goals.roas ? 'var(--green)' : cp.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
+      return `<div class="asc-card active" style="--ac:${campColors[i]}">
+        <div class="goal-badge ${badgeCls}">${badgeTxt}</div>
+        <div class="asc-num">캠페인 ${i+1}</div>
+        <div class="asc-type">${name.length > 14 ? name.slice(0,14)+'…' : name}</div>
+        <div class="asc-status"><span class="sdot son"></span>활동 중</div>
+        <div class="asc-kpi-row">
+          <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${(cp.roas||0).toFixed(2)}x</span></div>
+          <div class="asc-kpi"><span class="asc-kpi-lbl">구매</span><span class="asc-kpi-val">${(cp.purchases||0)}건</span></div>
+          <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(cp.cpa||0)}</span></div>
+          <div class="asc-kpi"><span class="asc-kpi-lbl">CPM</span><span class="asc-kpi-val">${wFmt(cp.cpm||0)}</span></div>
         </div>
-        <div class="asc-card" style="border-style:dashed;">
-          <div class="asc-num">일평균 성과</div>
-          <div class="asc-type" style="font-size:13px;margin-bottom:10px;">기간 평균</div>
-          <div class="asc-kpi-row">
-            <div class="asc-kpi"><span class="asc-kpi-lbl">일평균 ROAS</span><span class="asc-kpi-val">${pd.roas.toFixed(2)}x</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">일평균 광고비</span><span class="asc-kpi-val">${wFmt(rowCount>0?Math.round(pd.spend/rowCount):0)}</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">일평균 매출</span><span class="asc-kpi-val">${wFmt(rowCount>0?Math.round(pd.purchase_value/rowCount):0)}</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">집계 일수</span><span class="asc-kpi-val">${rowCount}일</span></div>
-          </div>
-        </div>`
-      : `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">선택한 기간의 데이터가 없습니다.</div>`;
+        <div class="asc-spend-bar">
+          <div class="asc-bar-row"><span>${periodSpendLabel} 광고비</span><span>${wFmt(cp.spend||0)}</span></div>
+          <div class="asc-bar-bg"><div class="asc-bar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    ascCards = `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">선택한 기간의 캠페인 데이터가 없습니다.</div>`;
   }
 
   // 차트 데이터 (기간 필터 적용)
@@ -571,12 +546,13 @@ function render(s, d, c) {
 
 async function loadData() {
   try {
-    const [s, d, c] = await Promise.all([
+    const [s, d, c, p] = await Promise.all([
       fetch(`${RAW}/summary.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/daily_history.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/campaigns.json?t=${Date.now()}`).then(r => r.json()),
+      fetch(`${RAW}/period_campaigns.json?t=${Date.now()}`).then(r => r.json()).catch(() => null),
     ]);
-    render(s, d, c);
+    render(s, d, c, p);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
       `<div class="loading" style="color:var(--red)">
