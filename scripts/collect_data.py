@@ -216,16 +216,21 @@ def main():
         today_campaigns.append(parsed)
     today_campaigns.sort(key=lambda x: x['spend'], reverse=True)
 
-    today_ads_resp = get_ad_insights_today()
-    today_ads_snap = []
-    for row in today_ads_resp.get('data', []):
-        parsed = parse_row(row)
-        parsed['ad_id']         = row.get('ad_id', '')
-        parsed['ad_name']       = row.get('ad_name', '')
-        parsed['adset_name']    = row.get('adset_name', '')
-        parsed['campaign_name'] = row.get('campaign_name', '')
-        today_ads_snap.append(parsed)
-    today_ads_snap.sort(key=lambda x: x['spend'], reverse=True)
+    try:
+        today_ads_resp = get_ad_insights_today()
+        today_ads_snap = []
+        for row in today_ads_resp.get('data', []):
+            parsed = parse_row(row)
+            parsed['ad_id']         = row.get('ad_id', '')
+            parsed['ad_name']       = row.get('ad_name', '')
+            parsed['adset_name']    = row.get('adset_name', '')
+            parsed['campaign_name'] = row.get('campaign_name', '')
+            today_ads_snap.append(parsed)
+        today_ads_snap.sort(key=lambda x: x['spend'], reverse=True)
+        print(f"  ✓ today_ads 수집 완료: {len(today_ads_snap)}개")
+    except Exception as e:
+        print(f"  ⚠️ today_ads 수집 실패 (스냅샷에 ads 미포함, 나머지 수집 계속): {e}")
+        today_ads_snap = []
 
     # ── 파일 저장 ────────────────────────────────────────────
     os.makedirs('data', exist_ok=True)
@@ -248,12 +253,9 @@ def main():
 
     # summary에 캠페인·목표 포함 (HTML에서 s.campaigns, s.goals 사용)
     summary['campaigns'] = campaigns
-    summary['goals'] = {
-        'budget':  3000000,
-        'roas':    2.5,
-        'revenue': 7500000,
-        'spend':   3000000,
-    }
+    # goals.json에서 목표 값 읽기 (없으면 기본값 사용)
+    _default_goals = {'budget': 3000000, 'roas': 2.5, 'revenue': 7500000, 'spend': 3000000}
+    summary['goals'] = load_json('goals.json', _default_goals)
 
     # ── 일별 히스토리 장기 누적 (30일 이상 보관) ──────────────
     cutoff_date = (now_kst - timedelta(days=5)).strftime('%Y-%m-%d')
