@@ -279,10 +279,16 @@ def main():
     snaps_list = sorted(snap_dict.values(), key=lambda x: x['key'])
 
     # ⑥ 기간별 캠페인 데이터 (period_campaigns.json) - 탭 기능용
+    # Meta API 유효 preset: this_week_mon_today / last_week_mon_sun
     period_camps = {'this_month': campaigns}   # 이미 수집된 이번달 데이터 재활용
-    for preset in ['last_month', 'this_week', 'last_week']:
+    period_api_map = {
+        'last_month': 'last_month',
+        'this_week':  'this_week_mon_today',
+        'last_week':  'last_week_mon_sun',
+    }
+    for key, api_preset in period_api_map.items():
         try:
-            resp = get_campaign_insights_for_period(preset)
+            resp = get_campaign_insights_for_period(api_preset)
             plist = []
             for row in resp.get('data', []):
                 parsed = parse_row(row)
@@ -290,10 +296,10 @@ def main():
                 parsed['campaign_name'] = row.get('campaign_name', '')
                 plist.append(parsed)
             plist.sort(key=lambda x: x['spend'], reverse=True)
-            period_camps[preset] = plist
+            period_camps[key] = plist
         except Exception as e:
-            print(f"  ⚠️ {preset} 캠페인 수집 실패 (대시보드 영향 없음): {e}")
-            period_camps[preset] = []
+            print(f"  ⚠️ {key} 캠페인 수집 실패 (대시보드 영향 없음): {e}")
+            period_camps[key] = []
 
     # ⑦ 캠페인별 일별 성과 (보고서용) - 실패해도 기존 수집에 영향 없음
     camp_daily_rows = []
