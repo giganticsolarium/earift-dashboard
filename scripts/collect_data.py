@@ -40,21 +40,35 @@ def get_daily_insights():
 
 
 def get_campaign_insights():
+    """이번달 캠페인 현황 — 현재 활성화된 캠페인만"""
     return api_get(AD_ACCOUNT_ID + '/insights', {
         'fields': 'campaign_id,campaign_name,spend,impressions,clicks,reach,ctr,cpc,cpm,actions,action_values',
         'level': 'campaign',
         'date_preset': 'this_month',
+        'filtering': json.dumps([{"field": "campaign.effective_status", "operator": "IN", "value": ["ACTIVE"]}]),
         'limit': 25,
     })
 
 
 def get_campaign_insights_today():
-    """시간별 스냅샷용: 오늘 캠페인별 실시간 데이터"""
+    """시간별 스냅샷용: 오늘 활성화된 캠페인별 실시간 데이터"""
     return api_get(AD_ACCOUNT_ID + '/insights', {
         'fields': 'campaign_id,campaign_name,spend,impressions,clicks,reach,ctr,cpc,cpm,actions,action_values',
         'level': 'campaign',
         'date_preset': 'today',
+        'filtering': json.dumps([{"field": "campaign.effective_status", "operator": "IN", "value": ["ACTIVE"]}]),
         'limit': 25,
+    })
+
+
+def get_ad_insights_today():
+    """시간별 스냅샷용: 오늘 활성화된 광고(소재)별 실시간 데이터"""
+    return api_get(AD_ACCOUNT_ID + '/insights', {
+        'fields': 'ad_id,ad_name,adset_name,campaign_name,spend,impressions,clicks,ctr,cpm,actions,action_values',
+        'level': 'ad',
+        'date_preset': 'today',
+        'filtering': json.dumps([{"field": "ad.effective_status", "operator": "IN", "value": ["ACTIVE"]}]),
+        'limit': 50,
     })
 
 
@@ -80,12 +94,14 @@ def get_campaign_insights_for_period(date_preset):
 
 
 def get_ad_insights():
+    """금일 콘텐츠 TOP — 오늘 활성화된 광고만"""
     return api_get(AD_ACCOUNT_ID + '/insights', {
         'fields': 'ad_id,ad_name,adset_name,campaign_name,spend,impressions,clicks,ctr,cpm,actions,action_values',
         'level': 'ad',
         'date_preset': 'today',
+        'filtering': json.dumps([{"field": "ad.effective_status", "operator": "IN", "value": ["ACTIVE"]}]),
         'sort': 'spend_descending',
-        'limit': 10,
+        'limit': 20,
     })
 
 
@@ -190,7 +206,7 @@ def main():
         ads.append(parsed)
     ads.sort(key=lambda x: x['spend'], reverse=True)
 
-    # ⑤ 오늘 캠페인별 실시간 (시간별 스냅샷용)
+    # ⑤ 오늘 캠페인·광고 실시간 (시간별 스냅샷용) — 활성화된 것만
     today_camp_resp = get_campaign_insights_today()
     today_campaigns = []
     for row in today_camp_resp.get('data', []):
@@ -199,6 +215,17 @@ def main():
         parsed['campaign_name'] = row.get('campaign_name', '')
         today_campaigns.append(parsed)
     today_campaigns.sort(key=lambda x: x['spend'], reverse=True)
+
+    today_ads_resp = get_ad_insights_today()
+    today_ads_snap = []
+    for row in today_ads_resp.get('data', []):
+        parsed = parse_row(row)
+        parsed['ad_id']         = row.get('ad_id', '')
+        parsed['ad_name']       = row.get('ad_name', '')
+        parsed['adset_name']    = row.get('adset_name', '')
+        parsed['campaign_name'] = row.get('campaign_name', '')
+        today_ads_snap.append(parsed)
+    today_ads_snap.sort(key=lambda x: x['spend'], reverse=True)
 
     # ── 파일 저장 ────────────────────────────────────────────
     os.makedirs('data', exist_ok=True)
@@ -245,8 +272,9 @@ def main():
         'datetime': now_kst.isoformat(),
         'date':     today_str,
         'hour':     now_kst.hour,
-        'totals':   today,                  # 오늘 전체 실시간
-        'campaigns': today_campaigns,       # 오늘 캠페인별 실시간
+        'totals':    today,                  # 오늘 전체 실시간
+        'campaigns': today_campaigns,       # 오늘 캠페인별 실시간 (활성화만)
+        'ads':       today_ads_snap,        # 오늘 광고(소재)별 실시간 (활성화만)
     }
     snaps_list = sorted(snap_dict.values(), key=lambda x: x['key'])
 
