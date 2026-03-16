@@ -3,86 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>이어리프트 — 시간별 히스토리</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<title>이어리프트 AD · 시간별 히스토리</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+/* ── CSS 변수: main/detail과 완전 통일 ── */
 :root{
-  --bg:#0f1117;--surface:#1a1d2e;--surface2:#222538;--border:#2a2d3e;
-  --accent:#4f6ef7;--text:#e2e8f0;--muted:#64748b;
-  --green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--purple:#a855f7;
-  --pink:#f472b6;--cyan:#06b6d4;
-  --r:12px;
+  --bg:#0f1117; --surface:#1a1d27; --surface2:#22263a; --surface3:#2a2f47;
+  --border:#2e3250; --accent:#4f6ef7; --green:#22c55e; --red:#ef4444;
+  --yellow:#f59e0b; --purple:#7c3aed; --cyan:#06b6d4; --pink:#f472b6;
+  --text:#e2e8f0; --muted:#8892b0; --r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',sans-serif;font-size:14px;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Apple SD Gothic Neo',sans-serif;min-height:100vh;font-size:14px;}
 
-/* ── 탭 네비 ── */
-.nav{display:flex;align-items:center;background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;}
-.nav-logo{font-size:15px;font-weight:800;color:var(--accent);padding:14px 20px 14px 0;border-right:1px solid var(--border);margin-right:4px;}
-.ntab{padding:15px 18px;cursor:pointer;color:var(--muted);font-size:13px;border-bottom:3px solid transparent;text-decoration:none;transition:color .2s;}
-.ntab:hover{color:var(--text);}
-.ntab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
-.badge{display:inline-block;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(79,110,247,.2);color:#4f6ef7;margin-left:5px;vertical-align:middle;}
+/* ── NAV: main/detail과 동일 구조 ── */
+.nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+}
+.nav-left{display:flex;align-items:center;gap:16px;}
+.logo{font-size:18px;font-weight:700;color:var(--accent);}
+.page-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:10px;padding:4px;}
+.page-tab{
+  padding:6px 16px;border-radius:7px;font-size:13px;font-weight:600;
+  cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .2s;
+}
+.page-tab.active{background:var(--accent);color:#fff;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nbadge{background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:8px;font-size:12px;color:var(--muted);}
+.nbadge span{color:var(--text);font-weight:600;}
+.pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
 /* ── 레이아웃 ── */
-.page{max-width:1360px;margin:0 auto;padding:20px;}
+.page{max-width:1360px;margin:0 auto;padding:24px 28px;display:flex;flex-direction:column;gap:20px;}
 
 /* ── 날짜 헤더 ── */
-.date-bar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;margin-bottom:16px;flex-wrap:wrap;}
-.date-bar h2{font-size:15px;font-weight:700;flex:1;min-width:160px;}
+.date-bar{
+  display:flex;align-items:center;gap:10px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 20px;flex-wrap:wrap;
+}
+.date-bar-title{font-size:15px;font-weight:700;flex:1;min-width:160px;}
 .qbtns{display:flex;gap:5px;}
-.qbtn{background:var(--border);border:none;color:var(--muted);border-radius:6px;padding:5px 11px;cursor:pointer;font-size:12px;transition:all .15s;}
-.qbtn.active,.qbtn:hover{background:var(--accent);color:#fff;}
+.qbtn{
+  background:var(--surface2);border:1px solid var(--border);color:var(--muted);
+  border-radius:20px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:600;transition:all .2s;
+}
+.qbtn.active,.qbtn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
 .date-nav{display:flex;align-items:center;gap:7px;}
-.date-nav button{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;}
+.date-nav button{
+  background:var(--surface2);border:1px solid var(--border);color:var(--text);
+  border-radius:7px;padding:5px 11px;cursor:pointer;font-size:13px;transition:all .2s;
+}
 .date-nav button:hover{background:var(--accent);border-color:var(--accent);}
-.date-display{font-size:15px;font-weight:700;color:var(--accent);min-width:105px;text-align:center;}
+.date-display{
+  font-size:15px;font-weight:700;color:var(--accent);
+  min-width:80px;text-align:center;cursor:pointer;user-select:none;
+  padding:4px 8px;border-radius:6px;transition:background .2s;
+}
+.date-display:hover{background:var(--surface2);}
 .snap-count{font-size:11px;color:var(--muted);}
 
 /* ── KPI ── */
-.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;}
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
 @media(max-width:900px){.kpi-row{grid-template-columns:repeat(3,1fr);}}
-.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:border-color .2s;}
+.kpi{
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;
+  padding:16px;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;
+}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--kc,var(--accent));}
 .kpi:hover,.kpi.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(79,110,247,.18);}
-.kpi-lbl{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;}
-.kpi-val{font-size:19px;font-weight:700;}
-.kpi-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.kpi-lbl{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.kpi-val{font-size:20px;font-weight:800;}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px;}
 .up{color:var(--green);} .dn{color:var(--red);}
 
-/* ── 섹션 ── */
-.sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:14px;}
-.sec-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:13px;}
-.sec-title{font-size:13px;font-weight:700;}
-.chart-wrap{height:220px;position:relative;}
+/* ── 섹션 공통 ── */
+.sec{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.sec-title{font-size:15px;font-weight:700;}
+.chart-wrap{height:240px;position:relative;}
 
 /* ── 메트릭 토글 ── */
 .mtog-row{display:flex;gap:5px;flex-wrap:wrap;}
-.mtog{padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;transition:all .15s;}
-.mtog.on{font-weight:600;border-color:currentColor;}
-.mtog[data-m="spend"].on{color:#4f6ef7;background:rgba(79,110,247,.15);}
-.mtog[data-m="roas"].on{color:#22c55e;background:rgba(34,197,94,.15);}
-.mtog[data-m="revenue"].on{color:#a855f7;background:rgba(168,85,247,.15);}
-.mtog[data-m="purchases"].on{color:#f59e0b;background:rgba(245,158,11,.15);}
-.mtog[data-m="ctr"].on{color:#06b6d4;background:rgba(6,182,212,.15);}
-.mtog[data-m="cpm"].on{color:#f472b6;background:rgba(244,114,182,.15);}
+.mtog{
+  padding:4px 12px;border-radius:20px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;
+}
+.mtog.on{color:#fff;}
+.mtog[data-m="spend"].on{background:#4f6ef7;border-color:#4f6ef7;}
+.mtog[data-m="roas"].on{background:#22c55e;border-color:#22c55e;}
+.mtog[data-m="revenue"].on{background:#a855f7;border-color:#a855f7;}
+.mtog[data-m="purchases"].on{background:#f59e0b;border-color:#f59e0b;}
+.mtog[data-m="ctr"].on{background:#06b6d4;border-color:#06b6d4;}
+.mtog[data-m="cpm"].on{background:#f472b6;border-color:#f472b6;}
+.axis-hint{font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;}
+
+/* ── 뷰 탭 (캠페인별 / 콘텐츠별) ── */
+.view-tabs{display:flex;gap:6px;background:var(--surface2);border-radius:12px;padding:5px;max-width:320px;}
+.vtab{
+  flex:1;padding:7px 14px;border-radius:9px;font-size:12px;font-weight:700;
+  cursor:pointer;border:none;background:transparent;color:var(--muted);
+  transition:all .2s;text-align:center;
+}
+.vtab:hover{color:var(--text);}
+.vtab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(79,110,247,.35);}
 
 /* ── 히트맵 ── */
-.metric-tabs{display:flex;gap:2px;margin-bottom:12px;border-bottom:1px solid var(--border);overflow-x:auto;}
-.mtab{padding:6px 14px;cursor:pointer;color:var(--muted);font-size:12px;border-bottom:2px solid transparent;white-space:nowrap;}
-.mtab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
+.metric-tabs{display:flex;gap:2px;margin-bottom:14px;border-bottom:1px solid var(--border);overflow-x:auto;}
+.mtab{padding:7px 16px;cursor:pointer;color:var(--muted);font-size:12px;font-weight:600;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;}
+.mtab:hover{color:var(--text);}
+.mtab.active{color:var(--accent);border-bottom-color:var(--accent);}
 .heat-wrap{overflow-x:auto;}
 table.heat{width:100%;border-collapse:collapse;min-width:860px;}
-table.heat th{font-size:10px;color:var(--muted);padding:4px 3px;text-align:center;font-weight:500;white-space:nowrap;}
-table.heat td{padding:3px;text-align:center;border-bottom:1px solid var(--border);}
-.ncol{text-align:left!important;padding-left:8px!important;font-weight:600;font-size:11px;min-width:120px;max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.hc{border-radius:3px;padding:4px 2px;font-size:10px;font-weight:600;cursor:pointer;display:block;}
+table.heat th{font-size:10px;color:var(--muted);padding:5px 3px;text-align:center;font-weight:600;white-space:nowrap;}
+table.heat td{padding:3px;text-align:center;border-bottom:1px solid rgba(46,50,80,.4);}
+.ncol{text-align:left!important;padding-left:8px!important;font-weight:600;font-size:11px;min-width:120px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hc{border-radius:4px;padding:5px 2px;font-size:10px;font-weight:600;cursor:pointer;display:block;transition:transform .1s;}
+.hc:hover{transform:scale(1.05);}
 .h0{background:var(--surface2);color:var(--muted);}
 .h1{background:rgba(79,110,247,.12);color:#8fa4fb;}
 .h2{background:rgba(79,110,247,.28);color:#a5b8ff;}
 .h3{background:rgba(79,110,247,.48);color:#c4d0ff;}
 .h4{background:rgba(79,110,247,.70);color:#e0e8ff;}
 .h5{background:#4f6ef7;color:#fff;}
-/* ROAS 색상 */
 .ra{background:rgba(239,68,68,.18);color:#fca5a5;}
 .rb{background:rgba(245,158,11,.22);color:#fcd34d;}
 .rc{background:rgba(34,197,94,.22);color:#86efac;}
@@ -90,48 +136,70 @@ table.heat td{padding:3px;text-align:center;border-bottom:1px solid var(--border
 .cur-h{outline:2px solid var(--yellow);outline-offset:-2px;}
 .total-row td{border-top:2px solid var(--border);}
 
+/* ── 콘텐츠별 뷰 테이블 ── */
+.content-table{width:100%;border-collapse:collapse;font-size:12px;}
+.content-table th{
+  padding:9px 12px;color:var(--muted);font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);text-align:center;
+}
+.content-table th.left-col{text-align:left;}
+.content-table td{padding:11px 12px;border-bottom:1px solid rgba(46,50,80,.4);text-align:center;vertical-align:middle;}
+.content-table td.left-col{text-align:left;}
+.content-table tr:last-child td{border-bottom:none;}
+.content-table tr:hover td{background:var(--surface2);}
+.ad-name-cell{display:block;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;cursor:default;}
+.rg{color:var(--green);font-weight:700;} .ry{color:var(--yellow);font-weight:700;} .rr{color:var(--red);font-weight:700;}
+
 /* ── 슬라이더 & 스냅샷 ── */
-.slider-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.slider-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
 .slider-row label{font-size:12px;color:var(--muted);white-space:nowrap;}
 input[type=range]{flex:1;accent-color:var(--accent);}
 .slider-val{font-size:15px;font-weight:700;color:var(--accent);min-width:55px;}
 .snap-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 @media(max-width:700px){.snap-grid{grid-template-columns:1fr;}}
-.snap-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px;}
-.snap-time{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.snap-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.snap-time{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .snap-m-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px;}
-.snap-m{background:var(--surface);border-radius:6px;padding:8px 10px;}
-.snap-m-lbl{font-size:10px;color:var(--muted);margin-bottom:3px;}
+.snap-m{background:var(--surface);border-radius:8px;padding:10px 12px;border:1px solid var(--border);}
+.snap-m-lbl{font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600;}
 .snap-m-val{font-size:14px;font-weight:700;}
-.diff{font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;margin-left:4px;}
+.diff{font-size:10px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:4px;}
 .diff-up{background:rgba(34,197,94,.15);color:var(--green);}
 .diff-dn{background:rgba(239,68,68,.15);color:var(--red);}
-.camp-list{margin-top:2px;}
-.camp-row{display:flex;justify-content:space-between;font-size:11px;padding:5px 0;border-bottom:1px solid var(--border);}
+.camp-list{margin-top:4px;}
+.camp-row{display:flex;justify-content:space-between;font-size:11px;padding:6px 0;border-bottom:1px solid rgba(46,50,80,.5);}
 .camp-row:last-child{border:none;}
 .camp-name{font-weight:600;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .camp-vals{display:flex;gap:8px;}
 
 /* ── 로딩 / 에러 ── */
-.loading{text-align:center;padding:60px 20px;color:var(--muted);}
+.loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:15px;}
 .no-data{text-align:center;padding:40px;color:var(--muted);font-size:13px;}
-.axis-hint{font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;}
 </style>
 </head>
 <body>
 
+<!-- NAV: main/detail과 동일 스타일 -->
 <nav class="nav">
-  <div class="nav-logo">이어리프트</div>
-  <a class="ntab" href="main.html">🎯 목표 현황</a>
-  <a class="ntab" href="detail.html">📊 상세 데이터</a>
-  <a class="ntab active" href="hourly.html">📅 시간별 히스토리<span class="badge">NEW</span></a>
+  <div class="nav-left">
+    <div class="logo">이어리프트 AD</div>
+    <div class="page-tabs">
+      <button class="page-tab" onclick="location.href='main.html'">🎯 목표 현황</button>
+      <button class="page-tab" onclick="location.href='detail.html'">📈 상세 데이터</button>
+      <button class="page-tab active">🕐 시간별 히스토리</button>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nbadge">광고 계정 <span>이어리프트</span></div>
+    <div class="nbadge" id="navUpdated"><span class="pulse"></span>로딩 중...</div>
+  </div>
 </nav>
 
 <div class="page">
 
   <!-- 날짜 선택 -->
   <div class="date-bar">
-    <h2>시간별 광고 히스토리</h2>
+    <div class="date-bar-title">🕐 시간별 광고 히스토리</div>
     <div class="qbtns" id="qbtns">
       <button class="qbtn active" onclick="quickDate(0,this)">오늘</button>
       <button class="qbtn" onclick="quickDate(1,this)">어제</button>
@@ -140,7 +208,7 @@ input[type=range]{flex:1;accent-color:var(--accent);}
     </div>
     <div class="date-nav">
       <button onclick="shiftDate(-1)">◀</button>
-      <div class="date-display" id="dateDisplay" onclick="openCalendar()" style="cursor:pointer;user-select:none;" title="클릭하면 달력으로 날짜 선택">—</div>
+      <div class="date-display" id="dateDisplay" onclick="openCalendar()" title="클릭하면 달력으로 날짜 선택">—</div>
       <input type="date" id="calendarInput" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;" onchange="onCalendarChange(this.value)"/>
       <button id="btnNext" onclick="shiftDate(1)">▶</button>
     </div>
@@ -149,32 +217,32 @@ input[type=range]{flex:1;accent-color:var(--accent);}
 
   <!-- KPI 6개 -->
   <div class="kpi-row" id="kpiRow">
-    <div class="kpi sel" onclick="pickMetric('spend',this)">
+    <div class="kpi sel" style="--kc:#4f6ef7" onclick="pickMetric('spend',this)">
       <div class="kpi-lbl">총 지출</div>
       <div class="kpi-val" style="color:#4f6ef7;" id="kpi-spend">—</div>
       <div class="kpi-sub" id="kpisub-spend"></div>
     </div>
-    <div class="kpi" onclick="pickMetric('roas',this)">
+    <div class="kpi" style="--kc:#22c55e" onclick="pickMetric('roas',this)">
       <div class="kpi-lbl">ROAS</div>
       <div class="kpi-val" style="color:#22c55e;" id="kpi-roas">—</div>
       <div class="kpi-sub" id="kpisub-roas"></div>
     </div>
-    <div class="kpi" onclick="pickMetric('revenue',this)">
+    <div class="kpi" style="--kc:#a855f7" onclick="pickMetric('revenue',this)">
       <div class="kpi-lbl">판매금액</div>
       <div class="kpi-val" style="color:#a855f7;" id="kpi-revenue">—</div>
       <div class="kpi-sub" id="kpisub-revenue"></div>
     </div>
-    <div class="kpi" onclick="pickMetric('purchases',this)">
+    <div class="kpi" style="--kc:#f59e0b" onclick="pickMetric('purchases',this)">
       <div class="kpi-lbl">판매개수</div>
       <div class="kpi-val" style="color:#f59e0b;" id="kpi-purchases">—</div>
       <div class="kpi-sub" id="kpisub-purchases"></div>
     </div>
-    <div class="kpi" onclick="pickMetric('ctr',this)">
+    <div class="kpi" style="--kc:#06b6d4" onclick="pickMetric('ctr',this)">
       <div class="kpi-lbl">CTR</div>
       <div class="kpi-val" style="color:#06b6d4;" id="kpi-ctr">—</div>
       <div class="kpi-sub" id="kpisub-ctr"></div>
     </div>
-    <div class="kpi" onclick="pickMetric('cpm',this)">
+    <div class="kpi" style="--kc:#f472b6" onclick="pickMetric('cpm',this)">
       <div class="kpi-lbl">CPM</div>
       <div class="kpi-val" style="color:#f472b6;" id="kpi-cpm">—</div>
       <div class="kpi-sub" id="kpisub-cpm"></div>
@@ -199,25 +267,44 @@ input[type=range]{flex:1;accent-color:var(--accent);}
     <div class="chart-wrap"><canvas id="mainChart"></canvas></div>
   </div>
 
-  <!-- 캠페인 × 시간 히트맵 -->
-  <div class="sec">
-    <div class="sec-hdr">
-      <span class="sec-title">🔥 캠페인별 시간대 히트맵</span>
-      <span style="font-size:11px;color:var(--muted);">노란 테두리 = 현재 시간대</span>
+  <!-- 뷰 선택 탭 -->
+  <div class="view-tabs">
+    <button class="vtab active" onclick="switchView('campaign',this)">📢 캠페인별</button>
+    <button class="vtab" onclick="switchView('content',this)">🎨 콘텐츠별</button>
+  </div>
+
+  <!-- ── 캠페인별 뷰 ── -->
+  <div id="campaignView">
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">🔥 캠페인별 시간대 히트맵</span>
+        <span style="font-size:11px;color:var(--muted);">노란 테두리 = 현재 시간대</span>
+      </div>
+      <div class="metric-tabs" id="heatTabs">
+        <div class="mtab active" onclick="switchHeat('spend',this)">지출</div>
+        <div class="mtab" onclick="switchHeat('roas',this)">ROAS</div>
+        <div class="mtab" onclick="switchHeat('revenue',this)">판매금액</div>
+        <div class="mtab" onclick="switchHeat('purchases',this)">판매개수</div>
+        <div class="mtab" onclick="switchHeat('ctr',this)">CTR</div>
+        <div class="mtab" onclick="switchHeat('cpm',this)">CPM</div>
+      </div>
+      <div class="heat-wrap">
+        <table class="heat">
+          <thead id="heatHead"></thead>
+          <tbody id="heatBody"></tbody>
+        </table>
+      </div>
     </div>
-    <div class="metric-tabs" id="heatTabs">
-      <div class="mtab active" onclick="switchHeat('spend',this)">지출</div>
-      <div class="mtab" onclick="switchHeat('roas',this)">ROAS</div>
-      <div class="mtab" onclick="switchHeat('revenue',this)">판매금액</div>
-      <div class="mtab" onclick="switchHeat('purchases',this)">판매개수</div>
-      <div class="mtab" onclick="switchHeat('ctr',this)">CTR</div>
-      <div class="mtab" onclick="switchHeat('cpm',this)">CPM</div>
-    </div>
-    <div class="heat-wrap">
-      <table class="heat">
-        <thead id="heatHead"></thead>
-        <tbody id="heatBody"></tbody>
-      </table>
+  </div>
+
+  <!-- ── 콘텐츠별 뷰 ── -->
+  <div id="contentView" style="display:none;">
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">🎨 콘텐츠별 오늘 성과 랭킹</span>
+        <span style="font-size:11px;color:var(--muted);">오늘 누적 기준 · 지출 정렬</span>
+      </div>
+      <div id="contentTableWrap"><div class="no-data">데이터 로딩 중...</div></div>
     </div>
   </div>
 
@@ -258,30 +345,26 @@ function wFmt(v) {
 }
 
 // ── 전역 상태 ──────────────────────────────────────────────────
-let allSnaps = [];          // hourly_snapshots.json 전체
-let dateSnaps = [];         // 현재 선택된 날짜의 스냅샷 배열 (hour 순)
+let allSnaps = [];
+let allAdsData = [];
+let dateSnaps = [];
 let selectedDate = '';
 let curHeatMetric = 'spend';
 let activeMetrics = new Set(['spend','roas','revenue']);
 let mainChart = null;
+let currentView = 'campaign';
 
-// hour → snap 맵 (현재 날짜)
 function buildHourMap() {
   const m = {};
   dateSnaps.forEach(s => { m[s.hour] = s; });
   return m;
 }
 
-// ── 날짜 유틸 (KST 기준, toISOString 타임존 버그 방지) ────────
+// ── 날짜 유틸 (KST 기준) ─────────────────────────────────────
 function toLocalStr(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,'0');
-  const day = String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${day}`;
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
 function todayStr() { return toLocalStr(new Date()); }
-
 function dateOffset(offset) {
   const d = new Date();
   d.setDate(d.getDate() - offset);
@@ -307,19 +390,10 @@ function onCalendarChange(val) {
   setDate(val);
 }
 
-// ── 전날 데이터 숨기기 처리 ──────────────────────────────────────────────
 function hideYesterdayIfTodayExists() {
-  // KST 기준 오늘 날짜
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const todayStr = `${year}-${month}-${day}`;
-
-  // 오늘 데이터가 1개 이상 있으면 어제 버튼 숨김
-  const todaySnapshots = allSnaps.filter(s => s.date === todayStr);
+  const today = todayStr();
+  const todaySnapshots = allSnaps.filter(s => s.date === today);
   const yesterdayBtn = Array.from(document.querySelectorAll('.qbtn')).find(b => b.textContent.includes('어제'));
-
   if (todaySnapshots.length > 0 && yesterdayBtn) {
     yesterdayBtn.style.display = 'none';
   }
@@ -329,21 +403,20 @@ function shiftDate(delta) {
   const d = new Date(selectedDate + 'T00:00:00');
   d.setDate(d.getDate() + delta);
   const next = toLocalStr(d);
-  if (next > todayStr()) return; // 오늘 이후로 못 감
+  if (next > todayStr()) return;
   document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
   setDate(next);
 }
 
 function setDate(dateStr) {
   selectedDate = dateStr;
-  document.getElementById('dateDisplay').textContent = dateStr.slice(5).replace('-','/'); // MM/DD 형식
+  document.getElementById('dateDisplay').textContent = dateStr.slice(5).replace('-','/');
   const btnNext = document.getElementById('btnNext');
   if (btnNext) btnNext.style.opacity = (dateStr >= todayStr()) ? '0.3' : '1';
   dateSnaps = allSnaps.filter(s => s.date === dateStr).sort((a,b)=>a.hour-b.hour);
   document.getElementById('snapCount').textContent =
     dateSnaps.length ? `스냅샷 ${dateSnaps.length}회 수집` : '수집된 데이터 없음';
 
-  // 슬라이더 범위 조정
   const slider = document.getElementById('slider');
   if (dateSnaps.length) {
     slider.min = dateSnaps[0].hour;
@@ -355,6 +428,70 @@ function setDate(dateStr) {
   renderChart();
   renderHeat();
   renderSnap(+slider.value);
+
+  // 콘텐츠별 뷰가 열려있으면 업데이트
+  if (currentView === 'content') renderContentView();
+}
+
+// ── 뷰 전환 ─────────────────────────────────────────────────
+function switchView(view, btn) {
+  currentView = view;
+  document.querySelectorAll('.vtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('campaignView').style.display = view === 'campaign' ? '' : 'none';
+  document.getElementById('contentView').style.display = view === 'content' ? '' : 'none';
+  if (view === 'content') renderContentView();
+}
+
+// ── 콘텐츠별 뷰 렌더 ─────────────────────────────────────────
+function renderContentView() {
+  const wrap = document.getElementById('contentTableWrap');
+  if (!wrap) return;
+  if (!allAdsData.length) {
+    wrap.innerHTML = '<div class="no-data">광고 데이터가 없습니다.<br><small style="color:var(--muted);margin-top:6px;display:block;">오늘 데이터 수집 후 표시됩니다.</small></div>';
+    return;
+  }
+  const sorted = [...allAdsData].sort((a,b) => (b.spend||0)-(a.spend||0));
+  wrap.innerHTML = `
+    <div style="overflow-x:auto;">
+      <table class="content-table">
+        <thead>
+          <tr>
+            <th class="left-col" style="width:30px;">#</th>
+            <th class="left-col" style="min-width:180px;">콘텐츠명</th>
+            <th>지출</th>
+            <th>구매</th>
+            <th>ROAS</th>
+            <th>CTR</th>
+            <th>CPM</th>
+            <th>CPA</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${sorted.map((ad, i) => {
+            const name = ad.ad_name || `광고 ${i+1}`;
+            const roas = ad.roas || 0;
+            const roasCls = roas >= 2.5 ? 'rg' : roas >= 1.5 ? 'ry' : 'rr';
+            return `<tr>
+              <td class="left-col" style="color:var(--muted);font-size:11px;">${i+1}</td>
+              <td class="left-col">
+                <span class="ad-name-cell" title="${name}">${name}</span>
+              </td>
+              <td>${wFmt(ad.spend||0)}</td>
+              <td>${ad.purchases||0}건</td>
+              <td class="${roasCls}">${roas.toFixed(2)}x</td>
+              <td>${(ad.ctr||0).toFixed(2)}%</td>
+              <td>${wFmt(ad.cpm||0)}</td>
+              <td>${wFmt(ad.cpa||0)}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      <div style="margin-top:12px;padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:11px;color:var(--muted);border:1px solid var(--border);">
+        💡 현재는 오늘 기준 일별 총합을 표시합니다. 시간별 콘텐츠 데이터는 향후 업데이트 예정입니다.
+      </div>
+    </div>
+  `;
 }
 
 // ── KPI ────────────────────────────────────────────────────────
@@ -366,7 +503,6 @@ function updateKPI() {
     });
     return;
   }
-  // 마지막 스냅샷 기준
   const last = dateSnaps[dateSnaps.length-1].totals || {};
   const prev = dateSnaps.length > 1 ? (dateSnaps[dateSnaps.length-2].totals || {}) : {};
 
@@ -401,6 +537,13 @@ function updateKPI() {
       document.getElementById('kpisub-'+k).innerHTML = '';
     }
   });
+
+  // 네브 업데이트 시각
+  const upd = document.getElementById('navUpdated');
+  if (upd && dateSnaps.length) {
+    const last = dateSnaps[dateSnaps.length-1];
+    upd.innerHTML = `<span class="pulse"></span><span>${selectedDate} ${String(last.hour).padStart(2,'0')}:00 기준</span>`;
+  }
 }
 
 // ── 차트 ──────────────────────────────────────────────────────
@@ -417,7 +560,6 @@ function getChartData(m) {
       ctr:  t.ctr || 0,
       cpm:  t.cpm || 0,
     }[m];
-    // 금액은 만원 단위로 변환
     if (META[m].axis === 'y1') return +(raw/10000).toFixed(2);
     return raw;
   });
@@ -460,13 +602,13 @@ function renderChart() {
     options: {
       responsive: true, maintainAspectRatio: false,
       interaction: { mode:'index', intersect:false },
-      plugins: { legend: { labels: { color:'#94a3b8', font:{size:11} } } },
+      plugins: { legend: { labels: { color:'#8892b0', font:{size:11} } } },
       scales: {
-        x:  { grid:{color:'#2a2d3e'}, ticks:{color:'#64748b',font:{size:10}} },
-        y1: { position:'left',  grid:{color:'#2a2d3e'}, ticks:{color:'#64748b',font:{size:10}},
-              title:{display:true,text:'금액 (만원)',color:'#64748b',font:{size:10}} },
-        y2: { position:'right', grid:{display:false},   ticks:{color:'#64748b',font:{size:10}},
-              title:{display:true,text:'비율(%) · 건수',color:'#64748b',font:{size:10}} },
+        x:  { grid:{color:'rgba(46,50,80,.4)'}, ticks:{color:'#8892b0',font:{size:10}} },
+        y1: { position:'left',  grid:{color:'rgba(46,50,80,.4)'}, ticks:{color:'#8892b0',font:{size:10}},
+              title:{display:true,text:'금액 (만원)',color:'#8892b0',font:{size:10}} },
+        y2: { position:'right', grid:{display:false},   ticks:{color:'#8892b0',font:{size:10}},
+              title:{display:true,text:'비율(%) · 건수',color:'#8892b0',font:{size:10}} },
       }
     }
   });
@@ -526,30 +668,25 @@ function renderHeat() {
   const m   = curHeatMetric;
   const now = new Date().getHours();
 
-  // 모든 캠페인명 수집
   const campNames = [];
-  const campMap   = {}; // name → hour → val
+  const campMap   = {};
   dateSnaps.forEach(s => {
     (s.campaigns||[]).forEach(c => {
       if (!campMap[c.campaign_name]) { campMap[c.campaign_name] = {}; campNames.push(c.campaign_name); }
       campMap[c.campaign_name][s.hour] = c;
     });
   });
-  // 중복 제거
   const uniqNames = [...new Set(campNames)];
 
-  // 전체값 범위 계산
   const allVals = [];
   uniqNames.forEach(n => Object.values(campMap[n]||{}).forEach(c => { const v=getCampVal(c,m); if(v) allVals.push(v); }));
   const maxV = allVals.length ? Math.max(...allVals) : 1;
   const minV = allVals.length ? Math.min(...allVals) : 0;
 
-  // 헤더
   const head = document.getElementById('heatHead');
   head.innerHTML = '<tr><th class="ncol" style="text-align:left">캠페인</th>' +
     Array.from({length:24},(_,h)=>`<th>${h}시</th>`).join('') + '<th>합계/평균</th></tr>';
 
-  // 바디
   const body = document.getElementById('heatBody');
   body.innerHTML = '';
 
@@ -561,7 +698,7 @@ function renderHeat() {
   const colors = ['#4f6ef7','#a855f7','#f59e0b','#22c55e','#06b6d4','#f472b6','#ec4899'];
   uniqNames.forEach((name, ni) => {
     const tr = document.createElement('tr');
-    let html = `<td class="ncol"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${colors[ni%colors.length]};margin-right:5px;"></span>${name.length>18?name.slice(0,18)+'…':name}</td>`;
+    let html = `<td class="ncol" title="${name}"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${colors[ni%colors.length]};margin-right:5px;"></span>${name.length>18?name.slice(0,18)+'…':name}</td>`;
     let sum = 0; let cnt = 0;
     for (let h=0; h<24; h++) {
       const camp = (campMap[name]||{})[h];
@@ -578,7 +715,6 @@ function renderHeat() {
     body.appendChild(tr);
   });
 
-  // 전체 합산 행
   const tr2 = document.createElement('tr');
   tr2.className = 'total-row';
   let html2 = `<td class="ncol" style="color:var(--accent);">▶ 전체</td>`;
@@ -599,7 +735,7 @@ function renderHeat() {
   body.appendChild(tr2);
 }
 
-// ── 스냅샷 ────────────────────────────────────────────────────
+// ── 스냅샷 상세 ────────────────────────────────────────────────
 function renderSnap(h) {
   document.getElementById('sliderVal').textContent = String(h).padStart(2,'0')+':00';
   const snap     = dateSnaps.find(s=>s.hour===h);
@@ -662,15 +798,19 @@ function renderSnap(h) {
 async function loadData() {
   try {
     const base = location.pathname.includes('/dashboard/') ? '../' : './';
-    const r = await fetch(base + 'data/hourly_snapshots.json?t=' + Date.now());
-    if (!r.ok) throw new Error('fetch failed');
-    const json = await r.json();
-    allSnaps = json.snapshots || [];
-    // 전날 데이터 숨김 처리
+    const [jsonH, jsonA] = await Promise.all([
+      fetch(base + 'data/hourly_snapshots.json?t=' + Date.now()).then(r => {
+        if (!r.ok) throw new Error('fetch failed');
+        return r.json();
+      }),
+      fetch(base + 'data/ads.json?t=' + Date.now()).then(r => r.json()).catch(() => ({data:[]})),
+    ]);
+    allSnaps = jsonH.snapshots || [];
+    allAdsData = jsonA.data || [];
     hideYesterdayIfTodayExists();
-    // 오늘 날짜로 초기화
-    const today = new Date().toISOString().slice(0,10);
+    const today = toLocalStr(new Date()); // KST 기준 오늘
     setDate(today);
+    if (currentView === 'content') renderContentView();
   } catch(e) {
     document.querySelector('.page').innerHTML =
       `<div class="loading">⚠️ 데이터를 불러올 수 없습니다.<br><small style="color:var(--muted)">hourly_snapshots.json이 아직 생성되지 않았거나 네트워크 오류입니다.<br>다음 정각 이후에 다시 확인해 주세요.</small></div>`;

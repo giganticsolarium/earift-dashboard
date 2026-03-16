@@ -81,7 +81,7 @@
     .weekly-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;}
     .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
     .sec-title{font-size:15px;font-weight:700;}
-    .week-meta{display:flex;gap:16px;align-items:center;}
+    .week-meta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
     .week-stat{text-align:right;}
     .week-stat-val{font-size:18px;font-weight:800;}
     .week-stat-lbl{font-size:11px;color:var(--muted);}
@@ -140,12 +140,17 @@
     .sbar-bg{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;}
     .sbar-fill{height:100%;border-radius:99px;}
 
-    /* ── PERIOD TABS ── */
+    /* ── PERIOD TABS (개선) ── */
+    .period-tabs-row{display:flex;gap:6px;background:var(--surface2);border-radius:12px;padding:5px;}
     .period-tab{
-      padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;
-      cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;
+      flex:1;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:700;
+      cursor:pointer;border:none;background:transparent;color:var(--muted);
+      transition:all .2s;text-align:center;line-height:1.3;
     }
-    .period-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .period-tab:hover{color:var(--text);}
+    .period-tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(79,110,247,.35);}
+    .tab-date{display:block;font-size:10px;font-weight:400;margin-top:2px;opacity:.7;}
+    .period-tab.active .tab-date{color:rgba(255,255,255,.85);opacity:1;}
   </style>
 </head>
 <body>
@@ -206,14 +211,62 @@ function makeGauge(id, pct, color) {
   });
 }
 
-function getPeriodLabel() {
-  const labels = {
-    'this_month': '이번 달',
-    'last_month': '저번 달',
-    'this_week': '이번 주',
-    'last_week': '저번 주'
-  };
-  return labels[currentPeriod] || '이번 달';
+// ── 기간 계산 헬퍼 ──────────────────────────────────────────────
+function getPeriodDates(p) {
+  p = p || currentPeriod;
+  const now = new Date();
+  const y = now.getFullYear(), mo = now.getMonth(), da = now.getDate();
+  const fmt = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+  const today = fmt(now);
+  switch(p) {
+    case 'this_month': {
+      const start = fmt(new Date(y, mo, 1));
+      return { start, end: today, shortLabel: `${mo+1}월`, fullLabel: `${mo+1}월 1~${da}일` };
+    }
+    case 'last_month': {
+      const lm = mo === 0 ? 11 : mo - 1;
+      const ly = mo === 0 ? y - 1 : y;
+      const start = fmt(new Date(ly, lm, 1));
+      const end = fmt(new Date(y, mo, 0));
+      const lastDay = new Date(y, mo, 0).getDate();
+      const lmNum = mo === 0 ? 12 : mo;
+      return { start, end, shortLabel: `${lmNum}월`, fullLabel: `${lmNum}월 1~${lastDay}일` };
+    }
+    case 'this_week': {
+      const dow = now.getDay();
+      const diff = dow === 0 ? -6 : 1 - dow;
+      const mon = new Date(y, mo, da + diff);
+      return { start: fmt(mon), end: today, shortLabel: '이번 주', fullLabel: `${mon.getMonth()+1}/${mon.getDate()}~${mo+1}/${da}` };
+    }
+    case 'last_week': {
+      const dow = now.getDay();
+      const diff = dow === 0 ? -6 : 1 - dow;
+      const thisMon = new Date(y, mo, da + diff);
+      const lastMon = new Date(thisMon.getTime() - 7*86400000);
+      const lastSun = new Date(thisMon.getTime() - 86400000);
+      return { start: fmt(lastMon), end: fmt(lastSun), shortLabel: '저번 주', fullLabel: `${lastMon.getMonth()+1}/${lastMon.getDate()}~${lastSun.getMonth()+1}/${lastSun.getDate()}` };
+    }
+    default: return { start: '', end: today, shortLabel: '', fullLabel: '' };
+  }
+}
+
+function getPeriodFilteredData(dailyData) {
+  const { start, end } = getPeriodDates();
+  if (!start) return (dailyData || []).slice(-14);
+  return (dailyData || []).filter(x => x.date >= start && x.date <= end);
+}
+
+function aggregatePeriodData(rows) {
+  if (!rows || !rows.length) return { spend:0, purchase_value:0, purchases:0, roas:0, cpa:0, cpm:0, impressions:0, clicks:0 };
+  const spend         = rows.reduce((a,x)=>a+(x.spend||0),0);
+  const purchase_value= rows.reduce((a,x)=>a+(x.purchase_value||0),0);
+  const purchases     = rows.reduce((a,x)=>a+(x.purchases||0),0);
+  const impressions   = rows.reduce((a,x)=>a+(x.impressions||0),0);
+  const clicks        = rows.reduce((a,x)=>a+(x.clicks||0),0);
+  const roas = spend > 0 ? Math.round(purchase_value/spend*100)/100 : 0;
+  const cpa  = purchases > 0 ? Math.round(spend/purchases) : 0;
+  const cpm  = impressions > 0 ? Math.round(spend/impressions*1000) : 0;
+  return { spend, purchase_value, purchases, impressions, clicks, roas, cpa, cpm };
 }
 
 function switchPeriod(period, btn) {
@@ -227,16 +280,20 @@ function switchPeriod(period, btn) {
 
 function render(s, d, c) {
   window_lastData = {s, d, c};
-  const goals   = s.goals   || { budget: 3000000, roas: 2.5, revenue: 10000000, spend: 4500000 };
-  const today   = s.today   || {};
-  const camps   = (c && (c.data || c.campaigns)) || s.campaigns || [];
+  const goals = s.goals || { budget: 3000000, roas: 2.5, revenue: 10000000, spend: 4500000 };
+  const today = s.today || {};
+  const camps = (c && (c.data || c.campaigns)) || s.campaigns || [];
+
+  // ── 기간 필터 데이터 ──
+  const periodRows = getPeriodFilteredData(d.data || []);
+  const periodData = aggregatePeriodData(periodRows);
+  const { fullLabel: periodFullLabel } = getPeriodDates();
 
   const revenuePct = goals.revenue > 0 ? Math.round((today.purchase_value||0) / goals.revenue * 100) : 0;
   const roasPct    = goals.roas    > 0 ? Math.round((today.roas||0) / goals.roas * 100) : 0;
   const spendPct   = goals.spend   > 0 ? Math.round((today.spend||0) / goals.spend * 100) : 0;
-  const totalSpendPct = goals.spend > 0 ? Math.round((today.spend||0) / goals.spend * 100) : 0;
 
-  // 캠페인 지출 바
+  // 캠페인 지출 바 (오늘 기준)
   const spendBarItems = camps.length > 0
     ? camps.map((c, i) => {
         const pct = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(camps.length,1)) * 100) : 0;
@@ -250,55 +307,96 @@ function render(s, d, c) {
       }).join('')
     : `<div style="color:var(--muted);font-size:13px;padding:8px 0;">캠페인 데이터 없음</div>`;
 
-  // ASC 카드
-  const ascCards = camps.length > 0
-    ? camps.map((c, i) => {
-        const pct = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(camps.length,1)) * 100) : 0;
-        const badgeCls = c.roas >= goals.roas ? 'badge-reach' : c.roas >= goals.roas * 0.7 ? 'badge-near' : 'badge-low';
-        const badgeTxt = c.roas >= goals.roas ? '목표 달성' : `${Math.round((c.roas||0)/goals.roas*100)}% 달성`;
-        const name = c.campaign_name || `캠페인 ${i+1}`;
-        const roasColor = c.roas >= goals.roas ? 'var(--green)' : c.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
-        return `<div class="asc-card active" style="--ac:${campColors[i]}">
-          <div class="goal-badge ${badgeCls}">${badgeTxt}</div>
-          <div class="asc-num">캠페인 ${i+1}</div>
-          <div class="asc-type">${name.length > 14 ? name.slice(0,14)+'…' : name}</div>
-          <div class="asc-status"><span class="sdot son"></span>활동 중</div>
+  // ── ASC 카드: 이번달 → 캠페인별, 나머지 → 기간 집계 ──
+  let ascCards;
+  if (currentPeriod === 'this_month') {
+    ascCards = camps.length > 0
+      ? camps.map((c, i) => {
+          const pct = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(camps.length,1)) * 100) : 0;
+          const badgeCls = c.roas >= goals.roas ? 'badge-reach' : c.roas >= goals.roas * 0.7 ? 'badge-near' : 'badge-low';
+          const badgeTxt = c.roas >= goals.roas ? '목표 달성' : `${Math.round((c.roas||0)/goals.roas*100)}% 달성`;
+          const name = c.campaign_name || `캠페인 ${i+1}`;
+          const roasColor = c.roas >= goals.roas ? 'var(--green)' : c.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
+          return `<div class="asc-card active" style="--ac:${campColors[i]}">
+            <div class="goal-badge ${badgeCls}">${badgeTxt}</div>
+            <div class="asc-num">캠페인 ${i+1}</div>
+            <div class="asc-type">${name.length > 14 ? name.slice(0,14)+'…' : name}</div>
+            <div class="asc-status"><span class="sdot son"></span>활동 중</div>
+            <div class="asc-kpi-row">
+              <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${(c.roas||0).toFixed(2)}x</span></div>
+              <div class="asc-kpi"><span class="asc-kpi-lbl">구매</span><span class="asc-kpi-val">${(c.purchases||0)}건</span></div>
+              <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(c.cpa||0)}</span></div>
+              <div class="asc-kpi"><span class="asc-kpi-lbl">CPM</span><span class="asc-kpi-val">${wFmt(c.cpm||0)}</span></div>
+            </div>
+            <div class="asc-spend-bar">
+              <div class="asc-bar-row"><span>이번 달 광고비</span><span>${wFmt(c.spend||0)}</span></div>
+              <div class="asc-bar-bg"><div class="asc-bar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
+            </div>
+          </div>`;
+        }).join('')
+      : `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">캠페인 데이터가 아직 없습니다.</div>`;
+  } else {
+    // 기간 집계 카드
+    const pd = periodData;
+    const rowCount = periodRows.length;
+    const roasColor = pd.roas >= goals.roas ? 'var(--green)' : pd.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
+    ascCards = rowCount > 0
+      ? `<div class="asc-card active" style="--ac:#4f6ef7;">
+          <div class="asc-num">${periodFullLabel} · 계정 전체</div>
+          <div class="asc-type" style="font-size:14px;margin-bottom:10px;">전체 광고 집계</div>
+          <div class="asc-status"><span class="sdot son"></span>기간 합산</div>
           <div class="asc-kpi-row">
-            <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${(c.roas||0).toFixed(2)}x</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">구매</span><span class="asc-kpi-val">${(c.purchases||0)}건</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(c.cpa||0)}</span></div>
-            <div class="asc-kpi"><span class="asc-kpi-lbl">CPM</span><span class="asc-kpi-val">${wFmt(c.cpm||0)}</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${pd.roas.toFixed(2)}x</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">총 매출</span><span class="asc-kpi-val">${wFmt(pd.purchase_value)}</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">총 광고비</span><span class="asc-kpi-val">${wFmt(pd.spend)}</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">구매 건수</span><span class="asc-kpi-val">${pd.purchases}건</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(pd.cpa)}</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">CPM</span><span class="asc-kpi-val">${wFmt(pd.cpm)}</span></div>
           </div>
-          <div class="asc-spend-bar">
-            <div class="asc-bar-row"><span>이번 달 광고비</span><span>${wFmt(c.spend||0)}</span></div>
-            <div class="asc-bar-bg"><div class="asc-bar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
+          <div style="margin-top:12px;padding:8px;background:var(--surface3);border-radius:8px;font-size:11px;color:var(--muted);">
+            📌 캠페인별 세부 데이터는 <strong style="color:var(--accent)">이번 달</strong>만 지원됩니다
           </div>
-        </div>`;
-      }).join('')
-    : `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">캠페인 데이터가 아직 없습니다.</div>`;
+        </div>
+        <div class="asc-card" style="border-style:dashed;">
+          <div class="asc-num">일평균 성과</div>
+          <div class="asc-type" style="font-size:13px;margin-bottom:10px;">기간 평균</div>
+          <div class="asc-kpi-row">
+            <div class="asc-kpi"><span class="asc-kpi-lbl">일평균 ROAS</span><span class="asc-kpi-val">${pd.roas.toFixed(2)}x</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">일평균 광고비</span><span class="asc-kpi-val">${wFmt(rowCount>0?Math.round(pd.spend/rowCount):0)}</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">일평균 매출</span><span class="asc-kpi-val">${wFmt(rowCount>0?Math.round(pd.purchase_value/rowCount):0)}</span></div>
+            <div class="asc-kpi"><span class="asc-kpi-lbl">집계 일수</span><span class="asc-kpi-val">${rowCount}일</span></div>
+          </div>
+        </div>`
+      : `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">선택한 기간의 데이터가 없습니다.</div>`;
+  }
 
-  // 일별 차트 데이터 (최근 14일)
-  const dailyArr   = (d.data || []).slice(-14);
-  const chartLabels = dailyArr.map(x => (x.date||'').slice(5));
-  const chartSpend  = dailyArr.map(x => Math.round((x.spend||0) / 10000));
-  const chartRevenue = dailyArr.map(x => Math.round((x.purchase_value||0) / 10000));
+  // 차트 데이터 (기간 필터 적용)
+  const chartLabels  = periodRows.map(x => (x.date||'').slice(5));
+  const chartSpend   = periodRows.map(x => Math.round((x.spend||0) / 10000));
+  const chartRevenue = periodRows.map(x => Math.round((x.purchase_value||0) / 10000));
 
-  // 이번 달 누적
-  const monthTotal = (s.month||{}).purchase_value || 0;
-  const monthGoal  = 300000000;
-  const monthPct   = monthGoal > 0 ? Math.round(monthTotal / monthGoal * 100) : 0;
-  const monthLeft  = Math.max(0, monthGoal - monthTotal);
+  // 기간 집계 수치
+  const periodTotal = periodData.purchase_value;
+  const periodSpend = periodData.spend;
+  const monthGoal   = currentPeriod === 'this_month' ? 300000000 : 0;
+  const monthPct    = monthGoal > 0 ? Math.round(periodTotal / monthGoal * 100) : 0;
+  const monthLeft   = Math.max(0, monthGoal - periodTotal);
 
   const now = new Date();
   const dateStr = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일`;
 
-  // gaugeDiff
   function gaugeDiff(cur, goal, isRoas) {
     const diff = goal - cur;
     if (diff <= 0) return `<div class="gauge-diff diff-up">🎉 목표 달성!</div>`;
     if (isRoas)    return `<div class="gauge-diff diff-dn">▼ ${Math.abs(diff).toFixed(2)} 부족</div>`;
     return `<div class="gauge-diff diff-dn">${wFmt(Math.abs(diff))} 부족</div>`;
   }
+
+  // 각 탭의 날짜 레이블
+  const tabThis  = getPeriodDates('this_month');
+  const tabLast  = getPeriodDates('last_month');
+  const tabThisW = getPeriodDates('this_week');
+  const tabLastW = getPeriodDates('last_week');
 
   document.getElementById('main-content').outerHTML = `
   <div id="main-content" class="main">
@@ -313,7 +411,7 @@ function render(s, d, c) {
         <div class="spend-numbers">
           <div class="spend-big">${wFmt(today.spend||0)}</div>
           <div class="spend-target">목표 ${wFmt(goals.spend)}</div>
-          <div class="spend-pct-badge">${totalSpendPct}% 집행</div>
+          <div class="spend-pct-badge">${spendPct}% 집행</div>
         </div>
         <div class="spend-bar-section">${spendBarItems}</div>
       </div>
@@ -378,40 +476,40 @@ function render(s, d, c) {
       </div>
     </div>
 
-    <!-- ③ 캠페인별 현황 (탭 기능) -->
+    <!-- ③ 캠페인별 현황 (기간 탭) -->
     <div class="asc-section">
-      <div class="sec-hdr">
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-          <div class="sec-title" id="asc-title">🚀 ${getPeriodLabel()} 캠페인별 현황</div>
-          <div style="display:flex;gap:6px;">
-            <button class="period-tab ${currentPeriod==='this_month'?'active':''}" onclick="switchPeriod('this_month', this)">이번 달</button>
-            <button class="period-tab ${currentPeriod==='last_month'?'active':''}" onclick="switchPeriod('last_month', this)">저번 달</button>
-            <button class="period-tab ${currentPeriod==='this_week'?'active':''}" onclick="switchPeriod('this_week', this)">이번 주</button>
-            <button class="period-tab ${currentPeriod==='last_week'?'active':''}" onclick="switchPeriod('last_week', this)">저번 주</button>
-          </div>
+      <div class="sec-hdr" style="flex-direction:column;align-items:stretch;gap:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div class="sec-title">🚀 ${periodFullLabel} 캠페인별 현황</div>
+          <div style="font-size:12px;color:var(--muted)">ROAS 목표 <strong style="color:var(--text)">${goals.roas}x</strong></div>
         </div>
-        <div style="font-size:12px;color:var(--muted)">ROAS 목표 <strong style="color:var(--text)">${goals.roas}x</strong></div>
+        <div class="period-tabs-row">
+          <button class="period-tab ${currentPeriod==='this_month'?'active':''}" onclick="switchPeriod('this_month', this)">이번 달<span class="tab-date">${tabThis.fullLabel}</span></button>
+          <button class="period-tab ${currentPeriod==='last_month'?'active':''}" onclick="switchPeriod('last_month', this)">저번 달<span class="tab-date">${tabLast.fullLabel}</span></button>
+          <button class="period-tab ${currentPeriod==='this_week'?'active':''}" onclick="switchPeriod('this_week', this)">이번 주<span class="tab-date">${tabThisW.fullLabel}</span></button>
+          <button class="period-tab ${currentPeriod==='last_week'?'active':''}" onclick="switchPeriod('last_week', this)">저번 주<span class="tab-date">${tabLastW.fullLabel}</span></button>
+        </div>
       </div>
       <div class="asc-grid" id="asc-grid">${ascCards}</div>
     </div>
 
-    <!-- ④ 최근 14일 추이 -->
+    <!-- ④ 기간별 추이 차트 -->
     <div class="weekly-section">
       <div class="sec-hdr">
-        <div class="sec-title">📈 최근 14일 광고비·매출 추이</div>
+        <div class="sec-title">📈 ${periodFullLabel} 광고비·매출 추이</div>
         <div class="week-meta">
           <div class="week-stat">
-            <div class="week-stat-val" style="color:var(--accent)">${wFmt(monthTotal)}</div>
-            <div class="week-stat-lbl">이번 달 누적 매출</div>
+            <div class="week-stat-val" style="color:var(--accent)">${wFmt(periodTotal)}</div>
+            <div class="week-stat-lbl">${periodFullLabel} 누적 매출</div>
           </div>
           <div class="week-stat">
-            <div class="week-stat-val" style="color:var(--muted)">${wFmt(monthGoal)}</div>
-            <div class="week-stat-lbl">월 목표 매출</div>
+            <div class="week-stat-val" style="color:var(--muted)">${wFmt(periodSpend)}</div>
+            <div class="week-stat-lbl">${periodFullLabel} 총 광고비</div>
           </div>
-          <div class="week-goal-line">
+          ${monthGoal > 0 ? `<div class="week-goal-line">
             <span style="color:var(--yellow)">●</span>
             목표까지 <strong style="color:var(--text)">${wFmt(monthLeft)}</strong> 남음 (${monthPct}% 달성)
-          </div>
+          </div>` : ''}
         </div>
       </div>
       <div class="chart-wrap"><canvas id="weeklyChart"></canvas></div>

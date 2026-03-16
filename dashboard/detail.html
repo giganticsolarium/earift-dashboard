@@ -116,15 +116,8 @@
 
     /* ── TIME SPEND ── */
     .time-spend-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-    .slot-labels { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px; }
-    .slot-lbl {
-      text-align:center; font-size:10px; font-weight:700; padding:5px 4px;
-      border-radius:6px; border:1px solid var(--border); color:var(--muted);
-      background: var(--surface2);
-    }
-    .slot-lbl.current { border-color:var(--accent); color:var(--accent); background:rgba(79,110,247,.12); }
     .ts-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--card-radius); padding:22px; }
-    .ts-table { width:100%; border-collapse:collapse; margin-top:14px; font-size:12px; }
+    .ts-table { width:100%; border-collapse:collapse; font-size:12px; }
     .ts-table th {
       padding:8px 10px; color:var(--muted); font-size:10px; font-weight:700;
       text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); text-align:center;
@@ -134,16 +127,12 @@
     .ts-table td.name-col { text-align:left; }
     .ts-table tr:last-child td { border-bottom:none; }
     .ts-table tr:hover td { background:var(--surface2); }
-    .camp-name { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; display:block; }
+    .camp-name { font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:140px; display:block; cursor:default; }
     .camp-total { font-size:10px; color:var(--muted); margin-top:2px; }
     .spend-cell { position:relative; }
-    .spend-cell .cell-bar {
-      position:absolute; bottom:0; left:50%; transform:translateX(-50%);
-      width:36px; border-radius:4px 4px 0 0; opacity:.35;
-    }
-    .spend-cell .cell-val { position:relative; z-index:1; font-size:12px; font-weight:700; color:var(--text); }
-    .spend-cell .cell-sub { font-size:10px; color:var(--muted); position:relative; z-index:1; }
-    .spend-cell .cell-sub2 { font-size:10px; color:var(--muted); position:relative; z-index:1; margin-top:1px; }
+    .spend-cell .cell-val { font-size:12px; font-weight:700; color:var(--text); }
+    .spend-cell .cell-sub { font-size:10px; color:var(--muted); }
+    .spend-cell .cell-sub2 { font-size:10px; color:var(--muted); margin-top:1px; }
     .spend-cell .cell-sub2 .rg { color:#22c55e; } .spend-cell .cell-sub2 .ry { color:#f59e0b; } .spend-cell .cell-sub2 .rr { color:#ef4444; }
     .spend-cell.current-slot { background:rgba(79,110,247,.07); }
     .spend-cell.current-slot .cell-val { color:var(--accent); }
@@ -169,6 +158,9 @@
       color:var(--muted); font-size:13px;
     }
     .badge-soon { background:var(--surface2); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; font-weight:700; color:var(--yellow); }
+
+    /* ── TOOLTIP ── */
+    [title] { cursor: default; }
   </style>
 </head>
 <body>
@@ -223,44 +215,32 @@ let currentGrain  = 'daily';
 // ── hourly_snapshots.json에서 전날 데이터 숨김 ──────────────────────────────────────────────
 async function checkAndHideYesterdayData() {
   try {
-    const r = await fetch(`https://raw.githubusercontent.com/giganticsolarium/earift-dashboard/main/data/hourly_snapshots.json?t=${Date.now()}`);
+    const r = await fetch(`${RAW}/hourly_snapshots.json?t=${Date.now()}`);
     const json = await r.json();
     const snapshots = json.snapshots || [];
-
-    // KST 기준 오늘 날짜
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-
-    // 오늘 데이터가 1개 이상 있으면 어제 버튼 숨김
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     const todaySnapshots = snapshots.filter(s => s.date === todayStr);
     const yesterdayBtn = Array.from(document.querySelectorAll('.dbtn')).find(b => b.textContent.includes('어제'));
-
     if (todaySnapshots.length > 0 && yesterdayBtn) {
       yesterdayBtn.style.display = 'none';
     }
-  } catch(e) {
-    // 에러 발생시 숨김 처리 안함
-  }
+  } catch(e) {}
 }
 
-// ── 날짜 선택 ──────────────────────────────────────────────
 function selectPeriod(period, btn) {
   currentPeriod = period;
   document.querySelectorAll('.dbtn:not([data-grain])').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c, window._lastData.a);
+  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c, window._lastData.a, window._lastData.h);
 }
 function selectGrain(grain, btn) {
   currentGrain = grain;
   document.querySelectorAll('.dbtn[data-grain]').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c);
+  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c, window._lastData.a, window._lastData.h);
 }
 
-// ── 기간 집계 헬퍼 ────────────────────────────────────────
 function aggregateDays(rows) {
   if (!rows || !rows.length) return {};
   const spend          = rows.reduce((a, x) => a + (x.spend||0), 0);
@@ -274,11 +254,10 @@ function aggregateDays(rows) {
   return { spend, purchases, purchase_value, impressions, clicks, roas, cpa, ctr };
 }
 
-// ── 기간에 맞는 KPI 반환 ────────────────────────────────
 function getKpiForPeriod(s, d) {
   const allData = (d && d.data) || [];
   const now = new Date();
-  const thisMonth = now.toISOString().slice(0, 7);
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   switch (currentPeriod) {
     case 'today':
       return { cur: s.today||{}, prev: s.yesterday||{}, label: 'vs 어제' };
@@ -304,11 +283,10 @@ function getKpiForPeriod(s, d) {
   }
 }
 
-// ── 기간에 맞는 차트용 일별 데이터 반환 ──────────────────
 function getChartDays(d) {
   const allData = (d && d.data) || [];
   const now = new Date();
-  const thisMonth = now.toISOString().slice(0, 7);
+  const thisMonth = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   switch (currentPeriod) {
     case 'today':
     case 'yesterday': return allData.slice(-14);
@@ -319,7 +297,6 @@ function getChartDays(d) {
   }
 }
 
-// ── 주별 집계 ────────────────────────────────────────────
 function groupByWeek(rows) {
   const weeks = {};
   rows.forEach(r => {
@@ -339,14 +316,13 @@ function wFmt(n) {
   return n.toLocaleString()+'원';
 }
 
-function render(s, d, c, a) {
-  window._lastData = {s, d, c, a};
+function render(s, d, c, a, h) {
+  window._lastData = {s, d, c, a, h};
   const {cur: today, prev: yesterday, label: periodLabel} = getKpiForPeriod(s, d);
   const camps = (c && (c.data || c.campaigns)) || s.campaigns || [];
   const ads = (a && a.data) || [];
   const goals = s.goals || { roas: 2.5 };
 
-  // KPI 델타
   function delta(cur, prev, isRoas) {
     const diff = (cur||0) - (prev||0);
     if (diff === 0) return '';
@@ -356,21 +332,16 @@ function render(s, d, c, a) {
     return `<span class="${cls}">${sign} ${val}</span>`;
   }
 
-  // 현재 시간 슬롯 (0=00~06, 1=06~12, 2=12~18, 3=18~24)
-  const hour = new Date().getHours();
-  const currentSlot = Math.floor(hour / 6);
-  const slotNames = ['00~06시','06~12시','12~18시','18~00시'];
-
-  // 일별 차트 데이터 (최근 14일)
+  // 일별 차트 데이터
   const dailyArr  = getChartDays(d);
   const labels    = dailyArr.map(x => (x.date||'').slice(5));
   const dsRoas    = dailyArr.map(x => x.roas||0);
-  const dsCpa     = dailyArr.map(x => Math.round((x.cpa||0)/1000));  // 천원 단위
-  const dsSpend   = dailyArr.map(x => Math.round((x.spend||0)/10000)); // 만원
-  const dsImp     = dailyArr.map(x => Math.round((x.impressions||0)/1000)); // 천 단위
+  const dsCpa     = dailyArr.map(x => Math.round((x.cpa||0)/1000));
+  const dsSpend   = dailyArr.map(x => Math.round((x.spend||0)/10000));
+  const dsImp     = dailyArr.map(x => Math.round((x.impressions||0)/1000));
   const dsClick   = dailyArr.map(x => Math.round((x.clicks||0)/100)*100/1000);
   const dsCtr     = dailyArr.map(x => x.ctr||0);
-  const dsCpm     = dailyArr.map(x => Math.round((x.cpm||0)/1000)); // 천원 단위
+  const dsCpm     = dailyArr.map(x => Math.round((x.cpm||0)/1000));
 
   const dsMap = {
     roas:  { label:'ROAS',        data: dsRoas,  color:'#4f6ef7', y:'y1' },
@@ -402,45 +373,62 @@ function render(s, d, c, a) {
       }).join('')
     : `<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:20px;">캠페인 데이터가 없습니다.</td></tr>`;
 
-  // 캠페인별 시간대 테이블 (campaigns의 월간 spend를 시간대 비율로 추정)
-  const slotRatios = [0.08, 0.28, 0.42, 0.22]; // 00~06 / 06~12 / 12~18 / 18~24 일반적 배분
-  const campTimeRows = camps.length > 0
-    ? camps.map((c, i) => {
-        const monthSpend     = c.spend || 0;
-        const monthPurchases = c.purchases || 0;
-        const campRoas       = c.roas || 0;
-        const daySpend       = monthSpend / 30;
-        const dayPurchases   = monthPurchases / 30;
-        const slots          = slotRatios.map(r => Math.round(daySpend * r));
-        const slotPurch      = slotRatios.map(r => Math.round(dayPurchases * r));
-        const maxSlot        = Math.max(...slots);
-        const cells          = slots.map((v, s) => {
-          const pct     = maxSlot > 0 ? Math.round(v/maxSlot*32) : 0;
-          const isCur   = s === currentSlot;
-          const valStr  = wFmt(v);
-          const purch   = slotPurch[s];
-          const roasCls = campRoas >= (goals.roas||2.5) ? 'rg' : campRoas >= 1.5 ? 'ry' : 'rr';
-          return `<td class="spend-cell ${isCur?'current-slot':''}" style="text-align:center;padding:6px 4px;">
-            <div class="cell-bar" style="height:${pct}px;background:${campColors[i]};"></div>
-            <div class="cell-val">${valStr}</div>
-            <div class="cell-sub2">${purch}건 · <span class="${roasCls}">${campRoas.toFixed(1)}x</span></div>
-            ${isCur ? '<div class="cell-sub" style="color:var(--accent);font-size:9px;">▶ NOW</div>' : ''}
-          </td>`;
-        }).join('');
-        const totalStr = wFmt(monthSpend);
-        return `<tr>
-          <td class="name-col">
-            <span class="camp-name" title="${c.campaign_name||''}">
-              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${campColors[i]};margin-right:6px;"></span>${c.campaign_name||'캠페인 '+(i+1)}
-            </span>
-            <span class="camp-total">${totalStr} 이번달 합계</span>
-          </td>
-          ${cells}
-        </tr>`;
-      }).join('')
-    : `<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px;">데이터 없음</td></tr>`;
+  // ── 오늘 실제 시간별 광고비 (hourly_snapshots.json 기반) ──────────────────
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  const allSnaps = (h && h.snapshots) || [];
+  const todaySnaps = allSnaps.filter(s => s.date === todayStr).sort((a,b) => a.hour - b.hour);
+  const collectedHours = todaySnaps.map(s => s.hour);
 
-  const nowSlotLabel = slotNames[currentSlot];
+  // 캠페인별 시간 데이터 맵 구성
+  const campHourMap = {};
+  const campNamesInSnaps = [];
+  todaySnaps.forEach(snap => {
+    (snap.campaigns || []).forEach(c => {
+      if (!campHourMap[c.campaign_name]) {
+        campHourMap[c.campaign_name] = {};
+        campNamesInSnaps.push(c.campaign_name);
+      }
+      campHourMap[c.campaign_name][snap.hour] = c;
+    });
+  });
+  const uniqCampNames = [...new Set(campNamesInSnaps)];
+  const latestHour = collectedHours.length ? collectedHours[collectedHours.length - 1] : -1;
+
+  let campTimeRows;
+  let timeTableHeaders;
+  if (!todaySnaps.length) {
+    timeTableHeaders = '';
+    campTimeRows = `<tr><td colspan="2" style="color:var(--muted);text-align:center;padding:24px;font-size:13px;">
+      ⏳ 오늘 데이터 수집 중입니다.<br>
+      <span style="font-size:11px;">매 시간 정각에 자동으로 업데이트됩니다.</span>
+    </td></tr>`;
+  } else {
+    timeTableHeaders = collectedHours.map((h, i) =>
+      `<th style="${i === collectedHours.length-1 ? 'color:var(--accent);' : ''}">${h}시${i === collectedHours.length-1 ? ' ▶' : ''}</th>`
+    ).join('');
+    campTimeRows = uniqCampNames.map((name, ni) => {
+      const cells = collectedHours.map((hh, i) => {
+        const camp = (campHourMap[name]||{})[hh];
+        const isLatest = hh === latestHour;
+        if (!camp) return `<td class="spend-cell" style="color:var(--muted);font-size:12px;">-</td>`;
+        const roasCls = (camp.roas||0) >= (goals.roas||2.5) ? 'rg' : (camp.roas||0) >= 1.5 ? 'ry' : 'rr';
+        return `<td class="spend-cell ${isLatest ? 'current-slot' : ''}">
+          <div class="cell-val">${wFmt(camp.spend||0)}</div>
+          <div class="cell-sub2">${camp.purchases||0}건 · <span class="${roasCls}">${(camp.roas||0).toFixed(1)}x</span></div>
+          ${isLatest ? '<div class="cell-sub" style="color:var(--accent);font-size:9px;">▶ 최신</div>' : ''}
+        </td>`;
+      }).join('');
+      return `<tr>
+        <td class="name-col">
+          <span class="camp-name" title="${name}" style="max-width:130px;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${campColors[ni%campColors.length]};margin-right:6px;vertical-align:middle;"></span>${name}
+          </span>
+        </td>
+        ${cells}
+      </tr>`;
+    }).join('') || `<tr><td colspan="${collectedHours.length + 1}" style="color:var(--muted);text-align:center;padding:20px;">캠페인 데이터 없음</td></tr>`;
+  }
 
   document.getElementById('main-content').outerHTML = `
   <div id="main-content" class="main">
@@ -500,28 +488,31 @@ function render(s, d, c, a) {
     <div class="time-spend-grid">
       <div class="ts-section">
         <div class="sec-hdr">
-          <div class="sec-title">⏱ 캠페인별 시간대 광고비 소진</div>
-          <div style="font-size:11px;color:var(--muted)">오늘 기준 · 월간 광고비 기준 추정</div>
+          <div class="sec-title">⏱ 캠페인별 오늘 시간대별 현황</div>
+          <div style="font-size:11px;color:var(--muted)">
+            ${todaySnaps.length > 0
+              ? `실측 데이터 · ${collectedHours.length}회 수집 · 최신 ${latestHour}시`
+              : '수집 대기 중 · 매 시간 업데이트'}
+          </div>
         </div>
-        <div class="slot-labels" style="margin-left:150px;">
-          ${slotNames.map((n,i) => `<div class="slot-lbl ${i===currentSlot?'current':''}">${n}${i===currentSlot?' <span style="font-size:9px;color:var(--accent)">▶ NOW</span>':''}</div>`).join('')}
+        <div style="overflow-x:auto;">
+          <table class="ts-table">
+            <thead>
+              <tr>
+                <th class="name-col">캠페인</th>
+                ${timeTableHeaders}
+              </tr>
+            </thead>
+            <tbody>${campTimeRows}</tbody>
+          </table>
         </div>
-        <table class="ts-table">
-          <thead>
-            <tr>
-              <th class="name-col">캠페인</th>
-              ${slotNames.map((n,i) => `<th ${i===currentSlot?'style="color:var(--accent)"':''}>${n}${i===currentSlot?' ▶':''}</th>`).join('')}
-            </tr>
-          </thead>
-          <tbody>${campTimeRows}</tbody>
-        </table>
       </div>
 
       <!-- 금일 콘텐츠 TOP 리스트 -->
       <div class="ts-section">
         <div class="sec-hdr">
           <div class="sec-title">📊 금일 콘텐츠 TOP 리스트</div>
-          <div style="font-size:11px;color:var(--muted);">지출 기준 정렬</div>
+          <div style="font-size:11px;color:var(--muted);">지출 기준 정렬 · META 실측값</div>
         </div>
         <table class="ts-table" style="margin-top:14px;">
           <thead>
@@ -587,12 +578,11 @@ function render(s, d, c, a) {
     }
   });
 
-  // 전역에 dsMap 노출 (토글용)
-  window._dsMap    = dsMap;
-  window._labels   = labels;
-  window._chart    = mainChart;
+  window._dsMap  = dsMap;
+  window._labels = labels;
+  window._chart  = mainChart;
 
-  // 금일 콘텐츠 TOP 리스트 렌더
+  // 금일 콘텐츠 TOP 리스트 렌더 (META 실측값 그대로)
   const adsBody = document.getElementById('ads-tbody');
   if (adsBody) {
     if (ads.length > 0) {
@@ -605,8 +595,9 @@ function render(s, d, c, a) {
         const ctr = ad.ctr || 0;
         const cpm = ad.cpm || 0;
         const cpa = ad.cpa || 0;
+        const displayName = adName.length > 20 ? adName.slice(0, 20)+'…' : adName;
         return `<tr>
-          <td class="name-col"><span class="camp-name">${adName.length > 20 ? adName.slice(0, 20)+'…' : adName}</span></td>
+          <td class="name-col"><span class="camp-name" title="${adName}">${displayName}</span></td>
           <td>${wFmt(spend)}</td>
           <td>${purchases}건</td>
           <td>${roas.toFixed(2)}x</td>
@@ -620,7 +611,6 @@ function render(s, d, c, a) {
     }
   }
 
-  // 업데이트 시각
   const upd = document.getElementById('last-updated');
   if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${s.last_updated_kst||'방금'}</span>`;
 }
@@ -653,13 +643,14 @@ function toggleCard(card, metric) {
 
 async function loadData() {
   try {
-    const [s, d, c, a] = await Promise.all([
+    const [s, d, c, a, h] = await Promise.all([
       fetch(`${RAW}/summary.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/daily_history.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/campaigns.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/ads.json?t=${Date.now()}`).then(r => r.json()).catch(() => ({data:[]})),
+      fetch(`${RAW}/hourly_snapshots.json?t=${Date.now()}`).then(r => r.json()).catch(() => ({snapshots:[]})),
     ]);
-    render(s, d, c, a);
+    render(s, d, c, a, h);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
       `<div class="loading" style="color:var(--red)">
