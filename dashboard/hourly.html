@@ -140,8 +140,9 @@ input[type=range]{flex:1;accent-color:var(--accent);}
     </div>
     <div class="date-nav">
       <button onclick="shiftDate(-1)">◀</button>
-      <div class="date-display" id="dateDisplay">—</div>
-      <button onclick="shiftDate(1)">▶</button>
+      <div class="date-display" id="dateDisplay" onclick="openCalendar()" style="cursor:pointer;user-select:none;" title="클릭하면 달력으로 날짜 선택">—</div>
+      <input type="date" id="calendarInput" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;" onchange="onCalendarChange(this.value)"/>
+      <button id="btnNext" onclick="shiftDate(1)">▶</button>
     </div>
     <span class="snap-count" id="snapCount"></span>
   </div>
@@ -271,17 +272,39 @@ function buildHourMap() {
   return m;
 }
 
-// ── 날짜 유틸 ─────────────────────────────────────────────────
+// ── 날짜 유틸 (KST 기준, toISOString 타임존 버그 방지) ────────
+function toLocalStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function todayStr() { return toLocalStr(new Date()); }
+
 function dateOffset(offset) {
   const d = new Date();
   d.setDate(d.getDate() - offset);
-  return d.toISOString().slice(0,10);
+  return toLocalStr(d);
 }
 
 function quickDate(offset, btn) {
   document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   setDate(dateOffset(offset));
+}
+
+function openCalendar() {
+  const cal = document.getElementById('calendarInput');
+  cal.max = todayStr();
+  cal.value = selectedDate || todayStr();
+  cal.showPicker ? cal.showPicker() : cal.click();
+}
+
+function onCalendarChange(val) {
+  if (!val) return;
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
+  setDate(val);
 }
 
 // ── 전날 데이터 숨기기 처리 ──────────────────────────────────────────────
@@ -305,13 +328,17 @@ function hideYesterdayIfTodayExists() {
 function shiftDate(delta) {
   const d = new Date(selectedDate + 'T00:00:00');
   d.setDate(d.getDate() + delta);
+  const next = toLocalStr(d);
+  if (next > todayStr()) return; // 오늘 이후로 못 감
   document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
-  setDate(d.toISOString().slice(0,10));
+  setDate(next);
 }
 
 function setDate(dateStr) {
   selectedDate = dateStr;
-  document.getElementById('dateDisplay').textContent = dateStr;
+  document.getElementById('dateDisplay').textContent = dateStr.slice(5).replace('-','/'); // MM/DD 형식
+  const btnNext = document.getElementById('btnNext');
+  if (btnNext) btnNext.style.opacity = (dateStr >= todayStr()) ? '0.3' : '1';
   dateSnaps = allSnaps.filter(s => s.date === dateStr).sort((a,b)=>a.hour-b.hour);
   document.getElementById('snapCount').textContent =
     dateSnaps.length ? `스냅샷 ${dateSnaps.length}회 수집` : '수집된 데이터 없음';
