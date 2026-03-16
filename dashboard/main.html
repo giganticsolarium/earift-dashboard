@@ -139,6 +139,13 @@
     .spend-bar-val{color:var(--muted);}
     .sbar-bg{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;}
     .sbar-fill{height:100%;border-radius:99px;}
+
+    /* ── PERIOD TABS ── */
+    .period-tab{
+      padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;
+      cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;
+    }
+    .period-tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
   </style>
 </head>
 <body>
@@ -168,6 +175,8 @@ const REPO = 'giganticsolarium/earift-dashboard';
 const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
 const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e','#06b6d4','#f472b6'];
 let gaugeCharts = {};
+let window_lastData = null;
+let currentPeriod = 'this_month';
 
 function wFmt(n) {
   n = Math.round(+n || 0);
@@ -197,8 +206,28 @@ function makeGauge(id, pct, color) {
   });
 }
 
+function getPeriodLabel() {
+  const labels = {
+    'this_month': '이번 달',
+    'last_month': '저번 달',
+    'this_week': '이번 주',
+    'last_week': '저번 주'
+  };
+  return labels[currentPeriod] || '이번 달';
+}
+
+function switchPeriod(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (window_lastData) {
+    render(window_lastData.s, window_lastData.d, window_lastData.c);
+  }
+}
+
 function render(s, d, c) {
-  const goals   = s.goals   || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
+  window_lastData = {s, d, c};
+  const goals   = s.goals   || { budget: 3000000, roas: 2.5, revenue: 10000000, spend: 4500000 };
   const today   = s.today   || {};
   const camps   = (c && (c.data || c.campaigns)) || s.campaigns || [];
 
@@ -256,7 +285,7 @@ function render(s, d, c) {
 
   // 이번 달 누적
   const monthTotal = (s.month||{}).purchase_value || 0;
-  const monthGoal  = goals.budget * goals.roas;
+  const monthGoal  = 300000000;
   const monthPct   = monthGoal > 0 ? Math.round(monthTotal / monthGoal * 100) : 0;
   const monthLeft  = Math.max(0, monthGoal - monthTotal);
 
@@ -349,13 +378,21 @@ function render(s, d, c) {
       </div>
     </div>
 
-    <!-- ③ 캠페인별 현황 -->
+    <!-- ③ 캠페인별 현황 (탭 기능) -->
     <div class="asc-section">
       <div class="sec-hdr">
-        <div class="sec-title">🚀 이번 달 캠페인별 현황</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div class="sec-title" id="asc-title">🚀 ${getPeriodLabel()} 캠페인별 현황</div>
+          <div style="display:flex;gap:6px;">
+            <button class="period-tab ${currentPeriod==='this_month'?'active':''}" onclick="switchPeriod('this_month', this)">이번 달</button>
+            <button class="period-tab ${currentPeriod==='last_month'?'active':''}" onclick="switchPeriod('last_month', this)">저번 달</button>
+            <button class="period-tab ${currentPeriod==='this_week'?'active':''}" onclick="switchPeriod('this_week', this)">이번 주</button>
+            <button class="period-tab ${currentPeriod==='last_week'?'active':''}" onclick="switchPeriod('last_week', this)">저번 주</button>
+          </div>
+        </div>
         <div style="font-size:12px;color:var(--muted)">ROAS 목표 <strong style="color:var(--text)">${goals.roas}x</strong></div>
       </div>
-      <div class="asc-grid">${ascCards}</div>
+      <div class="asc-grid" id="asc-grid">${ascCards}</div>
     </div>
 
     <!-- ④ 최근 14일 추이 -->
@@ -396,8 +433,8 @@ function render(s, d, c) {
         {
           type: 'line', label: '매출(구매금액)',
           data: chartRevenue,
-          borderColor: '#4f6ef7', backgroundColor: 'rgba(79,110,247,.08)',
-          tension: .4, fill: true, pointRadius: 4, pointBackgroundColor: '#4f6ef7',
+          borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,.08)',
+          tension: .4, fill: true, pointRadius: 4, pointBackgroundColor: '#22c55e',
           yAxisID: 'y2', order: 1,
         },
         {

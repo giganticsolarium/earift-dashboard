@@ -220,12 +220,38 @@ let activeMetrics = ['roas','cpa','spend'];
 let currentPeriod = 'today';
 let currentGrain  = 'daily';
 
+// ── hourly_snapshots.json에서 전날 데이터 숨김 ──────────────────────────────────────────────
+async function checkAndHideYesterdayData() {
+  try {
+    const r = await fetch(`https://raw.githubusercontent.com/giganticsolarium/earift-dashboard/main/data/hourly_snapshots.json?t=${Date.now()}`);
+    const json = await r.json();
+    const snapshots = json.snapshots || [];
+
+    // KST 기준 오늘 날짜
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
+
+    // 오늘 데이터가 1개 이상 있으면 어제 버튼 숨김
+    const todaySnapshots = snapshots.filter(s => s.date === todayStr);
+    const yesterdayBtn = Array.from(document.querySelectorAll('.dbtn')).find(b => b.textContent.includes('어제'));
+
+    if (todaySnapshots.length > 0 && yesterdayBtn) {
+      yesterdayBtn.style.display = 'none';
+    }
+  } catch(e) {
+    // 에러 발생시 숨김 처리 안함
+  }
+}
+
 // ── 날짜 선택 ──────────────────────────────────────────────
 function selectPeriod(period, btn) {
   currentPeriod = period;
   document.querySelectorAll('.dbtn:not([data-grain])').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c);
+  if (window._lastData) render(window._lastData.s, window._lastData.d, window._lastData.c, window._lastData.a);
 }
 function selectGrain(grain, btn) {
   currentGrain = grain;
@@ -313,10 +339,11 @@ function wFmt(n) {
   return n.toLocaleString()+'원';
 }
 
-function render(s, d, c) {
-  window._lastData = {s, d, c};
+function render(s, d, c, a) {
+  window._lastData = {s, d, c, a};
   const {cur: today, prev: yesterday, label: periodLabel} = getKpiForPeriod(s, d);
   const camps = (c && (c.data || c.campaigns)) || s.campaigns || [];
+  const ads = (a && a.data) || [];
   const goals = s.goals || { roas: 2.5 };
 
   // KPI 델타
@@ -490,31 +517,21 @@ function render(s, d, c) {
         </table>
       </div>
 
-      <!-- 캠페인 상세 테이블을 오른쪽에 -->
+      <!-- 금일 콘텐츠 TOP 리스트 -->
       <div class="ts-section">
         <div class="sec-hdr">
-          <div class="sec-title">📊 캠페인별 이번 달 성과</div>
+          <div class="sec-title">📊 금일 콘텐츠 TOP 리스트</div>
+          <div style="font-size:11px;color:var(--muted);">지출 기준 정렬</div>
         </div>
         <table class="ts-table" style="margin-top:14px;">
           <thead>
             <tr>
-              <th class="name-col">캠페인</th>
-              <th>지출</th><th>구매</th><th>ROAS</th><th>CPA</th>
+              <th class="name-col">콘텐츠명</th>
+              <th>지출</th><th>구매</th><th>ROAS</th><th>CTR</th><th>CPM</th><th>CPA</th>
             </tr>
           </thead>
-          <tbody>
-            ${camps.length > 0 ? camps.map((c,i) => {
-              const roasCls = c.roas >= (goals.roas||2.5) ? 'rg' : c.roas >= 1.5 ? 'ry' : 'rr';
-              return `<tr>
-                <td class="name-col"><span class="camp-name" style="max-width:160px;">
-                  <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${campColors[i]};margin-right:6px;"></span>${c.campaign_name||'-'}</span>
-                </td>
-                <td>${wFmt(c.spend||0)}</td>
-                <td>${c.purchases||0}건</td>
-                <td class="${roasCls}">${(c.roas||0).toFixed(2)}x</td>
-                <td>${wFmt(c.cpa||0)}</td>
-              </tr>`;
-            }).join('') : '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px;">데이터 없음</td></tr>'}
+          <tbody id="ads-tbody">
+            <tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px;">로딩 중...</td></tr>
           </tbody>
         </table>
       </div>
@@ -575,6 +592,34 @@ function render(s, d, c) {
   window._labels   = labels;
   window._chart    = mainChart;
 
+  // 금일 콘텐츠 TOP 리스트 렌더
+  const adsBody = document.getElementById('ads-tbody');
+  if (adsBody) {
+    if (ads.length > 0) {
+      const sortedAds = [...ads].sort((a, b) => (b.spend || 0) - (a.spend || 0));
+      adsBody.innerHTML = sortedAds.map((ad, i) => {
+        const adName = ad.ad_name || `광고 ${i+1}`;
+        const spend = ad.spend || 0;
+        const purchases = ad.purchases || 0;
+        const roas = ad.roas || 0;
+        const ctr = ad.ctr || 0;
+        const cpm = ad.cpm || 0;
+        const cpa = ad.cpa || 0;
+        return `<tr>
+          <td class="name-col"><span class="camp-name">${adName.length > 20 ? adName.slice(0, 20)+'…' : adName}</span></td>
+          <td>${wFmt(spend)}</td>
+          <td>${purchases}건</td>
+          <td>${roas.toFixed(2)}x</td>
+          <td>${ctr.toFixed(2)}%</td>
+          <td>${wFmt(cpm)}</td>
+          <td>${wFmt(cpa)}</td>
+        </tr>`;
+      }).join('');
+    } else {
+      adsBody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px;">광고 데이터가 없습니다.</td></tr>';
+    }
+  }
+
   // 업데이트 시각
   const upd = document.getElementById('last-updated');
   if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${s.last_updated_kst||'방금'}</span>`;
@@ -608,12 +653,13 @@ function toggleCard(card, metric) {
 
 async function loadData() {
   try {
-    const [s, d, c] = await Promise.all([
+    const [s, d, c, a] = await Promise.all([
       fetch(`${RAW}/summary.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/daily_history.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/campaigns.json?t=${Date.now()}`).then(r => r.json()),
+      fetch(`${RAW}/ads.json?t=${Date.now()}`).then(r => r.json()).catch(() => ({data:[]})),
     ]);
-    render(s, d, c);
+    render(s, d, c, a);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
       `<div class="loading" style="color:var(--red)">
@@ -625,7 +671,9 @@ async function loadData() {
 }
 
 loadData();
+checkAndHideYesterdayData();
 setInterval(loadData, 60 * 60 * 1000);
+setInterval(checkAndHideYesterdayData, 60 * 60 * 1000);
 </script>
 </body>
 </html>

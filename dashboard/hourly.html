@@ -284,6 +284,24 @@ function quickDate(offset, btn) {
   setDate(dateOffset(offset));
 }
 
+// ── 전날 데이터 숨기기 처리 ──────────────────────────────────────────────
+function hideYesterdayIfTodayExists() {
+  // KST 기준 오늘 날짜
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const todayStr = `${year}-${month}-${day}`;
+
+  // 오늘 데이터가 1개 이상 있으면 어제 버튼 숨김
+  const todaySnapshots = allSnaps.filter(s => s.date === todayStr);
+  const yesterdayBtn = Array.from(document.querySelectorAll('.qbtn')).find(b => b.textContent.includes('어제'));
+
+  if (todaySnapshots.length > 0 && yesterdayBtn) {
+    yesterdayBtn.style.display = 'none';
+  }
+}
+
 function shiftDate(delta) {
   const d = new Date(selectedDate + 'T00:00:00');
   d.setDate(d.getDate() + delta);
@@ -621,6 +639,8 @@ async function loadData() {
     if (!r.ok) throw new Error('fetch failed');
     const json = await r.json();
     allSnaps = json.snapshots || [];
+    // 전날 데이터 숨김 처리
+    hideYesterdayIfTodayExists();
     // 오늘 날짜로 초기화
     const today = new Date().toISOString().slice(0,10);
     setDate(today);
