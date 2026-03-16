@@ -373,12 +373,11 @@ function render(s, d, c, a, h) {
       }).join('')
     : `<tr><td colspan="10" style="color:var(--muted);text-align:center;padding:20px;">캠페인 데이터가 없습니다.</td></tr>`;
 
-  // ── 오늘 실제 시간별 광고비 (hourly_snapshots.json 기반) ──────────────────
+  // ── 오늘 실제 시간별 광고비 - 4슬롯 디자인 (hourly_snapshots.json 기반) ──────────────────
   const now = new Date();
   const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   const allSnaps = (h && h.snapshots) || [];
   const todaySnaps = allSnaps.filter(s => s.date === todayStr).sort((a,b) => a.hour - b.hour);
-  const collectedHours = todaySnaps.map(s => s.hour);
 
   // 캠페인별 시간 데이터 맵 구성
   const campHourMap = {};
@@ -393,30 +392,70 @@ function render(s, d, c, a, h) {
     });
   });
   const uniqCampNames = [...new Set(campNamesInSnaps)];
-  const latestHour = collectedHours.length ? collectedHours[collectedHours.length - 1] : -1;
+
+  // 4 슬롯 정의
+  const slotDefs = [
+    { name: '00~06시', start: 0, end: 5 },
+    { name: '06~12시', start: 6, end: 11 },
+    { name: '12~18시', start: 12, end: 17 },
+    { name: '18~24시', start: 18, end: 23 },
+  ];
+  const currentHour = now.getHours();
+  const currentSlotIdx = slotDefs.findIndex(s => currentHour >= s.start && currentHour <= s.end);
+
+  // 슬롯별 캠페인 증분 데이터 계산
+  function getSlotData(campName, slot) {
+    let snapAtEnd = null;
+    for (let hh = slot.end; hh >= slot.start; hh--) {
+      if ((campHourMap[campName]||{})[hh]) { snapAtEnd = (campHourMap[campName]||{})[hh]; break; }
+    }
+    if (!snapAtEnd) return null;
+    let snapBefore = null;
+    for (let hh = slot.start - 1; hh >= 0; hh--) {
+      if ((campHourMap[campName]||{})[hh]) { snapBefore = (campHourMap[campName]||{})[hh]; break; }
+    }
+    const incrSpend    = Math.max(0, (snapAtEnd.spend||0)          - (snapBefore ? snapBefore.spend||0 : 0));
+    const incrRevenue  = Math.max(0, (snapAtEnd.purchase_value||0) - (snapBefore ? snapBefore.purchase_value||0 : 0));
+    const incrPurchases= Math.max(0, (snapAtEnd.purchases||0)      - (snapBefore ? snapBefore.purchases||0 : 0));
+    const incrRoas     = incrSpend > 500 ? incrRevenue / incrSpend : (snapAtEnd.roas || 0);
+    return { spend: incrSpend, purchases: incrPurchases, roas: incrRoas };
+  }
+
+  // 슬롯별 전체 합산 (진행 바 스케일 계산용)
+  const slotTotals = slotDefs.map(slot => {
+    let total = 0;
+    uniqCampNames.forEach(n => { const d = getSlotData(n, slot); if (d) total += d.spend; });
+    return total;
+  });
+  const maxSlotSpend = Math.max(...slotTotals, 1);
+
+  const slotHeaders = slotDefs.map((s, i) =>
+    `<th style="${i === currentSlotIdx ? 'color:var(--accent);' : ''}">${s.name}${i === currentSlotIdx ? ' ◀' : ''}</th>`
+  ).join('');
 
   let campTimeRows;
-  let timeTableHeaders;
   if (!todaySnaps.length) {
-    timeTableHeaders = '';
-    campTimeRows = `<tr><td colspan="2" style="color:var(--muted);text-align:center;padding:24px;font-size:13px;">
+    campTimeRows = `<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:24px;font-size:13px;">
       ⏳ 오늘 데이터 수집 중입니다.<br>
       <span style="font-size:11px;">매 시간 정각에 자동으로 업데이트됩니다.</span>
     </td></tr>`;
   } else {
-    timeTableHeaders = collectedHours.map((h, i) =>
-      `<th style="${i === collectedHours.length-1 ? 'color:var(--accent);' : ''}">${h}시${i === collectedHours.length-1 ? ' ▶' : ''}</th>`
-    ).join('');
     campTimeRows = uniqCampNames.map((name, ni) => {
-      const cells = collectedHours.map((hh, i) => {
-        const camp = (campHourMap[name]||{})[hh];
-        const isLatest = hh === latestHour;
-        if (!camp) return `<td class="spend-cell" style="color:var(--muted);font-size:12px;">-</td>`;
-        const roasCls = (camp.roas||0) >= (goals.roas||2.5) ? 'rg' : (camp.roas||0) >= 1.5 ? 'ry' : 'rr';
-        return `<td class="spend-cell ${isLatest ? 'current-slot' : ''}">
-          <div class="cell-val">${wFmt(camp.spend||0)}</div>
-          <div class="cell-sub2">${camp.purchases||0}건 · <span class="${roasCls}">${(camp.roas||0).toFixed(1)}x</span></div>
-          ${isLatest ? '<div class="cell-sub" style="color:var(--accent);font-size:9px;">▶ 최신</div>' : ''}
+      const cells = slotDefs.map((slot, si) => {
+        const data = getSlotData(name, slot);
+        const isCurrent = si === currentSlotIdx;
+        if (!data) {
+          const isFuture = currentSlotIdx >= 0 && si > currentSlotIdx;
+          return `<td class="spend-cell" style="color:var(--muted);font-size:12px;opacity:${isFuture ? '0.3' : '1'};">-</td>`;
+        }
+        const roasCls = data.roas >= (goals.roas||2.5) ? 'rg' : data.roas >= 1.5 ? 'ry' : 'rr';
+        const barW    = data.spend > 0 ? Math.min(100, Math.round(data.spend / maxSlotSpend * 100)) : 0;
+        return `<td class="spend-cell${isCurrent ? ' current-slot' : ''}">
+          <div class="cell-val">${wFmt(data.spend)}</div>
+          <div style="height:3px;background:var(--surface3);border-radius:2px;margin:3px 0 4px;">
+            <div style="height:100%;width:${barW}%;background:${campColors[ni%campColors.length]};border-radius:2px;"></div>
+          </div>
+          <div class="cell-sub2">${data.purchases}건 · <span class="${roasCls}">${data.roas.toFixed(1)}x</span></div>
         </td>`;
       }).join('');
       return `<tr>
@@ -427,7 +466,7 @@ function render(s, d, c, a, h) {
         </td>
         ${cells}
       </tr>`;
-    }).join('') || `<tr><td colspan="${collectedHours.length + 1}" style="color:var(--muted);text-align:center;padding:20px;">캠페인 데이터 없음</td></tr>`;
+    }).join('') || `<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px;">캠페인 데이터 없음</td></tr>`;
   }
 
   document.getElementById('main-content').outerHTML = `
@@ -491,7 +530,7 @@ function render(s, d, c, a, h) {
           <div class="sec-title">⏱ 캠페인별 오늘 시간대별 현황</div>
           <div style="font-size:11px;color:var(--muted)">
             ${todaySnaps.length > 0
-              ? `실측 데이터 · ${collectedHours.length}회 수집 · 최신 ${latestHour}시`
+              ? `실측 증분 데이터 · ${todaySnaps.length}회 수집 · ${currentSlotIdx >= 0 ? slotDefs[currentSlotIdx].name + ' 진행 중' : currentHour + '시 기준'}`
               : '수집 대기 중 · 매 시간 업데이트'}
           </div>
         </div>
@@ -500,7 +539,7 @@ function render(s, d, c, a, h) {
             <thead>
               <tr>
                 <th class="name-col">캠페인</th>
-                ${timeTableHeaders}
+                ${slotHeaders}
               </tr>
             </thead>
             <tbody>${campTimeRows}</tbody>

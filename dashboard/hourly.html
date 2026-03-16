@@ -664,6 +664,53 @@ function heatCls(v, m, maxV, minV) {
   return 'h5';
 }
 
+// 캠페인 시간별 증분값 (cumulative snapshot → incremental per-hour value)
+function getIncrCampVal(campMap, name, h, m) {
+  const camp = (campMap[name]||{})[h];
+  if (!camp) return 0;
+  // CTR/CPM은 비율 지표 → 스냅샷 값 그대로 사용
+  if (m === 'ctr' || m === 'cpm') return getCampVal(camp, m);
+  // 직전 데이터 포인트 찾기
+  let prevCamp = null;
+  for (let ph = h-1; ph >= 0; ph--) {
+    if ((campMap[name]||{})[ph]) { prevCamp = (campMap[name]||{})[ph]; break; }
+  }
+  if (m === 'roas') {
+    const incrS = (camp.spend||0) - (prevCamp ? prevCamp.spend||0 : 0);
+    const incrR = (camp.purchase_value||0) - (prevCamp ? prevCamp.purchase_value||0 : 0);
+    if (incrS > 500) return Math.max(0, incrR / incrS);
+    return camp.roas || 0;
+  }
+  const cur  = getCampVal(camp, m);
+  const prev = prevCamp ? getCampVal(prevCamp, m) : 0;
+  return Math.max(0, cur - prev);
+}
+
+// 전체 합계행 시간별 증분값
+function getIncrTotalVal(h, m) {
+  const snap = dateSnaps.find(s=>s.hour===h);
+  if (!snap) return 0;
+  const t = snap.totals || {};
+  if (m === 'ctr' || m === 'cpm') {
+    return {ctr:t.ctr||0,cpm:t.cpm||0}[m];
+  }
+  let prevSnap = null;
+  for (let ph = h-1; ph >= 0; ph--) {
+    const ps = dateSnaps.find(s=>s.hour===ph);
+    if (ps) { prevSnap = ps; break; }
+  }
+  const pt = prevSnap ? prevSnap.totals||{} : {};
+  if (m === 'roas') {
+    const incrS = (t.spend||0) - (pt.spend||0);
+    const incrR = (t.purchase_value||0) - (pt.purchase_value||0);
+    if (incrS > 500) return Math.max(0, incrR / incrS);
+    return t.roas || 0;
+  }
+  const cv = {spend:t.spend||0,revenue:t.purchase_value||0,purchases:t.purchases||0}[m] || 0;
+  const pv = {spend:pt.spend||0,revenue:pt.purchase_value||0,purchases:pt.purchases||0}[m] || 0;
+  return Math.max(0, cv - pv);
+}
+
 function renderHeat() {
   const m   = curHeatMetric;
   const now = new Date().getHours();
@@ -678,14 +725,20 @@ function renderHeat() {
   });
   const uniqNames = [...new Set(campNames)];
 
+  // 색상 스케일은 증분값 기준으로 계산
   const allVals = [];
-  uniqNames.forEach(n => Object.values(campMap[n]||{}).forEach(c => { const v=getCampVal(c,m); if(v) allVals.push(v); }));
+  uniqNames.forEach(n => {
+    for (let h=0; h<24; h++) {
+      const v = getIncrCampVal(campMap, n, h, m);
+      if (v) allVals.push(v);
+    }
+  });
   const maxV = allVals.length ? Math.max(...allVals) : 1;
   const minV = allVals.length ? Math.min(...allVals) : 0;
 
   const head = document.getElementById('heatHead');
   head.innerHTML = '<tr><th class="ncol" style="text-align:left">캠페인</th>' +
-    Array.from({length:24},(_,h)=>`<th>${h}시</th>`).join('') + '<th>합계/평균</th></tr>';
+    Array.from({length:24},(_,h)=>`<th>${h}시</th>`).join('') + '<th style="color:var(--accent)">누적합계</th></tr>';
 
   const body = document.getElementById('heatBody');
   body.innerHTML = '';
@@ -699,38 +752,44 @@ function renderHeat() {
   uniqNames.forEach((name, ni) => {
     const tr = document.createElement('tr');
     let html = `<td class="ncol" title="${name}"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${colors[ni%colors.length]};margin-right:5px;"></span>${name.length>18?name.slice(0,18)+'…':name}</td>`;
-    let sum = 0; let cnt = 0;
+
     for (let h=0; h<24; h++) {
-      const camp = (campMap[name]||{})[h];
-      const v    = getCampVal(camp, m);
-      if (v) { sum += v; cnt++; }
+      const v     = getIncrCampVal(campMap, name, h, m);
       const isCur = (h === now);
       const cls   = heatCls(v, m, maxV, minV) + (isCur?' cur-h':'');
       const disp  = v ? META[m].fmt(v) : '-';
-      html += `<td><span class="hc ${cls}" title="${h}시 ${META[m].lbl}: ${disp}">${disp}</span></td>`;
+      html += `<td><span class="hc ${cls}" title="${h}시 증분 ${META[m].lbl}: ${disp}">${disp}</span></td>`;
     }
-    const agg = (m==='roas'||m==='ctr') ? (cnt?META[m].fmt(sum/cnt):'-') : META[m].fmt(sum);
-    html += `<td style="font-weight:700;color:${colors[ni%colors.length]};font-size:11px;">${agg}</td>`;
+
+    // 누적합계: 해당 캠페인의 가장 마지막 스냅샷 값
+    let latestCamp = null;
+    for (let hh = 23; hh >= 0; hh--) {
+      if ((campMap[name]||{})[hh]) { latestCamp = (campMap[name]||{})[hh]; break; }
+    }
+    const agg = latestCamp ? META[m].fmt(getCampVal(latestCamp, m)) : '-';
+    html += `<td style="font-weight:700;color:${colors[ni%colors.length]};font-size:11px;border-left:1px solid var(--border);">${agg}</td>`;
     tr.innerHTML = html;
     body.appendChild(tr);
   });
 
+  // 전체 합계 행
   const tr2 = document.createElement('tr');
   tr2.className = 'total-row';
   let html2 = `<td class="ncol" style="color:var(--accent);">▶ 전체</td>`;
   for (let h=0; h<24; h++) {
-    const snap = dateSnaps.find(s=>s.hour===h);
-    const t    = snap ? snap.totals || {} : {};
-    const v    = {spend:t.spend||0,roas:t.roas||0,revenue:t.purchase_value||0,purchases:t.purchases||0,ctr:t.ctr||0,cpm:t.cpm||0}[m];
+    const v    = getIncrTotalVal(h, m);
     const disp = v ? META[m].fmt(v) : '-';
     html2 += `<td style="font-size:10px;font-weight:700;color:var(--accent);">${disp}</td>`;
   }
-  const totSum = dateSnaps.reduce((a,s)=>{
-    const t=s.totals||{}; const v={spend:t.spend||0,roas:t.roas||0,revenue:t.purchase_value||0,purchases:t.purchases||0,ctr:t.ctr||0,cpm:t.cpm||0}[m];
-    return a+v;
-  }, 0);
-  const totAgg = (m==='roas'||m==='ctr') ? META[m].fmt(dateSnaps.length?totSum/dateSnaps.length:0) : META[m].fmt(totSum);
-  html2 += `<td style="font-weight:700;color:var(--accent);font-size:11px;">${totAgg}</td>`;
+  // 전체 누적합계: 가장 마지막 스냅샷의 totals 값
+  const lastSnap = dateSnaps.length ? dateSnaps[dateSnaps.length-1] : null;
+  let totAgg = '-';
+  if (lastSnap) {
+    const t = lastSnap.totals || {};
+    const v = {spend:t.spend||0,roas:t.roas||0,revenue:t.purchase_value||0,purchases:t.purchases||0,ctr:t.ctr||0,cpm:t.cpm||0}[m];
+    totAgg = META[m].fmt(v);
+  }
+  html2 += `<td style="font-weight:700;color:var(--accent);font-size:11px;border-left:1px solid var(--border);">${totAgg}</td>`;
   tr2.innerHTML = html2;
   body.appendChild(tr2);
 }
