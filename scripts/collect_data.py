@@ -58,11 +58,22 @@ def get_campaign_insights_today():
     })
 
 
+def get_campaign_insights_daily():
+    """캠페인별 일별 성과 (이번달 전체)"""
+    return api_get(AD_ACCOUNT_ID + '/insights', {
+        'fields': 'date_start,campaign_id,campaign_name,spend,impressions,clicks,reach,ctr,cpc,cpm,actions,action_values',
+        'level': 'campaign',
+        'time_increment': 1,
+        'date_preset': 'this_month',
+        'limit': 200,
+    })
+
+
 def get_ad_insights():
     return api_get(AD_ACCOUNT_ID + '/insights', {
-        'fields': 'ad_id,ad_name,adset_name,campaign_name,spend,impressions,clicks,actions,action_values',
+        'fields': 'ad_id,ad_name,adset_name,campaign_name,spend,impressions,clicks,ctr,cpm,actions,action_values',
         'level': 'ad',
-        'date_preset': 'this_month',
+        'date_preset': 'today',
         'sort': 'spend_descending',
         'limit': 10,
     })
@@ -229,11 +240,32 @@ def main():
     }
     snaps_list = sorted(snap_dict.values(), key=lambda x: x['key'])
 
+    # ⑥ 캠페인별 일별 성과 (보고서용) - 실패해도 기존 수집에 영향 없음
+    camp_daily_rows = []
+    try:
+        camp_daily_resp = get_campaign_insights_daily()
+        for row in camp_daily_resp.get('data', []):
+            parsed = parse_row(row)
+            parsed['campaign_id']   = row.get('campaign_id', '')
+            parsed['campaign_name'] = row.get('campaign_name', '')
+            parsed['date']          = row.get('date_start', '')
+            camp_daily_rows.append(parsed)
+        camp_daily_rows.sort(key=lambda x: (x['date'], x['campaign_name']))
+    except Exception as e:
+        print(f"  ⚠️ campaign_daily 수집 실패 (대시보드 영향 없음): {e}")
+
+    # 기존 파일 먼저 저장 (대시보드 핵심 데이터)
     save('summary.json',          summary)
     save('daily_history.json',    {'last_updated': now_kst.isoformat(), 'data': merged_daily_list})
     save('campaigns.json',        {'last_updated': now_kst.isoformat(), 'campaigns': campaigns, 'data': campaigns})
     save('ads.json',              {'last_updated': now_kst.isoformat(), 'data': ads[:10]})
     save('hourly_snapshots.json', {'last_updated': now_kst.isoformat(), 'snapshots': snaps_list})
+
+    # campaign_daily는 별도 try-except (실패해도 기존 데이터에 영향 없음)
+    try:
+        save('campaign_daily.json', {'last_updated': now_kst.isoformat(), 'data': camp_daily_rows})
+    except Exception as e:
+        print(f"  ⚠️ campaign_daily.json 저장 실패 (대시보드 영향 없음): {e}")
 
     print(f"\n✅ 수집 완료 | 이번달 지출: {monthly.get('spend',0):,.0f}원 | ROAS: {monthly.get('roas',0)}")
 
