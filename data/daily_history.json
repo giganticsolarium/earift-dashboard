@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-17T01:00:34.807785+09:00",
+  "last_updated": "2026-03-17T02:00:35.186140+09:00",
   "data": [
     {
       "spend": 104073.0,
@@ -394,31 +394,31 @@
       "date": "2026-03-12"
     },
     {
-      "spend": 1648451.0,
-      "impressions": 88900,
-      "clicks": 1654,
+      "spend": 1648863.0,
+      "impressions": 88905,
+      "clicks": 1656,
       "reach": 80459,
       "ctr": 1.86,
-      "cpc": 997.0,
-      "cpm": 18543.0,
+      "cpc": 996.0,
+      "cpm": 18546.0,
       "purchases": 32,
       "purchase_value": 1983894.0,
       "roas": 1.2,
-      "cpa": 51514.0,
+      "cpa": 51527.0,
       "date": "2026-03-16"
     },
     {
-      "spend": 74833.0,
-      "impressions": 2884,
-      "clicks": 51,
-      "reach": 2339,
-      "ctr": 1.77,
-      "cpc": 1467.0,
-      "cpm": 25948.0,
-      "purchases": 0,
-      "purchase_value": 0.0,
-      "roas": 0.0,
-      "cpa": 0.0,
+      "spend": 110493.0,
+      "impressions": 4444,
+      "clicks": 84,
+      "reach": 4122,
+      "ctr": 1.89,
+      "cpc": 1315.0,
+      "cpm": 24863.0,
+      "purchases": 2,
+      "purchase_value": 183818.0,
+      "roas": 1.66,
+      "cpa": 55246.0,
       "date": "2026-03-17"
     }
   ]
