@@ -396,6 +396,7 @@ function render(s, d, c, a, h, p, g) {
   const {cur: today, prev: yesterday, label: periodLabel} = getKpiForPeriod(s, d);
   // 기간에 맞는 캠페인 데이터 선택
   const periodCampData = {
+    today:      (p && Array.isArray(p.today))      ? p.today      : null,
     this_week:  (p && Array.isArray(p.this_week))  ? p.this_week  : null,
     last_week:  (p && Array.isArray(p.last_week))  ? p.last_week  : null,
     last_month: (p && Array.isArray(p.last_month)) ? p.last_month : null,
@@ -403,11 +404,13 @@ function render(s, d, c, a, h, p, g) {
   const camps = periodCampData[currentPeriod] !== null && periodCampData[currentPeriod] !== undefined
     ? periodCampData[currentPeriod]
     : (c && (c.data || c.campaigns)) || s.campaigns || [];
-  const campPeriodLabel = { today:'오늘 (이번 달 기준)', yesterday:'어제 (이번 달 기준)',
-    this_week:'이번 주', last_week:'저번 주', month:'이번 달', last_month:'저번 달',
-    '7d':'최근 7일 (이번 달 기준)', '30d':'최근 30일 (이번 달 기준)',
-    custom: customStart ? `${customStart} ~ ${customEnd}` : '직접 선택 (이번 달 기준)'
-  }[currentPeriod] || '이번 달';
+  const _hasPeriodData = periodCampData[currentPeriod] !== null && periodCampData[currentPeriod] !== undefined;
+  const campPeriodLabel = _hasPeriodData
+    ? ({ today:'오늘', yesterday:'어제', this_week:'이번 주', last_week:'저번 주',
+         month:'이번 달', last_month:'저번 달', '7d':'최근 7일', '30d':'최근 30일',
+         custom: customStart ? `${customStart} ~ ${customEnd}` : '직접 선택'
+       }[currentPeriod] || '이번 달')
+    : '이번 달';
   const ads = (a && a.data) || [];
   // localStorage 우선 → goals.json(g) → summary.json(s.goals) → 하드코딩 기본값
   const goals = getStoredGoals() || g || s.goals || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
