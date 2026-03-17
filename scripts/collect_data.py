@@ -33,7 +33,7 @@ def get_daily_insights():
     today = datetime.now(KST).date()
     since = today - timedelta(days=29)
     return api_get(AD_ACCOUNT_ID + '/insights', {
-        'fields': 'date_start,spend,impressions,clicks,reach,ctr,cpc,actions,action_values',
+        'fields': 'date_start,spend,impressions,clicks,reach,ctr,cpc,cpm,actions,action_values',
         'time_increment': 1,
         'time_range': json.dumps({'since': str(since), 'until': str(today)}),
     })
