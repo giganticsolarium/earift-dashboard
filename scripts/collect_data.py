@@ -36,6 +36,7 @@ def get_daily_insights():
         'fields': 'date_start,spend,impressions,clicks,reach,ctr,cpc,cpm,actions,action_values',
         'time_increment': 1,
         'time_range': json.dumps({'since': str(since), 'until': str(today)}),
+        'limit': 100,
     })
 
 
