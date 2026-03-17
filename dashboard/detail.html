@@ -394,7 +394,7 @@ function wFmt(n) {
 function render(s, d, c, a, h, p, g) {
   window._lastData = {s, d, c, a, h, p, g};
   const {cur: today, prev: yesterday, label: periodLabel} = getKpiForPeriod(s, d);
-  // 기간에 맞는 캠페인 데이터 선택
+  // 기간에 맞는 캠페인 데이터 선택 (period_campaigns.json에서 직접 로드)
   const periodCampData = {
     today:      (p && Array.isArray(p.today))      ? p.today      : null,
     this_week:  (p && Array.isArray(p.this_week))  ? p.this_week  : null,
