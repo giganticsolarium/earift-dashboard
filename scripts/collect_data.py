@@ -283,7 +283,10 @@ def main():
 
     # ⑥ 기간별 캠페인 데이터 (period_campaigns.json) - 탭 기능용
     # Meta API 유효 preset: this_week_mon_today / last_week_mon_sun
-    period_camps = {'this_month': campaigns}   # 이미 수집된 이번달 데이터 재활용
+    period_camps = {
+        'this_month': campaigns,      # 이미 수집된 이번달 데이터 재활용
+        'today':      today_campaigns, # 이미 수집된 오늘 실시간 데이터 재활용
+    }
     period_api_map = {
         'last_month': 'last_month',
         'this_week':  'this_week_mon_today',
