@@ -30,6 +30,69 @@
     }
     .page-tab.active{background:var(--accent);color:#fff;}
     .nav-right{display:flex;align-items:center;gap:10px;}
+
+    /* ── GOALS MODAL ── */
+    .goal-btn{
+      display:flex;align-items:center;gap:6px;
+      padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;
+      cursor:pointer;border:1px solid var(--border);background:var(--surface2);
+      color:var(--muted);transition:all .2s;
+    }
+    .goal-btn:hover{border-color:var(--accent);color:var(--text);}
+    .modal-overlay{
+      display:none;position:fixed;inset:0;z-index:1000;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+      align-items:center;justify-content:center;
+    }
+    .modal-overlay.open{display:flex;}
+    .modal-box{
+      background:var(--surface);border:1px solid var(--border);border-radius:18px;
+      padding:28px;width:440px;max-width:95vw;box-shadow:0 24px 60px rgba(0,0,0,.5);
+    }
+    .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+    .modal-title{font-size:16px;font-weight:800;}
+    .modal-close{
+      width:30px;height:30px;border-radius:50%;border:1px solid var(--border);
+      background:var(--surface2);color:var(--muted);cursor:pointer;font-size:16px;
+      display:flex;align-items:center;justify-content:center;transition:all .2s;
+    }
+    .modal-close:hover{background:var(--surface3);color:var(--text);}
+    .goal-field{margin-bottom:18px;}
+    .goal-field-label{
+      font-size:12px;font-weight:700;color:var(--muted);
+      text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .goal-field-hint{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:0;}
+    .goal-input-wrap{display:flex;align-items:center;gap:0;}
+    .goal-input{
+      flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px 0 0 8px;
+      color:var(--text);padding:10px 14px;font-size:15px;font-weight:700;
+      transition:border-color .2s;outline:none;
+    }
+    .goal-input:focus{border-color:var(--accent);}
+    .goal-unit{
+      background:var(--surface3);border:1px solid var(--border);border-left:none;
+      border-radius:0 8px 8px 0;padding:10px 12px;font-size:12px;
+      color:var(--muted);font-weight:600;white-space:nowrap;
+    }
+    .modal-divider{height:1px;background:var(--border);margin:4px 0 18px;}
+    .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+    .btn-cancel{
+      padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;
+      cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);
+    }
+    .btn-cancel:hover{background:var(--surface2);}
+    .btn-save{
+      padding:9px 24px;border-radius:8px;font-size:13px;font-weight:700;
+      cursor:pointer;border:none;background:var(--accent);color:#fff;transition:opacity .2s;
+    }
+    .btn-save:hover{opacity:.85;}
+    .save-feedback{
+      font-size:12px;color:var(--green);font-weight:600;
+      display:none;align-items:center;gap:4px;
+    }
+    .save-feedback.show{display:flex;}
     .nbadge{background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:8px;font-size:12px;color:var(--muted);}
     .nbadge span{color:var(--text);font-weight:600;}
     .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px;animation:pulse 2s infinite;}
@@ -166,10 +229,61 @@
     </div>
   </div>
   <div class="nav-right">
+    <button class="goal-btn" onclick="openGoalsModal()">⚙️ 목표 설정</button>
     <div class="nbadge">광고 계정 <span>이어리프트</span></div>
     <div class="nbadge" id="last-updated"><span class="pulse"></span>로딩 중...</div>
   </div>
 </nav>
+
+<!-- 목표 설정 모달 -->
+<div class="modal-overlay" id="goals-modal" onclick="closeGoalsModalOutside(event)">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div class="modal-title">⚙️ KPI 목표 설정</div>
+      <button class="modal-close" onclick="closeGoalsModal()">✕</button>
+    </div>
+
+    <div class="goal-field">
+      <div class="goal-field-label">
+        ROAS 목표
+        <span class="goal-field-hint" id="roas-preview"></span>
+      </div>
+      <div class="goal-input-wrap">
+        <input type="number" class="goal-input" id="g-roas" step="0.1" min="0" placeholder="2.5" oninput="updatePreview('roas')">
+        <div class="goal-unit">배수 (x)</div>
+      </div>
+    </div>
+
+    <div class="goal-field">
+      <div class="goal-field-label">
+        일 지출 목표
+        <span class="goal-field-hint" id="spend-preview"></span>
+      </div>
+      <div class="goal-input-wrap">
+        <input type="number" class="goal-input" id="g-spend" step="1" min="0" placeholder="300" oninput="updatePreview('spend')">
+        <div class="goal-unit">만원</div>
+      </div>
+    </div>
+
+    <div class="goal-field">
+      <div class="goal-field-label">
+        일 매출 목표
+        <span class="goal-field-hint" id="revenue-preview"></span>
+      </div>
+      <div class="goal-input-wrap">
+        <input type="number" class="goal-input" id="g-revenue" step="1" min="0" placeholder="750" oninput="updatePreview('revenue')">
+        <div class="goal-unit">만원</div>
+      </div>
+    </div>
+
+    <div class="modal-divider"></div>
+    <div class="modal-actions">
+      <span class="save-feedback" id="save-feedback">✓ 저장됐어요</span>
+      <button class="btn-cancel" onclick="closeGoalsModal()">취소</button>
+      <button class="btn-save" onclick="saveGoals()">저장하기</button>
+    </div>
+  </div>
+</div>
 
 <div id="main-content" class="main">
   <div class="loading">⏳ 데이터 불러오는 중...</div>
@@ -180,6 +294,51 @@ const REPO = 'giganticsolarium/earift-dashboard';
 const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
 const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e','#06b6d4','#f472b6'];
 let gaugeCharts = {};
+
+// ── 목표 설정 (localStorage 우선) ──────────────────────────────────────────────
+const GOALS_KEY = 'earift_goals_v1';
+function getStoredGoals() {
+  try { const s = localStorage.getItem(GOALS_KEY); return s ? JSON.parse(s) : null; } catch(e) { return null; }
+}
+function openGoalsModal() {
+  const cur = getStoredGoals() || window_lastData?.g || window_lastData?.s?.goals || {};
+  document.getElementById('g-roas').value    = cur.roas    || '';
+  document.getElementById('g-spend').value   = cur.spend   ? Math.round(cur.spend/10000)   : '';
+  document.getElementById('g-revenue').value = cur.revenue ? Math.round(cur.revenue/10000) : '';
+  ['roas','spend','revenue'].forEach(k => updatePreview(k));
+  document.getElementById('save-feedback').classList.remove('show');
+  document.getElementById('goals-modal').classList.add('open');
+}
+function closeGoalsModal() {
+  document.getElementById('goals-modal').classList.remove('open');
+}
+function closeGoalsModalOutside(e) {
+  if (e.target === document.getElementById('goals-modal')) closeGoalsModal();
+}
+function updatePreview(key) {
+  const val = parseFloat(document.getElementById(`g-${key}`).value);
+  const el = document.getElementById(`${key}-preview`);
+  if (!el) return;
+  if (isNaN(val) || val <= 0) { el.textContent = ''; return; }
+  if (key === 'roas')    el.textContent = `→ ${val.toFixed(1)}x`;
+  if (key === 'spend')   el.textContent = `→ ${val.toLocaleString()}만원 / 일`;
+  if (key === 'revenue') el.textContent = `→ ${val.toLocaleString()}만원 / 일`;
+}
+function saveGoals() {
+  const roas    = parseFloat(document.getElementById('g-roas').value);
+  const spendM  = parseFloat(document.getElementById('g-spend').value);
+  const revenueM= parseFloat(document.getElementById('g-revenue').value);
+  if (isNaN(roas)||roas<=0||isNaN(spendM)||spendM<=0||isNaN(revenueM)||revenueM<=0) {
+    alert('모든 값을 올바르게 입력해 주세요.'); return;
+  }
+  const goals = { roas, spend: Math.round(spendM*10000), revenue: Math.round(revenueM*10000), budget: Math.round(spendM*10000) };
+  localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
+  const fb = document.getElementById('save-feedback');
+  fb.classList.add('show');
+  setTimeout(() => { fb.classList.remove('show'); closeGoalsModal(); }, 1200);
+  // 화면 즉시 재렌더
+  if (window_lastData) render(window_lastData.s, window_lastData.d, window_lastData.c, window_lastData.p, goals);
+}
 let window_lastData = null;
 let currentPeriod = 'this_month';
 
@@ -280,8 +439,8 @@ function switchPeriod(period, btn) {
 
 function render(s, d, c, p, g) {
   window_lastData = {s, d, c, p, g};
-  // goals.json(g) 우선 → summary.json(s.goals) → 하드코딩 기본값
-  const goals = g || s.goals || { budget: 3000000, roas: 2.5, revenue: 10000000, spend: 4500000 };
+  // localStorage 우선 → goals.json(g) → summary.json(s.goals) → 하드코딩 기본값
+  const goals = getStoredGoals() || g || s.goals || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
   const today = s.today || {};
 
   // p = period_campaigns.json 데이터. 현재 탭 기간에 맞는 캠페인 사용

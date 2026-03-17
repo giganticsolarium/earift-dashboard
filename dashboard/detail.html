@@ -218,6 +218,11 @@
 const REPO = 'giganticsolarium/earift-dashboard';
 const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
 const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e','#06b6d4','#f472b6'];
+// localStorage에서 목표 읽기 (main.html의 ⚙️ 설정과 공유)
+const GOALS_KEY = 'earift_goals_v1';
+function getStoredGoals() {
+  try { const s = localStorage.getItem(GOALS_KEY); return s ? JSON.parse(s) : null; } catch(e) { return null; }
+}
 
 let mainChart = null;
 let activeMetrics = ['roas','cpa','spend'];
@@ -404,8 +409,8 @@ function render(s, d, c, a, h, p, g) {
     custom: customStart ? `${customStart} ~ ${customEnd}` : '직접 선택 (이번 달 기준)'
   }[currentPeriod] || '이번 달';
   const ads = (a && a.data) || [];
-  // goals.json(g) 우선 → summary.json(s.goals) → 하드코딩 기본값
-  const goals = g || s.goals || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
+  // localStorage 우선 → goals.json(g) → summary.json(s.goals) → 하드코딩 기본값
+  const goals = getStoredGoals() || g || s.goals || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
 
   function delta(cur, prev, isRoas) {
     const diff = (cur||0) - (prev||0);
