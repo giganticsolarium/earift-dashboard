@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이어리프트 AD · 운영 변경 이력</title>
+  <style>
+    :root {
+      --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --surface3: #2a2f47;
+      --border: #2e3250; --accent: #4f6ef7; --green: #22c55e; --red: #ef4444;
+      --yellow: #f59e0b; --cyan: #06b6d4; --purple: #a855f7;
+      --text: #e2e8f0; --muted: #8892b0; --r: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI','Apple SD Gothic Neo',sans-serif; min-height: 100vh; }
+
+    /* ── NAV ── */
+    .nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 28px; background: var(--surface); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-left { display: flex; align-items: center; gap: 16px; }
+    .logo { font-size: 18px; font-weight: 700; color: var(--accent); }
+    .page-tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: 10px; padding: 4px; }
+    .page-tab {
+      padding: 6px 16px; border-radius: 7px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all .2s;
+    }
+    .page-tab.active { background: var(--accent); color: #fff; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nbadge { background: var(--surface2); border: 1px solid var(--border); padding: 5px 12px; border-radius: 8px; font-size: 12px; color: var(--muted); }
+    .nbadge span { color: var(--text); font-weight: 600; }
+    .pulse { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* ── MAIN ── */
+    .main { max-width: 960px; margin: 0 auto; padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 14px 18px;
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .filter-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+    .ftab {
+      padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; border: 1px solid var(--border);
+      background: transparent; color: var(--muted); transition: all .18s;
+    }
+    .ftab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .ftab:hover:not(.active) { color: var(--text); border-color: var(--accent); }
+    .range-sel {
+      margin-left: auto;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 5px 12px;
+      font-size: 12px; cursor: pointer; outline: none;
+      color-scheme: dark;
+    }
+
+    /* ── SECTION BOX ── */
+    .section-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); padding: 20px 22px;
+    }
+    .sec-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px; flex-wrap: wrap; gap: 10px;
+    }
+    .sec-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .sec-count { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+    /* ── TIMELINE ── */
+    .timeline { display: flex; flex-direction: column; }
+
+    .date-divider {
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 0 8px;
+    }
+    .date-divider span {
+      font-size: 11px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .5px; white-space: nowrap;
+    }
+    .date-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* ── EVENT ROW ── */
+    .event-row {
+      display: grid;
+      grid-template-columns: 52px 32px 1fr auto;
+      align-items: flex-start; gap: 10px;
+      padding: 10px 10px; border-radius: 10px;
+      transition: background .15s; cursor: default;
+    }
+    .event-row:hover { background: var(--surface2); }
+
+    .ev-time {
+      font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums;
+      padding-top: 4px; white-space: nowrap;
+    }
+
+    .ev-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0; margin-top: 1px;
+    }
+    .ev-icon.on     { background: rgba(34,197,94,.15); }
+    .ev-icon.off    { background: rgba(239,68,68,.15); }
+    .ev-icon.budget { background: rgba(245,158,11,.15); }
+    .ev-icon.edit   { background: rgba(79,110,247,.15); }
+
+    .ev-body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .ev-main { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    .lv-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 7px;
+      border-radius: 5px; flex-shrink: 0; letter-spacing: .3px;
+    }
+    .lv-badge.campaign { background: rgba(79,110,247,.15);  color: #7b9ef5; border: 1px solid rgba(79,110,247,.3); }
+    .lv-badge.adset    { background: rgba(168,85,247,.15);  color: #c084fc; border: 1px solid rgba(168,85,247,.3); }
+    .lv-badge.ad       { background: rgba(6,182,212,.15);   color: #22d3ee; border: 1px solid rgba(6,182,212,.3); }
+
+    .ev-name {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 420px;
+    }
+
+    .ev-desc { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .ev-change { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 5px; }
+    .ch-before { color: var(--muted); text-decoration: line-through; }
+    .ch-arrow  { color: var(--border); font-size: 11px; }
+    .ch-after.up   { color: var(--green); font-weight: 700; }
+    .ch-after.down { color: var(--red);   font-weight: 700; }
+    .ch-after.on   { color: var(--green); font-weight: 700; }
+    .ch-after.off  { color: var(--red);   font-weight: 700; }
+
+    .ev-by { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .ev-by::before { content: '·'; }
+    .ev-by .author { color: var(--accent); font-weight: 600; }
+
+    .ev-status {
+      font-size: 11px; font-weight: 700; padding: 3px 9px;
+      border-radius: 6px; white-space: nowrap; align-self: center;
+    }
+    .ev-status.on          { background: rgba(34,197,94,.12);  color: var(--green); border: 1px solid rgba(34,197,94,.3); }
+    .ev-status.off         { background: rgba(239,68,68,.12);  color: var(--red);   border: 1px solid rgba(239,68,68,.3); }
+    .ev-status.budget-up   { background: rgba(245,158,11,.12); color: var(--yellow);border: 1px solid rgba(245,158,11,.3); }
+    .ev-status.budget-down { background: rgba(239,68,68,.12);  color: var(--red);   border: 1px solid rgba(239,68,68,.3); }
+    .ev-status.edit        { background: rgba(79,110,247,.12); color: #7b9ef5;      border: 1px solid rgba(79,110,247,.3); }
+
+    /* ── EMPTY / LOADING ── */
+    .loading { text-align: center; padding: 60px; color: var(--muted); font-size: 14px; }
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+
+    /* ── STATS ROW ── */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 18px;
+    }
+    .stat-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .stat-value { font-size: 22px; font-weight: 800; }
+    .stat-sub   { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-left">
+    <div class="logo">이어리프트 AD</div>
+    <div class="page-tabs">
+      <button class="page-tab" onclick="location.href='main.html'">🎯 목표 현황</button>
+      <button class="page-tab" onclick="location.href='detail.html'">📈 상세 데이터</button>
+      <button class="page-tab" onclick="location.href='hourly.html'">🕐 시간별 히스토리</button>
+      <button class="page-tab active">📋 운영 이력</button>
+    </div>
+  </div>
+  <div class="nav-right">
+    <div class="nbadge">광고 계정 <span>이어리프트</span></div>
+    <div class="nbadge" id="last-updated"><span class="pulse"></span>로딩 중...</div>
+  </div>
+</nav>
+
+<div class="main">
+
+  <!-- 필터 바 -->
+  <div class="filter-bar">
+    <span class="filter-label">필터</span>
+    <button class="ftab active" data-level="all"      onclick="setFilter('all',this)">전체</button>
+    <button class="ftab"        data-level="campaign" onclick="setFilter('campaign',this)">캠페인</button>
+    <button class="ftab"        data-level="adset"    onclick="setFilter('adset',this)">광고 세트</button>
+    <button class="ftab"        data-level="ad"       onclick="setFilter('ad',this)">광고</button>
+
+    <select class="range-sel" id="range-sel" onchange="setRange(this.value)">
+      <option value="7">최근 7일</option>
+      <option value="14">최근 14일</option>
+      <option value="30">최근 30일</option>
+    </select>
+  </div>
+
+  <!-- 요약 통계 -->
+  <div class="stats-row" id="stats-row">
+    <div class="stat-card"><div class="stat-label">전체 변경</div><div class="stat-value" id="stat-total">-</div><div class="stat-sub">건</div></div>
+    <div class="stat-card"><div class="stat-label">ON 전환</div><div class="stat-value" style="color:var(--green)" id="stat-on">-</div><div class="stat-sub">건</div></div>
+    <div class="stat-card"><div class="stat-label">OFF 전환</div><div class="stat-value" style="color:var(--red)" id="stat-off">-</div><div class="stat-sub">건</div></div>
+    <div class="stat-card"><div class="stat-label">예산 변경</div><div class="stat-value" style="color:var(--yellow)" id="stat-budget">-</div><div class="stat-sub">건</div></div>
+  </div>
+
+  <!-- 타임라인 -->
+  <div class="section-box">
+    <div class="sec-hdr">
+      <div class="sec-title">📋 운영 변경 이력 <span class="sec-count" id="timeline-count"></span></div>
+    </div>
+    <div class="timeline" id="timeline">
+      <div class="loading">⏳ 데이터 불러오는 중...</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+const REPO = 'giganticsolarium/earift-dashboard';
+const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
+
+let allEvents   = [];
+let filterLevel = 'all';
+let filterDays  = 7;
+
+function setFilter(level, btn) {
+  filterLevel = level;
+  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTimeline();
+}
+
+function setRange(days) {
+  filterDays = parseInt(days);
+  renderTimeline();
+}
+
+// 숫자 포맷
+function krw(n) {
+  n = Math.round(+n || 0);
+  if (n >= 10000) return Math.round(n/10000).toLocaleString() + '만원';
+  return n.toLocaleString() + '원';
+}
+
+// 날짜 레이블
+function dateLabelFor(dateStr) {
+  const now   = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const yest  = new Date(now - 86400000).toISOString().slice(0, 10);
+  const d     = new Date(dateStr + 'T00:00:00+09:00');
+  const mo = d.getMonth() + 1, da = d.getDate();
+  if (dateStr === today) return `오늘 · ${mo}월 ${da}일`;
+  if (dateStr === yest)  return `어제 · ${mo}월 ${da}일`;
+  return `${mo}월 ${da}일`;
+}
+
+// 이벤트 → HTML 행
+function eventRow(ev) {
+  const levelLabel = { campaign: '캠페인', adset: '광고 세트', ad: '광고' }[ev.level] || ev.level;
+  const levelCls   = ev.level;
+
+  let iconCls = 'edit', iconEmoji = '✏️';
+  let changePart = '';
+  let statusBadge = '';
+
+  if (ev.type === 'status_on') {
+    iconCls = 'on'; iconEmoji = '🟢';
+    changePart = `상태 <span class="ch-before">OFF</span><span class="ch-arrow">→</span><span class="ch-after on">ON</span>`;
+    statusBadge = `<div class="ev-status on">ON</div>`;
+  } else if (ev.type === 'status_off') {
+    iconCls = 'off'; iconEmoji = '🔴';
+    changePart = `상태 <span class="ch-before">ON</span><span class="ch-arrow">→</span><span class="ch-after off">OFF</span>`;
+    statusBadge = `<div class="ev-status off">OFF</div>`;
+  } else if (ev.type === 'budget_up') {
+    iconCls = 'budget'; iconEmoji = '💰';
+    const diff = Math.round((ev.after - ev.before));
+    const pct  = ev.before > 0 ? Math.round(diff / ev.before * 100) : 0;
+    changePart = `${ev.field || '예산'} <span class="ch-before">${krw(ev.before)}</span><span class="ch-arrow">→</span><span class="ch-after up">${krw(ev.after)} (+${pct}%)</span>`;
+    statusBadge = `<div class="ev-status budget-up">+${krw(diff)}</div>`;
+  } else if (ev.type === 'budget_down') {
+    iconCls = 'budget'; iconEmoji = '💰';
+    const diff = Math.round(ev.before - ev.after);
+    const pct  = ev.before > 0 ? Math.round(diff / ev.before * 100) : 0;
+    changePart = `${ev.field || '예산'} <span class="ch-before">${krw(ev.before)}</span><span class="ch-arrow">→</span><span class="ch-after down">${krw(ev.after)} (-${pct}%)</span>`;
+    statusBadge = `<div class="ev-status budget-down">-${krw(diff)}</div>`;
+  } else {
+    iconCls = 'edit'; iconEmoji = '✏️';
+    changePart = `${ev.field || '설정'} 변경 <span class="ch-before">${ev.before||''}</span><span class="ch-arrow">→</span><span class="ch-after up">${ev.after||''}</span>`;
+    statusBadge = `<div class="ev-status edit">수정</div>`;
+  }
+
+  const timeStr   = ev.time ? ev.time.slice(11, 16) : '--:--';
+  const actorPart = ev.actor_name ? `<div class="ev-by">수정자: <span class="author">${ev.actor_name}</span></div>` : '';
+  const displayName = (ev.object_name || '').length > 40 ? (ev.object_name || '').slice(0, 40) + '…' : (ev.object_name || '-');
+
+  return `<div class="event-row">
+    <div class="ev-time">${timeStr}</div>
+    <div class="ev-icon ${iconCls}">${iconEmoji}</div>
+    <div class="ev-body">
+      <div class="ev-main">
+        <span class="lv-badge ${levelCls}">${levelLabel}</span>
+        <span class="ev-name" title="${ev.object_name || ''}">${displayName}</span>
+      </div>
+      <div class="ev-desc">
+        <div class="ev-change">${changePart}</div>
+        ${actorPart}
+      </div>
+    </div>
+    ${statusBadge}
+  </div>`;
+}
+
+function renderTimeline() {
+  const cutoff = new Date(Date.now() - filterDays * 86400000).toISOString().slice(0, 10);
+
+  // 필터 적용
+  let events = allEvents.filter(ev => {
+    const dateOk  = !ev.date || ev.date >= cutoff;
+    const levelOk = filterLevel === 'all' || ev.level === filterLevel;
+    return dateOk && levelOk;
+  });
+
+  // 정렬: 최신순
+  events.sort((a, b) => (b.time || b.date || '').localeCompare(a.time || a.date || ''));
+
+  // 통계 업데이트
+  document.getElementById('stat-total').textContent  = events.length;
+  document.getElementById('stat-on').textContent     = events.filter(e => e.type === 'status_on').length;
+  document.getElementById('stat-off').textContent    = events.filter(e => e.type === 'status_off').length;
+  document.getElementById('stat-budget').textContent = events.filter(e => e.type === 'budget_up' || e.type === 'budget_down').length;
+  document.getElementById('timeline-count').textContent = events.length > 0 ? `(${events.length}건)` : '';
+
+  if (events.length === 0) {
+    document.getElementById('timeline').innerHTML =
+      `<div class="empty-state">📭 선택한 기간에 변경 이력이 없습니다.</div>`;
+    return;
+  }
+
+  // 날짜별 그룹핑
+  const grouped = {};
+  events.forEach(ev => {
+    const date = (ev.date || ev.time || '').slice(0, 10);
+    if (!grouped[date]) grouped[date] = [];
+    grouped[date].push(ev);
+  });
+
+  let html = '';
+  Object.keys(grouped).sort((a, b) => b.localeCompare(a)).forEach(date => {
+    html += `<div class="date-divider"><span>${dateLabelFor(date)}</span></div>`;
+    html += grouped[date].map(ev => eventRow(ev)).join('');
+  });
+
+  document.getElementById('timeline').innerHTML = html;
+}
+
+// Meta API 활동 데이터 파싱
+function parseMetaActivities(data) {
+  const events = [];
+  const items = data.data || [];
+  items.forEach(item => {
+    const eventType  = item.event_type || '';
+    const objectType = (item.object_type || '').toLowerCase();
+    const extra      = item.extra_data || {};
+
+    // 레벨 판단
+    let level = 'campaign';
+    if (objectType.includes('ad_set') || objectType === 'adset') level = 'adset';
+    else if (objectType === 'ad') level = 'ad';
+
+    // 시간 파싱 (KST)
+    let time = item.event_time || '';
+    if (time) {
+      try {
+        const d = new Date(time);
+        const kst = new Date(d.getTime() + 9 * 3600000);
+        time = kst.toISOString().replace('Z', '+09:00');
+      } catch(e) {}
+    }
+    const date = time.slice(0, 10);
+
+    // 타입 분류
+    let type = 'edit';
+    let field = '', before = '', after = '';
+
+    // 상태 변경
+    if (extra.status) {
+      const [oldSt, newSt] = Array.isArray(extra.status) ? extra.status : [null, extra.status];
+      if (newSt === 'ACTIVE')  type = 'status_on';
+      if (newSt === 'PAUSED')  type = 'status_off';
+      if (newSt === 'DELETED') type = 'status_off';
+      before = oldSt || '';
+      after  = newSt || '';
+      field  = '상태';
+    }
+    // 일일 예산
+    else if (extra.daily_budget) {
+      const [oldB, newB] = Array.isArray(extra.daily_budget) ? extra.daily_budget : [null, extra.daily_budget];
+      before = parseFloat(oldB) || 0;
+      after  = parseFloat(newB) || 0;
+      type   = after >= before ? 'budget_up' : 'budget_down';
+      field  = '일일 예산';
+    }
+    // 총 예산
+    else if (extra.lifetime_budget) {
+      const [oldB, newB] = Array.isArray(extra.lifetime_budget) ? extra.lifetime_budget : [null, extra.lifetime_budget];
+      before = parseFloat(oldB) || 0;
+      after  = parseFloat(newB) || 0;
+      type   = after >= before ? 'budget_up' : 'budget_down';
+      field  = '총 예산';
+    }
+    // 그 외
+    else {
+      const keys = Object.keys(extra);
+      if (keys.length > 0) {
+        field = keys[0];
+        const val = extra[keys[0]];
+        before = Array.isArray(val) ? val[0] : '';
+        after  = Array.isArray(val) ? val[1] : val;
+      }
+    }
+
+    events.push({
+      id:          item.object_id || '',
+      time, date, type, level, field,
+      object_name: item.object_name || '',
+      actor_name:  item.actor_name  || '',
+      before, after,
+    });
+  });
+  return events;
+}
+
+async function loadData() {
+  try {
+    const data = await fetch(`${RAW}/activity_log.json?t=${Date.now()}`).then(r => r.json());
+    const events = data.events || parseMetaActivities(data);
+    allEvents = events;
+    renderTimeline();
+
+    const upd = document.getElementById('last-updated');
+    if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${data.last_updated_kst || '방금'}</span>`;
+  } catch(e) {
+    document.getElementById('timeline').innerHTML =
+      `<div class="empty-state">
+        ⚠ 변경 이력 데이터를 불러오지 못했습니다.<br>
+        <small style="color:var(--muted);font-size:11px;margin-top:6px;display:block;">collect_data.py 실행 후 activity_log.json이 생성됩니다.</small>
+      </div>`;
+    document.getElementById('last-updated').innerHTML = `<span class="pulse"></span><span style="color:var(--red)">데이터 없음</span>`;
+    // 통계 0으로
+    ['stat-total','stat-on','stat-off','stat-budget'].forEach(id => {
+      document.getElementById(id).textContent = '0';
+    });
+  }
+}
+
+loadData();
+setInterval(loadData, 60 * 60 * 1000);
+</script>
+</body>
+</html>

@@ -226,6 +226,7 @@
       <button class="page-tab active">🎯 목표 현황</button>
       <button class="page-tab" onclick="location.href='detail.html'">📈 상세 데이터</button>
       <button class="page-tab" onclick="location.href='hourly.html'">🕐 시간별 히스토리</button>
+      <button class="page-tab" onclick="location.href='activity.html'">📋 운영 이력</button>
     </div>
   </div>
   <div class="nav-right">
@@ -473,10 +474,11 @@ function render(s, d, c, p, g) {
   const roasPct    = goals.roas    > 0 ? Math.round((gaugeData.roas||0)           / goals.roas    * 100) : 0;
   const spendPct   = periodSpdGoal > 0 ? Math.round((gaugeData.spend||0)          / periodSpdGoal * 100) : 0;
 
-  // 캠페인 지출 바 (오늘 기준)
-  const spendBarItems = camps.length > 0
-    ? camps.map((c, i) => {
-        const pct = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(camps.length,1)) * 100) : 0;
+  // 캠페인 지출 바 (오늘 기준 - period_campaigns.json.today 사용)
+  const todayCamps = (p && Array.isArray(p.today) && p.today.length > 0) ? p.today : [];
+  const spendBarItems = todayCamps.length > 0
+    ? todayCamps.map((c, i) => {
+        const pct = goals.spend > 0 ? Math.round(c.spend / goals.spend * 100) : 0;
         return `<div class="spend-bar-item">
           <div class="spend-bar-meta">
             <span class="spend-bar-name">${c.campaign_name || '캠페인 '+(i+1)}</span>
@@ -485,7 +487,7 @@ function render(s, d, c, p, g) {
           <div class="sbar-bg"><div class="sbar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
         </div>`;
       }).join('')
-    : `<div style="color:var(--muted);font-size:13px;padding:8px 0;">캠페인 데이터 없음</div>`;
+    : `<div style="color:var(--muted);font-size:13px;padding:8px 0;">오늘 캠페인 데이터 없음</div>`;
 
   // ── ASC 카드: 모든 기간 → 캠페인별 실제 데이터 (period_campaigns.json 기반) ──
   let ascCards;
