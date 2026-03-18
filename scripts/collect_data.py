@@ -119,9 +119,11 @@ def get_ad_insights_yesterday():
 
 def get_activity_log(since_date, until_date):
     """광고 운영 변경 이력 — on/off, 예산 수정 등 (지정 기간)"""
+    # activities 엔드포인트는 time_range JSON이 아닌 since/until 직접 파라미터 사용
     return api_get(AD_ACCOUNT_ID + '/activities', {
-        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_name,object_type',
-        'time_range': json.dumps({'since': since_date, 'until': until_date}),
+        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_name,object_type,translated_event_type',
+        'since': since_date,
+        'until': until_date,
         'limit': 200,
     })
 
@@ -382,7 +384,9 @@ def main():
         # (없으면 최초 실행 → 최근 30일치 한 번만 가져옴)
         if old_events:
             # 가장 최근 이벤트 날짜 기준으로 어제~오늘만 재수집 (하루 여유)
-            latest_date = old_events[0]['event_time'][:10]
+            # old_events는 최신순 정렬이므로 [0]이 가장 최근
+            all_times = [e['event_time'][:10] for e in old_events if e.get('event_time')]
+            latest_date = max(all_times) if all_times else today_str
             fetch_since = (datetime.strptime(latest_date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
         else:
             fetch_since = (now_kst - timedelta(days=30)).strftime('%Y-%m-%d')
@@ -441,7 +445,9 @@ def main():
         })
         print(f"  ✓ activity_log.json 저장 완료: 신규 {len(new_events)}건 / 누적 {len(merged_list)}건")
     except Exception as e:
+        import traceback
         print(f"  ⚠️ activity_log.json 수집/저장 실패 (대시보드 영향 없음): {e}")
+        print(f"  ⚠️ 상세 오류:\n{traceback.format_exc()}")
 
     print(f"\n✅ 수집 완료 | 이번달 지출: {monthly.get('spend',0):,.0f}원 | ROAS: {monthly.get('roas',0)}")
 
