@@ -1,6 +1,68 @@
 {
-  "last_updated": "2026-03-18T20:00:30.664626+09:00",
+  "last_updated": "2026-03-18T20:10:59.220414+09:00",
   "events": [
+    {
+      "event_time": "2026-03-18T11:06:03+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243967511780020",
+      "object_name": "120243967511780020",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-18T11:05:54+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243967511780020",
+      "object_name": "120243967511780020",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-18T11:05:54+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_up",
+      "object_id": "120243967511780020",
+      "object_name": "120243967511780020",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 100000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 50000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
     {
       "event_time": "2026-03-18T10:51:32+0000",
       "event_type": "first_delivery_event",
