@@ -423,8 +423,16 @@ def main():
                 new_status = extra.get('new_value', extra.get('status', ''))
                 category = 'status_on' if str(new_status).upper() in ('ACTIVE', '1', 'TRUE', 'ON') else 'status_off'
             elif 'budget' in event_type_raw.lower() or 'bid' in event_type_raw.lower():
-                old_b = float(extra.get('old_value', extra.get('old_budget', 0)) or 0)
-                new_b = float(extra.get('new_value', extra.get('new_budget', 0)) or 0)
+                def _num(v):
+                    # Meta API가 예산을 {"value": 50000, "currency": "KRW"} 형태로 반환할 수 있음
+                    if isinstance(v, dict):
+                        v = v.get('value', v.get('amount', 0))
+                    try:
+                        return float(v or 0)
+                    except (TypeError, ValueError):
+                        return 0.0
+                old_b = _num(extra.get('old_value', extra.get('old_budget', 0)))
+                new_b = _num(extra.get('new_value', extra.get('new_budget', 0)))
                 category = 'budget_up' if new_b >= old_b else 'budget_down'
             else:
                 category = 'edit'
