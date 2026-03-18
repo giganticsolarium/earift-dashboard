@@ -123,7 +123,7 @@ def get_activity_log(since_ts, until_ts):
     Meta /activities 엔드포인트는 date string 이 아닌 Unix timestamp 를 요구함
     """
     return api_get(AD_ACCOUNT_ID + '/activities', {
-        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_type',
+        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_name,object_type',
         'since': since_ts,
         'until': until_ts,
         'limit': 200,
