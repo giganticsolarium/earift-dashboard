@@ -106,6 +106,17 @@ def get_ad_insights():
     })
 
 
+def get_ad_insights_yesterday():
+    """어제 광고(소재)별 성과 — 전날 대비 비교용"""
+    return api_get(AD_ACCOUNT_ID + '/insights', {
+        'fields': 'ad_id,ad_name,adset_name,campaign_name,spend,impressions,clicks,ctr,cpm,actions,action_values',
+        'level': 'ad',
+        'date_preset': 'yesterday',
+        'sort': 'spend_descending',
+        'limit': 20,
+    })
+
+
 # ── 데이터 파싱 헬퍼 ────────────────────────────────────────
 def extract(items, action_type):
     """actions / action_values 배열에서 특정 타입 값 추출"""
@@ -195,7 +206,7 @@ def main():
         campaigns.append(parsed)
     campaigns.sort(key=lambda x: x['spend'], reverse=True)
 
-    # ④ 광고(소재)별 TOP10
+    # ④ 광고(소재)별 TOP20 — 오늘
     ads_resp = get_ad_insights()
     ads = []
     for row in ads_resp.get('data', []):
@@ -206,6 +217,23 @@ def main():
         parsed['campaign_name'] = row.get('campaign_name', '')
         ads.append(parsed)
     ads.sort(key=lambda x: x['spend'], reverse=True)
+
+    # ④-b 어제 광고(소재)별 — 전날 대비 비교용
+    try:
+        yesterday_ads_resp = get_ad_insights_yesterday()
+        yesterday_ads = []
+        for row in yesterday_ads_resp.get('data', []):
+            parsed = parse_row(row)
+            parsed['ad_id']         = row.get('ad_id', '')
+            parsed['ad_name']       = row.get('ad_name', '')
+            parsed['adset_name']    = row.get('adset_name', '')
+            parsed['campaign_name'] = row.get('campaign_name', '')
+            yesterday_ads.append(parsed)
+        yesterday_ads.sort(key=lambda x: x['spend'], reverse=True)
+        print(f"  ✓ yesterday_ads 수집 완료: {len(yesterday_ads)}개")
+    except Exception as e:
+        print(f"  ⚠️ yesterday_ads 수집 실패 (비교 기능 미작동, 나머지 영향 없음): {e}")
+        yesterday_ads = []
 
     # ⑤ 오늘 캠페인·광고 실시간 (시간별 스냅샷용) — 활성화된 것만
     today_camp_resp = get_campaign_insights_today()
@@ -325,7 +353,7 @@ def main():
     save('summary.json',          summary)
     save('daily_history.json',    {'last_updated': now_kst.isoformat(), 'data': merged_daily_list})
     save('campaigns.json',        {'last_updated': now_kst.isoformat(), 'campaigns': campaigns, 'data': campaigns})
-    save('ads.json',              {'last_updated': now_kst.isoformat(), 'data': ads[:10]})
+    save('ads.json',              {'last_updated': now_kst.isoformat(), 'data': ads[:20], 'yesterday_data': yesterday_ads[:20]})
     save('hourly_snapshots.json', {'last_updated': now_kst.isoformat(), 'snapshots': snaps_list})
     save('period_campaigns.json', {'last_updated': now_kst.isoformat(), **period_camps})
 
