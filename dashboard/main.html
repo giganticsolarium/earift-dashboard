@@ -1,742 +1,518 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>이어리프트 AD 대시보드</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  <style>
-    :root {
-      --bg:#0f1117; --surface:#1a1d27; --surface2:#22263a; --surface3:#2a2f47;
-      --border:#2e3250; --accent:#4f6ef7; --green:#22c55e; --red:#ef4444;
-      --yellow:#f59e0b; --purple:#7c3aed; --cyan:#06b6d4;
-      --text:#e2e8f0; --muted:#8892b0; --r:14px;
-    }
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{background:var(--bg);color:var(--text);font-family:'Segoe UI','Apple SD Gothic Neo',sans-serif;min-height:100vh;}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>이어리프트 광고 대시보드</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --card: #1a1d2e; --card2: #222538;
+    --accent: #6c63ff; --green: #00d97e; --red: #ff4d6d;
+    --yellow: #ffd60a; --text: #e8eaf0; --muted: #6b7280;
+    --border: #2d3148;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; min-height:100vh; }
 
-    /* ── NAV ── */
-    .nav{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:14px 28px;background:var(--surface);border-bottom:1px solid var(--border);
-      position:sticky;top:0;z-index:100;
-    }
-    .nav-left{display:flex;align-items:center;gap:16px;}
-    .logo{font-size:18px;font-weight:700;color:var(--accent);}
-    .page-tabs{display:flex;gap:4px;background:var(--surface2);border-radius:10px;padding:4px;}
-    .page-tab{
-      padding:6px 16px;border-radius:7px;font-size:13px;font-weight:600;
-      cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .2s;
-    }
-    .page-tab.active{background:var(--accent);color:#fff;}
-    .nav-right{display:flex;align-items:center;gap:10px;}
+  /* ─── 헤더 ─────────────────────────────────── */
+  header { display:flex; align-items:center; justify-content:space-between; padding:18px 28px; border-bottom:1px solid var(--border); }
+  .logo  { font-size:18px; font-weight:700; letter-spacing:-.5px; }
+  .logo span { color:var(--accent); }
+  .header-right { display:flex; align-items:center; gap:16px; }
+  #last-updated { font-size:12px; color:var(--muted); }
+  .nav-btn { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; text-decoration:none; }
+  .nav-btn:hover { background:var(--accent); border-color:var(--accent); }
 
-    /* ── GOALS MODAL ── */
-    .goal-btn{
-      display:flex;align-items:center;gap:6px;
-      padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;
-      cursor:pointer;border:1px solid var(--border);background:var(--surface2);
-      color:var(--muted);transition:all .2s;
-    }
-    .goal-btn:hover{border-color:var(--accent);color:var(--text);}
-    .modal-overlay{
-      display:none;position:fixed;inset:0;z-index:1000;
-      background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
-      align-items:center;justify-content:center;
-    }
-    .modal-overlay.open{display:flex;}
-    .modal-box{
-      background:var(--surface);border:1px solid var(--border);border-radius:18px;
-      padding:28px;width:440px;max-width:95vw;box-shadow:0 24px 60px rgba(0,0,0,.5);
-    }
-    .modal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
-    .modal-title{font-size:16px;font-weight:800;}
-    .modal-close{
-      width:30px;height:30px;border-radius:50%;border:1px solid var(--border);
-      background:var(--surface2);color:var(--muted);cursor:pointer;font-size:16px;
-      display:flex;align-items:center;justify-content:center;transition:all .2s;
-    }
-    .modal-close:hover{background:var(--surface3);color:var(--text);}
-    .goal-field{margin-bottom:18px;}
-    .goal-field-label{
-      font-size:12px;font-weight:700;color:var(--muted);
-      text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;
-      display:flex;align-items:center;justify-content:space-between;
-    }
-    .goal-field-hint{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:0;}
-    .goal-input-wrap{display:flex;align-items:center;gap:0;}
-    .goal-input{
-      flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px 0 0 8px;
-      color:var(--text);padding:10px 14px;font-size:15px;font-weight:700;
-      transition:border-color .2s;outline:none;
-    }
-    .goal-input:focus{border-color:var(--accent);}
-    .goal-unit{
-      background:var(--surface3);border:1px solid var(--border);border-left:none;
-      border-radius:0 8px 8px 0;padding:10px 12px;font-size:12px;
-      color:var(--muted);font-weight:600;white-space:nowrap;
-    }
-    .modal-divider{height:1px;background:var(--border);margin:4px 0 18px;}
-    .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
-    .btn-cancel{
-      padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;
-      cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);
-    }
-    .btn-cancel:hover{background:var(--surface2);}
-    .btn-save{
-      padding:9px 24px;border-radius:8px;font-size:13px;font-weight:700;
-      cursor:pointer;border:none;background:var(--accent);color:#fff;transition:opacity .2s;
-    }
-    .btn-save:hover{opacity:.85;}
-    .save-feedback{
-      font-size:12px;color:var(--green);font-weight:600;
-      display:none;align-items:center;gap:4px;
-    }
-    .save-feedback.show{display:flex;}
-    .nbadge{background:var(--surface2);border:1px solid var(--border);padding:5px 12px;border-radius:8px;font-size:12px;color:var(--muted);}
-    .nbadge span{color:var(--text);font-weight:600;}
-    .pulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:5px;animation:pulse 2s infinite;}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  /* ─── 레이아웃 ──────────────────────────────── */
+  main { max-width:1300px; margin:0 auto; padding:28px 20px; }
+  .section-title { font-size:13px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px; }
 
-    /* ── MAIN ── */
-    .main{padding:24px 28px;display:flex;flex-direction:column;gap:24px;}
+  /* ─── 목표 게이지 영역 ───────────────────────── */
+  .goals-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+  .goal-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px 20px; text-align:center; position:relative; overflow:hidden; }
+  .goal-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
+  .gauge-wrap { position:relative; width:130px; height:130px; margin:0 auto 16px; }
+  .gauge-wrap svg { transform:rotate(-90deg); }
+  .gauge-bg  { fill:none; stroke:var(--card2); stroke-width:10; }
+  .gauge-bar { fill:none; stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset .8s ease; }
+  .gauge-center { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; }
+  .gauge-pct { font-size:22px; font-weight:800; }
+  .gauge-label-sub { font-size:11px; color:var(--muted); margin-top:2px; }
+  .goal-name { font-size:15px; font-weight:600; margin-bottom:6px; }
+  .goal-values { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+  .goal-values .current { color:var(--text); font-weight:600; font-size:14px; }
 
-    /* ── LOADING ── */
-    .loading{display:flex;align-items:center;justify-content:center;min-height:60vh;font-size:15px;color:var(--muted);flex-direction:column;gap:12px;}
+  /* ─── KPI 카드 ──────────────────────────────── */
+  .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px; }
+  .kpi-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 16px; }
+  .kpi-label { font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .kpi-value { font-size:22px; font-weight:700; }
+  .kpi-sub { font-size:11px; color:var(--muted); margin-top:4px; }
+  .kpi-delta { font-size:12px; font-weight:600; margin-top:6px; }
+  .up   { color:var(--green); }
+  .down { color:var(--red); }
 
-    /* ── TODAY SECTION ── */
-    .today-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-    .today-title{font-size:20px;font-weight:800;}
-    .today-date{font-size:13px;color:var(--muted);}
-    .today-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  /* ─── 주간 차트 ─────────────────────────────── */
+  .chart-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
+  .chart-header  { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .chart-tabs { display:flex; gap:8px; }
+  .tab-btn { background:none; border:1px solid var(--border); color:var(--muted); padding:5px 12px; border-radius:6px; font-size:12px; cursor:pointer; }
+  .tab-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  #chart-canvas { width:100%; height:200px; position:relative; }
+  .chart-bars { display:flex; align-items:flex-end; gap:6px; height:160px; padding-bottom:24px; position:relative; }
+  .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .chart-bar { width:100%; border-radius:4px 4px 0 0; min-height:2px; transition:height .5s ease; cursor:pointer; position:relative; }
+  .chart-bar:hover::after { content:attr(data-tooltip); position:absolute; top:-28px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:4px 8px; border-radius:4px; font-size:11px; white-space:nowrap; z-index:10; }
+  .chart-date { font-size:10px; color:var(--muted); }
+  .chart-empty { text-align:center; color:var(--muted); padding:60px 0; font-size:14px; }
 
-    /* 원형 게이지 카드 */
-    .gauge-card{
-      background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
-      padding:24px 20px;display:flex;flex-direction:column;align-items:center;gap:12px;
-      position:relative;overflow:hidden;
-    }
-    .gauge-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--gc,var(--accent));}
-    .gauge-card:nth-child(1){--gc:#4f6ef7;}
-    .gauge-card:nth-child(2){--gc:#22c55e;}
-    .gauge-card:nth-child(3){--gc:#f59e0b;}
-    .gauge-label{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;text-align:center;}
-    .gauge-wrap{position:relative;width:160px;height:160px;}
-    .gauge-wrap canvas{width:160px!important;height:160px!important;}
-    .gauge-center{
-      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-      text-align:center;pointer-events:none;
-    }
-    .gauge-pct{font-size:30px;font-weight:800;line-height:1;}
-    .gauge-pct-sub{font-size:11px;color:var(--muted);margin-top:2px;}
-    .gauge-values{text-align:center;}
-    .gauge-current{font-size:22px;font-weight:800;}
-    .gauge-target{font-size:12px;color:var(--muted);margin-top:2px;}
-    .gauge-diff{
-      font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;
-      background:var(--surface2);margin-top:4px;display:inline-block;
-    }
-    .diff-up{color:var(--green);}
-    .diff-dn{color:var(--red);}
-    .diff-ok{color:var(--accent);}
+  /* ─── 캠페인 목록 ───────────────────────────── */
+  .campaigns-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
+  .camp-table { width:100%; border-collapse:collapse; }
+  .camp-table th { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); }
+  .camp-table td { padding:12px; font-size:13px; border-bottom:1px solid var(--border); }
+  .camp-table tr:last-child td { border-bottom:none; }
+  .camp-table tr:hover td { background:var(--card2); }
+  .roas-badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:12px; font-weight:600; }
+  .roas-good { background:rgba(0,217,126,.15); color:var(--green); }
+  .roas-mid  { background:rgba(255,214,10,.12); color:var(--yellow); }
+  .roas-bad  { background:rgba(255,77,109,.12); color:var(--red); }
+  .camp-empty { text-align:center; color:var(--muted); padding:32px; font-size:14px; }
 
-    /* ── WEEKLY SECTION ── */
-    .weekly-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;}
-    .sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
-    .sec-title{font-size:15px;font-weight:700;}
-    .week-meta{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
-    .week-stat{text-align:right;}
-    .week-stat-val{font-size:18px;font-weight:800;}
-    .week-stat-lbl{font-size:11px;color:var(--muted);}
-    .week-goal-line{
-      display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);
-      padding:6px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);
-    }
-    .chart-wrap{position:relative;height:240px;}
+  /* ─── 설정 패널 ─────────────────────────────── */
+  .settings-bar { background:var(--card); border:1px solid var(--yellow); border-radius:12px; padding:16px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .settings-bar.hidden { display:none; }
+  .settings-bar label { font-size:13px; color:var(--muted); margin-right:6px; }
+  .settings-bar input { background:var(--card2); border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:6px; font-size:13px; width:160px; }
+  .settings-bar .save-btn { background:var(--accent); border:none; color:#fff; padding:7px 16px; border-radius:8px; font-size:13px; cursor:pointer; }
 
-    /* ── ASC SECTION ── */
-    .asc-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;}
-    .asc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:16px;}
-    .asc-card{
-      background:var(--surface2);border:1px solid var(--border);border-radius:12px;
-      padding:18px;position:relative;overflow:hidden;transition:border-color .2s;
-    }
-    .asc-card:hover{border-color:var(--accent);}
-    .asc-card.active::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ac,#4f6ef7);}
-    .asc-num{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
-    .asc-type{font-size:13px;font-weight:700;margin-bottom:14px;line-height:1.4;}
-    .asc-kpi-row{display:flex;flex-direction:column;gap:8px;}
-    .asc-kpi{display:flex;justify-content:space-between;align-items:center;font-size:12px;}
-    .asc-kpi-lbl{color:var(--muted);}
-    .asc-kpi-val{font-weight:700;}
-    .asc-spend-bar{margin-top:10px;}
-    .asc-bar-row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;}
-    .asc-bar-bg{height:5px;background:var(--surface3);border-radius:99px;overflow:hidden;}
-    .asc-bar-fill{height:100%;border-radius:99px;transition:width .8s ease;}
-    .asc-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;margin-bottom:10px;}
-    .sdot{width:7px;height:7px;border-radius:50%;display:inline-block;}
-    .son{background:var(--green);}
-    .soff{background:var(--muted);}
+  /* ─── 로딩 ──────────────────────────────────── */
+  .loading { text-align:center; padding:60px; color:var(--muted); font-size:14px; }
+  .spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin-right:10px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
 
-    /* 목표 달성 뱃지 */
-    .goal-badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;}
-    .badge-reach{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
-    .badge-near{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3);}
-    .badge-low{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+  /* ─── 오늘 광고비 현황 (개편) ──────────────────── */
+  .today-spend-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
+  .today-spend-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .today-spend-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:20px; }
+  .today-stat { background:var(--card2); border-radius:12px; padding:16px 18px; position:relative; }
+  .today-stat-label { font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
+  .today-stat-value { font-size:24px; font-weight:800; color:var(--text); line-height:1; }
+  .today-stat-sub { font-size:12px; color:var(--muted); margin-top:6px; display:flex; align-items:center; gap:4px; }
+  .today-stat-bar { margin-top:10px; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
+  .today-stat-bar-fill { height:100%; border-radius:2px; transition:width .6s ease; }
 
-    /* ── TOTAL SPEND BAR ── */
-    .total-spend-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;}
-    .spend-overview{display:grid;grid-template-columns:1fr 2fr;gap:20px;align-items:center;margin-top:16px;}
-    .spend-numbers{display:flex;flex-direction:column;gap:8px;}
-    .spend-big{font-size:32px;font-weight:800;color:var(--yellow);}
-    .spend-target{font-size:14px;color:var(--muted);}
-    .spend-pct-badge{
-      display:inline-block;background:rgba(245,158,11,.15);color:var(--yellow);
-      border:1px solid rgba(245,158,11,.3);font-size:14px;font-weight:700;
-      padding:4px 12px;border-radius:8px;margin-top:4px;
-    }
-    .spend-bar-section{display:flex;flex-direction:column;gap:10px;}
-    .spend-bar-item{display:flex;flex-direction:column;gap:4px;}
-    .spend-bar-meta{display:flex;justify-content:space-between;font-size:12px;}
-    .spend-bar-name{font-weight:600;}
-    .spend-bar-val{color:var(--muted);}
-    .sbar-bg{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden;}
-    .sbar-fill{height:100%;border-radius:99px;}
+  /* ─── 오늘 캠페인 미니 테이블 ───────────────────── */
+  .today-camps { margin-top:4px; }
+  .today-camp-row { display:grid; grid-template-columns:1fr 90px 70px 70px 70px; gap:8px; padding:9px 10px; border-radius:8px; align-items:center; }
+  .today-camp-row:hover { background:var(--card2); }
+  .today-camp-row.header { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; font-weight:600; padding-bottom:6px; border-bottom:1px solid var(--border); }
+  .today-camp-row.header:hover { background:none; }
+  .tc-name { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tc-val { font-size:13px; text-align:right; }
+  .tc-roas-g { color:var(--green); } .tc-roas-y { color:var(--yellow); } .tc-roas-r { color:var(--red); }
 
-    /* ── PERIOD TABS (개선) ── */
-    .period-tabs-row{display:flex;gap:6px;background:var(--surface2);border-radius:12px;padding:5px;}
-    .period-tab{
-      flex:1;padding:8px 10px;border-radius:9px;font-size:12px;font-weight:700;
-      cursor:pointer;border:none;background:transparent;color:var(--muted);
-      transition:all .2s;text-align:center;line-height:1.3;
-    }
-    .period-tab:hover{color:var(--text);}
-    .period-tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(79,110,247,.35);}
-    .tab-date{display:block;font-size:10px;font-weight:400;margin-top:2px;opacity:.7;}
-    .period-tab.active .tab-date{color:rgba(255,255,255,.85);opacity:1;}
-  </style>
+  /* ─── 추이 차트 (Chart.js 기반) ────────────────── */
+  .trend-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
+  .trend-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .trend-tabs { display:flex; gap:6px; }
+  .trend-tab { background:none; border:1px solid var(--border); color:var(--muted); padding:4px 12px; border-radius:6px; font-size:12px; cursor:pointer; }
+  .trend-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  #trendChart { height:200px; }
+
+  @media (max-width:768px) {
+    .goals-grid { grid-template-columns:1fr; }
+    .kpi-grid   { grid-template-columns:repeat(2,1fr); }
+    .today-spend-grid { grid-template-columns:repeat(2,1fr); }
+    .today-camp-row { grid-template-columns:1fr 80px 60px; }
+    .today-camp-row > *:nth-child(4), .today-camp-row > *:nth-child(5) { display:none; }
+  }
+</style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-left">
-    <div class="logo">이어리프트 AD</div>
-    <div class="page-tabs">
-      <button class="page-tab active">🎯 목표 현황</button>
-      <button class="page-tab" onclick="location.href='detail.html'">📈 상세 데이터</button>
-      <button class="page-tab" onclick="location.href='hourly.html'">🕐 시간별 히스토리</button>
-    </div>
+<header>
+  <div class="logo">이어리프트 <span>AD</span></div>
+  <div class="header-right">
+    <span id="last-updated">로딩 중...</span>
+    <a href="detail.html" class="nav-btn">상세 데이터 →</a>
+    <button class="nav-btn" onclick="toggleSettings()">⚙ 목표 설정</button>
   </div>
-  <div class="nav-right">
-    <button class="goal-btn" onclick="openGoalsModal()">⚙️ 목표 설정</button>
-    <div class="nbadge">광고 계정 <span>이어리프트</span></div>
-    <div class="nbadge" id="last-updated"><span class="pulse"></span>로딩 중...</div>
-  </div>
-</nav>
+</header>
 
-<!-- 목표 설정 모달 -->
-<div class="modal-overlay" id="goals-modal" onclick="closeGoalsModalOutside(event)">
-  <div class="modal-box">
-    <div class="modal-hdr">
-      <div class="modal-title">⚙️ KPI 목표 설정</div>
-      <button class="modal-close" onclick="closeGoalsModal()">✕</button>
+<!-- 목표 설정 패널 -->
+<div style="max-width:1300px;margin:16px auto 0;padding:0 20px;">
+  <div class="settings-bar hidden" id="settings-bar">
+    <div>
+      <label>월 예산(원)</label>
+      <input type="number" id="goal-budget" placeholder="예: 3000000">
     </div>
-
-    <div class="goal-field">
-      <div class="goal-field-label">
-        ROAS 목표
-        <span class="goal-field-hint" id="roas-preview"></span>
-      </div>
-      <div class="goal-input-wrap">
-        <input type="number" class="goal-input" id="g-roas" step="0.1" min="0" placeholder="2.5" oninput="updatePreview('roas')">
-        <div class="goal-unit">배수 (x)</div>
-      </div>
+    <div>
+      <label>ROAS 목표</label>
+      <input type="number" step="0.1" id="goal-roas" placeholder="예: 3.0">
     </div>
-
-    <div class="goal-field">
-      <div class="goal-field-label">
-        일 지출 목표
-        <span class="goal-field-hint" id="spend-preview"></span>
-      </div>
-      <div class="goal-input-wrap">
-        <input type="number" class="goal-input" id="g-spend" step="1" min="0" placeholder="300" oninput="updatePreview('spend')">
-        <div class="goal-unit">만원</div>
-      </div>
+    <div>
+      <label>월 구매 목표(건)</label>
+      <input type="number" id="goal-purchases" placeholder="예: 300">
     </div>
-
-    <div class="goal-field">
-      <div class="goal-field-label">
-        일 매출 목표
-        <span class="goal-field-hint" id="revenue-preview"></span>
-      </div>
-      <div class="goal-input-wrap">
-        <input type="number" class="goal-input" id="g-revenue" step="1" min="0" placeholder="750" oninput="updatePreview('revenue')">
-        <div class="goal-unit">만원</div>
-      </div>
-    </div>
-
-    <div class="modal-divider"></div>
-    <div class="modal-actions">
-      <span class="save-feedback" id="save-feedback">✓ 저장됐어요</span>
-      <button class="btn-cancel" onclick="closeGoalsModal()">취소</button>
-      <button class="btn-save" onclick="saveGoals()">저장하기</button>
-    </div>
+    <button class="save-btn" onclick="saveGoals()">저장</button>
   </div>
 </div>
 
-<div id="main-content" class="main">
-  <div class="loading">⏳ 데이터 불러오는 중...</div>
-</div>
+<main>
+  <div id="main-content" class="loading">
+    <span class="spinner"></span> 광고 데이터를 불러오는 중...
+  </div>
+</main>
 
 <script>
+// ── 데이터 URL ─────────────────────────────────────────────
 const REPO = 'giganticsolarium/earift-dashboard';
 const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
-const campColors = ['#4f6ef7','#7c3aed','#f59e0b','#22c55e','#06b6d4','#f472b6'];
-let gaugeCharts = {};
 
-// ── 목표 설정 (localStorage 우선) ──────────────────────────────────────────────
-const GOALS_KEY = 'earift_goals_v1';
-function getStoredGoals() {
-  try { const s = localStorage.getItem(GOALS_KEY); return s ? JSON.parse(s) : null; } catch(e) { return null; }
-}
-function openGoalsModal() {
-  const cur = getStoredGoals() || window_lastData?.g || window_lastData?.s?.goals || {};
-  document.getElementById('g-roas').value    = cur.roas    || '';
-  document.getElementById('g-spend').value   = cur.spend   ? Math.round(cur.spend/10000)   : '';
-  document.getElementById('g-revenue').value = cur.revenue ? Math.round(cur.revenue/10000) : '';
-  ['roas','spend','revenue'].forEach(k => updatePreview(k));
-  document.getElementById('save-feedback').classList.remove('show');
-  document.getElementById('goals-modal').classList.add('open');
-}
-function closeGoalsModal() {
-  document.getElementById('goals-modal').classList.remove('open');
-}
-function closeGoalsModalOutside(e) {
-  if (e.target === document.getElementById('goals-modal')) closeGoalsModal();
-}
-function updatePreview(key) {
-  const val = parseFloat(document.getElementById(`g-${key}`).value);
-  const el = document.getElementById(`${key}-preview`);
-  if (!el) return;
-  if (isNaN(val) || val <= 0) { el.textContent = ''; return; }
-  if (key === 'roas')    el.textContent = `→ ${val.toFixed(1)}x`;
-  if (key === 'spend')   el.textContent = `→ ${val.toLocaleString()}만원 / 일`;
-  if (key === 'revenue') el.textContent = `→ ${val.toLocaleString()}만원 / 일`;
+// ── 기본 목표값 (localStorage 우선) ───────────────────────
+function getGoals() {
+  return {
+    budget:    parseFloat(localStorage.getItem('goal_budget')    || 3000000),
+    roas:      parseFloat(localStorage.getItem('goal_roas')      || 3.0),
+    purchases: parseFloat(localStorage.getItem('goal_purchases') || 300),
+  };
 }
 function saveGoals() {
-  const roas    = parseFloat(document.getElementById('g-roas').value);
-  const spendM  = parseFloat(document.getElementById('g-spend').value);
-  const revenueM= parseFloat(document.getElementById('g-revenue').value);
-  if (isNaN(roas)||roas<=0||isNaN(spendM)||spendM<=0||isNaN(revenueM)||revenueM<=0) {
-    alert('모든 값을 올바르게 입력해 주세요.'); return;
-  }
-  const goals = { roas, spend: Math.round(spendM*10000), revenue: Math.round(revenueM*10000), budget: Math.round(spendM*10000) };
-  localStorage.setItem(GOALS_KEY, JSON.stringify(goals));
-  const fb = document.getElementById('save-feedback');
-  fb.classList.add('show');
-  setTimeout(() => { fb.classList.remove('show'); closeGoalsModal(); }, 1200);
-  // 화면 즉시 재렌더
-  if (window_lastData) render(window_lastData.s, window_lastData.d, window_lastData.c, window_lastData.p, goals);
+  localStorage.setItem('goal_budget',    document.getElementById('goal-budget').value    || 3000000);
+  localStorage.setItem('goal_roas',      document.getElementById('goal-roas').value      || 3.0);
+  localStorage.setItem('goal_purchases', document.getElementById('goal-purchases').value || 300);
+  document.getElementById('settings-bar').classList.add('hidden');
+  loadData();
 }
-let window_lastData = null;
-let currentPeriod = 'this_month';
+function toggleSettings() {
+  const bar = document.getElementById('settings-bar');
+  bar.classList.toggle('hidden');
+  if (!bar.classList.contains('hidden')) {
+    const g = getGoals();
+    document.getElementById('goal-budget').value    = g.budget;
+    document.getElementById('goal-roas').value      = g.roas;
+    document.getElementById('goal-purchases').value = g.purchases;
+  }
+}
 
+// ── 숫자 포맷 (한국식: 만원/억원) ──────────────────────────
 function wFmt(n) {
   n = Math.round(+n || 0);
-  if (n >= 100000000) { const v = n/100000000; return (v%1===0?v:v.toFixed(1))+'억원'; }
-  if (n >= 10000)     return Math.round(n/10000).toLocaleString()+'만원';
-  return n.toLocaleString()+'원';
+  if (n >= 100000000) { const v = n/100000000; return (v%1===0 ? v : v.toFixed(1)) + '억원'; }
+  if (n >= 10000)     return Math.round(n/10000).toLocaleString() + '만원';
+  return n.toLocaleString() + '원';
+}
+// 간단 원화 (소수점 없이, 단위 표시)
+function wShort(n) {
+  n = Math.round(+n || 0);
+  if (n >= 100000000) return (n/100000000).toFixed(1) + '억';
+  if (n >= 10000)     return Math.round(n/10000).toLocaleString() + '만';
+  return n.toLocaleString();
+}
+const num  = n => (+n || 0).toLocaleString('ko-KR');
+const pct  = n => (+n || 0).toFixed(1) + '%';
+// 구버전 호환용
+const won  = wFmt;
+
+// ── 게이지 SVG ─────────────────────────────────────────────
+function buildGauge(pctVal, color) {
+  const r = 54, circ = 2 * Math.PI * r;
+  const filled = Math.min(pctVal / 100, 1) * circ;
+  const colorMap = { green:var(--green)||'#00d97e', accent:'#6c63ff', yellow:'#ffd60a', red:'#ff4d6d' };
+  const stroke = { green:'#00d97e', accent:'#6c63ff', yellow:'#ffd60a', red:'#ff4d6d' }[color] || '#6c63ff';
+  return `<svg width="130" height="130" viewBox="0 0 130 130">
+    <circle class="gauge-bg" cx="65" cy="65" r="${r}"/>
+    <circle class="gauge-bar" cx="65" cy="65" r="${r}"
+      stroke="${stroke}"
+      stroke-dasharray="${circ}"
+      stroke-dashoffset="${circ - filled}"
+      style="transition:stroke-dashoffset .8s ease"/>
+  </svg>`;
 }
 
-function makeGauge(id, pct, color) {
-  if (gaugeCharts[id]) gaugeCharts[id].destroy();
-  const ctx = document.getElementById(id).getContext('2d');
-  gaugeCharts[id] = new Chart(ctx, {
-    type: 'doughnut',
+// ── 차트 인스턴스 ──────────────────────────────────────────
+let _trendChart = null;
+let _trendMode  = 'spend'; // 'spend' | 'roas' | 'purchases'
+
+// ── 메인 렌더 ──────────────────────────────────────────────
+function render(summary, daily, campaigns, periodData) {
+  const goals = getGoals();
+  const m = summary.monthly   || {};
+  const t = summary.today     || {};
+  const y = summary.yesterday || {};
+
+  // 오늘 캠페인 데이터 (period_campaigns.json.today 우선)
+  const todayCamps = (periodData && Array.isArray(periodData.today) && periodData.today.length > 0)
+    ? periodData.today
+    : (campaigns.data || []).slice(0, 8);
+
+  const budgetPct    = goals.budget    > 0 ? Math.min((m.spend / goals.budget * 100), 999)    : 0;
+  const roasPct      = goals.roas      > 0 ? Math.min((m.roas  / goals.roas   * 100), 999)    : 0;
+  const purchasesPct = goals.purchases > 0 ? Math.min((m.purchases / goals.purchases * 100), 999) : 0;
+
+  const budgetColor    = budgetPct > 90 ? 'red' : budgetPct > 70 ? 'yellow' : 'accent';
+  const roasColor      = roasPct   > 80 ? 'green' : roasPct > 50 ? 'yellow' : 'red';
+  const purchasesColor = purchasesPct > 80 ? 'green' : purchasesPct > 50 ? 'yellow' : 'accent';
+
+  // ─ 어제 대비 델타
+  function delta(curr, prev, isRoas) {
+    if (!prev) return '';
+    const d = curr - prev;
+    const cls = d >= 0 ? 'up' : 'down';
+    const sign = d >= 0 ? '▲' : '▼';
+    const val  = isRoas ? Math.abs(d).toFixed(2) : wFmt(Math.abs(d));
+    return `<span class="kpi-delta ${cls}">${sign} ${val}</span>`;
+  }
+
+  // ─ 이번달 캠페인 테이블
+  let campRows = '';
+  if (campaigns.data && campaigns.data.length) {
+    campaigns.data.slice(0, 8).forEach(c => {
+      const roasClass = c.roas >= 3 ? 'roas-good' : c.roas >= 2 ? 'roas-mid' : 'roas-bad';
+      campRows += `<tr>
+        <td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.campaign_name||'—'}</td>
+        <td>${wFmt(c.spend)}</td>
+        <td>${num(c.impressions)}</td>
+        <td>${pct(c.ctr)}</td>
+        <td>${num(c.purchases)}</td>
+        <td><span class="roas-badge ${roasClass}">${(c.roas||0).toFixed(2)}x</span></td>
+        <td>${c.cpa > 0 ? wFmt(c.cpa) : '—'}</td>
+      </tr>`;
+    });
+  } else {
+    campRows = `<tr><td colspan="7" class="camp-empty">캠페인 데이터를 불러오는 중입니다.<br>GitHub Actions가 처음 실행되면 자동으로 채워집니다.</td></tr>`;
+  }
+
+  // ─ 오늘 캠페인 미니 테이블
+  let todayCampRows = '';
+  if (todayCamps.length) {
+    todayCamps.slice(0, 6).forEach(c => {
+      const rc = (c.roas||0) >= (goals.roas||3) ? 'tc-roas-g' : (c.roas||0) >= 1.5 ? 'tc-roas-y' : 'tc-roas-r';
+      todayCampRows += `<div class="today-camp-row">
+        <div class="tc-name" title="${c.campaign_name||''}">${(c.campaign_name||'—').length > 20 ? (c.campaign_name||'').slice(0,20)+'…' : (c.campaign_name||'—')}</div>
+        <div class="tc-val">${wFmt(c.spend||0)}</div>
+        <div class="tc-val ${rc}">${(c.roas||0).toFixed(1)}x</div>
+        <div class="tc-val">${c.purchases||0}건</div>
+        <div class="tc-val">${c.cpa > 0 ? wFmt(c.cpa) : '—'}</div>
+      </div>`;
+    });
+  } else {
+    todayCampRows = `<div style="color:var(--muted);font-size:13px;padding:16px;text-align:center;">오늘 캠페인 데이터 수집 중...</div>`;
+  }
+
+  // ─ 오늘 지출 vs 일 예산
+  const dailyBudget = goals.budget > 0 ? Math.round(goals.budget / 30) : 0;
+  const spendPct    = dailyBudget > 0 ? Math.min(Math.round(t.spend / dailyBudget * 100), 100) : 0;
+  const spendBarColor = spendPct > 90 ? '#ff4d6d' : spendPct > 70 ? '#ffd60a' : '#6c63ff';
+
+  document.getElementById('main-content').innerHTML = `
+
+    <!-- ① 목표 게이지 -->
+    <p class="section-title">이번 달 목표 달성률</p>
+    <div class="goals-grid">
+      <div class="goal-card">
+        <div class="gauge-wrap">${buildGauge(budgetPct, budgetColor)}<div class="gauge-center"><div class="gauge-pct" style="color:${budgetColor==='red'?'#ff4d6d':budgetColor==='yellow'?'#ffd60a':'#6c63ff'}">${budgetPct.toFixed(0)}%</div><div class="gauge-label-sub">예산소진</div></div></div>
+        <div class="goal-name">월 광고비 예산</div>
+        <div class="goal-values"><span>목표 <b>${wFmt(goals.budget)}</b></span><span class="current">${wFmt(m.spend||0)} 사용</span></div>
+      </div>
+      <div class="goal-card" style="--accent:#00d97e">
+        <div class="gauge-wrap">${buildGauge(roasPct, roasColor)}<div class="gauge-center"><div class="gauge-pct" style="color:${roasColor==='green'?'#00d97e':roasColor==='yellow'?'#ffd60a':'#ff4d6d'}">${roasPct.toFixed(0)}%</div><div class="gauge-label-sub">ROAS</div></div></div>
+        <div class="goal-name">ROAS 목표</div>
+        <div class="goal-values"><span>목표 <b>${goals.roas}x</b></span><span class="current">${(m.roas||0).toFixed(2)}x 달성</span></div>
+      </div>
+      <div class="goal-card">
+        <div class="gauge-wrap">${buildGauge(purchasesPct, purchasesColor)}<div class="gauge-center"><div class="gauge-pct" style="color:#6c63ff">${purchasesPct.toFixed(0)}%</div><div class="gauge-label-sub">구매</div></div></div>
+        <div class="goal-name">월 구매 목표</div>
+        <div class="goal-values"><span>목표 <b>${num(goals.purchases)}건</b></span><span class="current">${num(m.purchases||0)}건 달성</span></div>
+      </div>
+    </div>
+
+    <!-- ② 오늘 광고비 집행 현황 -->
+    <div class="today-spend-section">
+      <div class="today-spend-header">
+        <p class="section-title" style="margin:0">오늘 전체 광고비 집행 현황</p>
+        <span style="font-size:11px;color:var(--muted);">vs 어제 비교</span>
+      </div>
+
+      <div class="today-spend-grid">
+        <!-- 광고비 -->
+        <div class="today-stat">
+          <div class="today-stat-label">광고비</div>
+          <div class="today-stat-value">${wFmt(t.spend||0)}</div>
+          <div class="today-stat-sub">
+            ${delta(t.spend||0, y.spend||0, false)}
+            <span style="margin-left:2px;">어제 ${wFmt(y.spend||0)}</span>
+          </div>
+          ${dailyBudget > 0 ? `<div class="today-stat-bar"><div class="today-stat-bar-fill" style="width:${spendPct}%;background:${spendBarColor}"></div></div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;">일 예산 ${wFmt(dailyBudget)} 대비 ${spendPct}%</div>` : ''}
+        </div>
+        <!-- ROAS -->
+        <div class="today-stat">
+          <div class="today-stat-label">ROAS</div>
+          <div class="today-stat-value" style="color:${(t.roas||0) >= (goals.roas||3) ? 'var(--green)' : (t.roas||0) >= 1.5 ? 'var(--yellow)' : 'var(--red)'}">${(t.roas||0).toFixed(2)}x</div>
+          <div class="today-stat-sub">
+            ${delta(t.roas||0, y.roas||0, true)}
+            <span style="margin-left:2px;">어제 ${(y.roas||0).toFixed(2)}x</span>
+          </div>
+          <div class="today-stat-bar"><div class="today-stat-bar-fill" style="width:${Math.min(roasPct,100)}%;background:${roasColor==='green'?'#00d97e':roasColor==='yellow'?'#ffd60a':'#ff4d6d'}"></div></div>
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;">목표 ${goals.roas}x 대비 ${roasPct.toFixed(0)}%</div>
+        </div>
+        <!-- 구매 -->
+        <div class="today-stat">
+          <div class="today-stat-label">구매 건수</div>
+          <div class="today-stat-value">${num(t.purchases||0)}건</div>
+          <div class="today-stat-sub">
+            ${delta(t.purchases||0, y.purchases||0, false)}
+            <span style="margin-left:2px;">어제 ${num(y.purchases||0)}건</span>
+          </div>
+        </div>
+        <!-- 구매금액 -->
+        <div class="today-stat">
+          <div class="today-stat-label">구매 금액</div>
+          <div class="today-stat-value">${wFmt(t.purchase_value||0)}</div>
+          <div class="today-stat-sub">
+            ${delta(t.purchase_value||0, y.purchase_value||0, false)}
+            <span style="margin-left:2px;">어제 ${wFmt(y.purchase_value||0)}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오늘 캠페인별 미니 테이블 -->
+      ${todayCamps.length > 0 ? `
+      <div class="today-camps">
+        <div class="today-camp-row header">
+          <div>캠페인</div><div class="tc-val">지출</div><div class="tc-val">ROAS</div><div class="tc-val">구매</div><div class="tc-val">CPA</div>
+        </div>
+        ${todayCampRows}
+      </div>` : ''}
+    </div>
+
+    <!-- ③ 추이 차트 (Chart.js) -->
+    <div class="trend-section">
+      <div class="trend-header">
+        <p class="section-title" style="margin:0">광고비·성과 추이 (최근 14일)</p>
+        <div class="trend-tabs">
+          <button class="trend-tab ${_trendMode==='spend'?'active':''}"     onclick="switchTrend('spend',this)">광고비</button>
+          <button class="trend-tab ${_trendMode==='roas'?'active':''}"      onclick="switchTrend('roas',this)">ROAS</button>
+          <button class="trend-tab ${_trendMode==='purchases'?'active':''}" onclick="switchTrend('purchases',this)">구매</button>
+        </div>
+      </div>
+      <canvas id="trendChart" height="200"></canvas>
+    </div>
+
+    <!-- ④ 이번 달 캠페인 테이블 -->
+    <div class="campaigns-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <p class="section-title" style="margin:0">이번 달 캠페인 성과</p>
+        <a href="detail.html" style="font-size:12px;color:var(--accent);text-decoration:none">전체 보기 →</a>
+      </div>
+      <table class="camp-table">
+        <thead><tr>
+          <th>캠페인</th><th>지출</th><th>노출</th><th>CTR</th><th>구매</th><th>ROAS</th><th>CPA</th>
+        </tr></thead>
+        <tbody>${campRows}</tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById('last-updated').textContent = '최종 업데이트: ' + (summary.last_updated_kst || '—');
+
+  // ─ Chart.js 추이 차트 그리기
+  const dailyData = (daily.data || []).slice(-14);
+  drawTrendChart(dailyData);
+}
+
+function drawTrendChart(dailyData) {
+  if (_trendChart) { _trendChart.destroy(); _trendChart = null; }
+  const ctx = document.getElementById('trendChart');
+  if (!ctx || !dailyData.length) return;
+
+  const labels = dailyData.map(d => (d.date||'').slice(5));
+
+  let dataset, yLabel, color;
+  if (_trendMode === 'roas') {
+    dataset = dailyData.map(d => d.roas||0);
+    yLabel  = 'ROAS';
+    color   = '#00d97e';
+  } else if (_trendMode === 'purchases') {
+    dataset = dailyData.map(d => d.purchases||0);
+    yLabel  = '구매 (건)';
+    color   = '#6c63ff';
+  } else {
+    dataset = dailyData.map(d => Math.round((d.spend||0) / 10000)); // 만원 단위
+    yLabel  = '지출 (만원)';
+    color   = '#6c63ff';
+  }
+
+  _trendChart = new Chart(ctx, {
+    type: 'bar',
     data: {
+      labels,
       datasets: [{
-        data: [Math.min(pct,100), Math.max(0,100-pct)],
-        backgroundColor: [color, 'rgba(46,50,80,.4)'],
-        borderWidth: 0, borderRadius: 4,
+        label: yLabel,
+        data: dataset,
+        backgroundColor: color + '44',
+        borderColor: color,
+        borderWidth: 2,
+        borderRadius: 5,
+        borderSkipped: false,
+        hoverBackgroundColor: color + '88',
       }]
     },
     options: {
-      responsive: false, cutout: '76%',
-      plugins: { legend: { display: false }, tooltip: { enabled: false } },
-      animation: { animateRotate: true, duration: 1200 },
-      rotation: -90, circumference: 360,
-    }
-  });
-}
-
-// ── 기간 계산 헬퍼 ──────────────────────────────────────────────
-function getPeriodDates(p) {
-  p = p || currentPeriod;
-  const now = new Date();
-  const y = now.getFullYear(), mo = now.getMonth(), da = now.getDate();
-  const fmt = dt => `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
-  const today = fmt(now);
-  switch(p) {
-    case 'this_month': {
-      const start = fmt(new Date(y, mo, 1));
-      return { start, end: today, shortLabel: `${mo+1}월`, fullLabel: `${mo+1}월 1~${da}일` };
-    }
-    case 'last_month': {
-      const lm = mo === 0 ? 11 : mo - 1;
-      const ly = mo === 0 ? y - 1 : y;
-      const start = fmt(new Date(ly, lm, 1));
-      const end = fmt(new Date(y, mo, 0));
-      const lastDay = new Date(y, mo, 0).getDate();
-      const lmNum = mo === 0 ? 12 : mo;
-      return { start, end, shortLabel: `${lmNum}월`, fullLabel: `${lmNum}월 1~${lastDay}일` };
-    }
-    case 'this_week': {
-      const dow = now.getDay();
-      const diff = dow === 0 ? -6 : 1 - dow;
-      const mon = new Date(y, mo, da + diff);
-      return { start: fmt(mon), end: today, shortLabel: '이번 주', fullLabel: `${mon.getMonth()+1}/${mon.getDate()}~${mo+1}/${da}` };
-    }
-    case 'last_week': {
-      const dow = now.getDay();
-      const diff = dow === 0 ? -6 : 1 - dow;
-      const thisMon = new Date(y, mo, da + diff);
-      const lastMon = new Date(thisMon.getTime() - 7*86400000);
-      const lastSun = new Date(thisMon.getTime() - 86400000);
-      return { start: fmt(lastMon), end: fmt(lastSun), shortLabel: '저번 주', fullLabel: `${lastMon.getMonth()+1}/${lastMon.getDate()}~${lastSun.getMonth()+1}/${lastSun.getDate()}` };
-    }
-    default: return { start: '', end: today, shortLabel: '', fullLabel: '' };
-  }
-}
-
-function getPeriodFilteredData(dailyData) {
-  const { start, end } = getPeriodDates();
-  if (!start) return (dailyData || []).slice(-14);
-  return (dailyData || []).filter(x => x.date >= start && x.date <= end);
-}
-
-function aggregatePeriodData(rows) {
-  if (!rows || !rows.length) return { spend:0, purchase_value:0, purchases:0, roas:0, cpa:0, cpm:0, impressions:0, clicks:0 };
-  const spend         = rows.reduce((a,x)=>a+(x.spend||0),0);
-  const purchase_value= rows.reduce((a,x)=>a+(x.purchase_value||0),0);
-  const purchases     = rows.reduce((a,x)=>a+(x.purchases||0),0);
-  const impressions   = rows.reduce((a,x)=>a+(x.impressions||0),0);
-  const clicks        = rows.reduce((a,x)=>a+(x.clicks||0),0);
-  const roas = spend > 0 ? Math.round(purchase_value/spend*100)/100 : 0;
-  const cpa  = purchases > 0 ? Math.round(spend/purchases) : 0;
-  const cpm  = impressions > 0 ? Math.round(spend/impressions*1000) : 0;
-  return { spend, purchase_value, purchases, impressions, clicks, roas, cpa, cpm };
-}
-
-function switchPeriod(period, btn) {
-  currentPeriod = period;
-  document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (window_lastData) {
-    render(window_lastData.s, window_lastData.d, window_lastData.c, window_lastData.p, window_lastData.g);
-  }
-}
-
-function render(s, d, c, p, g) {
-  window_lastData = {s, d, c, p, g};
-  // localStorage 우선 → goals.json(g) → summary.json(s.goals) → 하드코딩 기본값
-  const goals = getStoredGoals() || g || s.goals || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
-  const today = s.today || {};
-
-  // p = period_campaigns.json 데이터. 현재 탭 기간에 맞는 캠페인 사용
-  // ※ JS에서 [] (빈배열)도 truthy이므로 length 체크 필수
-  let camps;
-  if (p && Array.isArray(p[currentPeriod])) {
-    // period_campaigns.json 로드 성공 → 기간별 데이터 사용 (비어있으면 "데이터 없음" 표시)
-    camps = p[currentPeriod];
-  } else {
-    // period_campaigns.json 미로드 → campaigns.json 폴백
-    camps = (c && (c.data || c.campaigns)) || s.campaigns || [];
-  }
-
-  // 기간 표시 레이블
-  const periodLabels = { this_month: '이번 달', last_month: '저번 달', this_week: '이번 주', last_week: '저번 주' };
-  const periodSpendLabel = periodLabels[currentPeriod] || '기간';
-
-  // ── 기간 필터 데이터 ──
-  const periodRows = getPeriodFilteredData(d.data || []);
-  const periodData = aggregatePeriodData(periodRows);
-  const { fullLabel: periodFullLabel } = getPeriodDates();
-
-  // 게이지: 선택된 기간 집계 데이터 기반으로 계산
-  const gaugeData     = periodData;
-  const periodDays    = Math.max(periodRows.length, 1);
-  const periodRevGoal = goals.revenue * periodDays;
-  const periodSpdGoal = goals.spend   * periodDays;
-
-  const revenuePct = periodRevGoal > 0 ? Math.round((gaugeData.purchase_value||0) / periodRevGoal * 100) : 0;
-  const roasPct    = goals.roas    > 0 ? Math.round((gaugeData.roas||0)           / goals.roas    * 100) : 0;
-  const spendPct   = periodSpdGoal > 0 ? Math.round((gaugeData.spend||0)          / periodSpdGoal * 100) : 0;
-
-  // 캠페인 지출 바 (오늘 기준)
-  const spendBarItems = camps.length > 0
-    ? camps.map((c, i) => {
-        const pct = goals.spend > 0 ? Math.round(c.spend / (goals.spend / Math.max(camps.length,1)) * 100) : 0;
-        return `<div class="spend-bar-item">
-          <div class="spend-bar-meta">
-            <span class="spend-bar-name">${c.campaign_name || '캠페인 '+(i+1)}</span>
-            <span class="spend-bar-val">${wFmt(c.spend)} · ${Math.min(pct,999)}%</span>
-          </div>
-          <div class="sbar-bg"><div class="sbar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
-        </div>`;
-      }).join('')
-    : `<div style="color:var(--muted);font-size:13px;padding:8px 0;">캠페인 데이터 없음</div>`;
-
-  // ── ASC 카드: 모든 기간 → 캠페인별 실제 데이터 (period_campaigns.json 기반) ──
-  let ascCards;
-  if (camps.length > 0) {
-    const maxCampSpend = Math.max(...camps.map(cp => cp.spend||0), 1);
-    ascCards = camps.map((cp, i) => {
-      const pct       = Math.round((cp.spend||0) / maxCampSpend * 100);
-      const badgeCls  = cp.roas >= goals.roas ? 'badge-reach' : cp.roas >= goals.roas * 0.7 ? 'badge-near' : 'badge-low';
-      const badgeTxt  = cp.roas >= goals.roas ? '목표 달성' : `${Math.round((cp.roas||0)/goals.roas*100)}% 달성`;
-      const name      = cp.campaign_name || `캠페인 ${i+1}`;
-      const roasColor = cp.roas >= goals.roas ? 'var(--green)' : cp.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
-      return `<div class="asc-card active" style="--ac:${campColors[i]}">
-        <div class="goal-badge ${badgeCls}">${badgeTxt}</div>
-        <div class="asc-num">캠페인 ${i+1}</div>
-        <div class="asc-type">${name.length > 14 ? name.slice(0,14)+'…' : name}</div>
-        <div class="asc-status"><span class="sdot son"></span>활동 중</div>
-        <div class="asc-kpi-row">
-          <div class="asc-kpi"><span class="asc-kpi-lbl">ROAS</span><span class="asc-kpi-val" style="color:${roasColor}">${(cp.roas||0).toFixed(2)}x</span></div>
-          <div class="asc-kpi"><span class="asc-kpi-lbl">구매</span><span class="asc-kpi-val">${(cp.purchases||0)}건</span></div>
-          <div class="asc-kpi"><span class="asc-kpi-lbl">CPA</span><span class="asc-kpi-val">${wFmt(cp.cpa||0)}</span></div>
-          <div class="asc-kpi"><span class="asc-kpi-lbl">CPM</span><span class="asc-kpi-val">${wFmt(cp.cpm||0)}</span></div>
-        </div>
-        <div class="asc-spend-bar">
-          <div class="asc-bar-row"><span>${periodSpendLabel} 광고비</span><span>${wFmt(cp.spend||0)}</span></div>
-          <div class="asc-bar-bg"><div class="asc-bar-fill" style="width:${Math.min(pct,100)}%;background:${campColors[i]};"></div></div>
-        </div>
-      </div>`;
-    }).join('');
-  } else {
-    ascCards = `<div style="color:var(--muted);font-size:13px;grid-column:1/-1;padding:20px;">선택한 기간의 캠페인 데이터가 없습니다.</div>`;
-  }
-
-  // 차트 데이터 (기간 필터 적용)
-  const chartLabels  = periodRows.map(x => (x.date||'').slice(5));
-  const chartSpend   = periodRows.map(x => Math.round((x.spend||0) / 10000));
-  const chartRevenue = periodRows.map(x => Math.round((x.purchase_value||0) / 10000));
-
-  // 기간 집계 수치
-  const periodTotal = periodData.purchase_value;
-  const periodSpend = periodData.spend;
-  const monthGoal   = currentPeriod === 'this_month' ? 300000000 : 0;
-  const monthPct    = monthGoal > 0 ? Math.round(periodTotal / monthGoal * 100) : 0;
-  const monthLeft   = Math.max(0, monthGoal - periodTotal);
-
-  const now = new Date();
-  const dateStr = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일`;
-
-  function gaugeDiff(cur, goal, isRoas) {
-    const diff = goal - cur;
-    if (diff <= 0) return `<div class="gauge-diff diff-up">🎉 목표 달성!</div>`;
-    if (isRoas)    return `<div class="gauge-diff diff-dn">▼ ${Math.abs(diff).toFixed(2)} 부족</div>`;
-    return `<div class="gauge-diff diff-dn">${wFmt(Math.abs(diff))} 부족</div>`;
-  }
-
-  // 각 탭의 날짜 레이블
-  const tabThis  = getPeriodDates('this_month');
-  const tabLast  = getPeriodDates('last_month');
-  const tabThisW = getPeriodDates('this_week');
-  const tabLastW = getPeriodDates('last_week');
-
-  document.getElementById('main-content').outerHTML = `
-  <div id="main-content" class="main">
-
-    <!-- ① 오늘 전체 광고비 집행 현황 -->
-    <div class="total-spend-section">
-      <div class="sec-hdr">
-        <div class="sec-title">💰 오늘 전체 광고비 집행 현황</div>
-        <div style="font-size:12px;color:var(--muted)">일 목표: ${wFmt(goals.spend)}</div>
-      </div>
-      <div class="spend-overview">
-        <div class="spend-numbers">
-          <div class="spend-big">${wFmt(today.spend||0)}</div>
-          <div class="spend-target">목표 ${wFmt(goals.spend)}</div>
-          <div class="spend-pct-badge">${spendPct}% 집행</div>
-        </div>
-        <div class="spend-bar-section">${spendBarItems}</div>
-      </div>
-    </div>
-
-    <!-- ② 목표 달성률 게이지 -->
-    <div>
-      <div class="today-header">
-        <div class="today-title">📅 목표 달성률</div>
-        <div class="today-date">${periodFullLabel} · ${periodDays}일 기준</div>
-      </div>
-      <div class="today-grid">
-
-        <div class="gauge-card">
-          <div class="gauge-label">${periodSpendLabel} 매출 (구매금액)</div>
-          <div class="gauge-wrap">
-            <canvas id="gaugeRevenue"></canvas>
-            <div class="gauge-center">
-              <div class="gauge-pct" style="color:#4f6ef7">${Math.round(revenuePct)}%</div>
-              <div class="gauge-pct-sub">달성</div>
-            </div>
-          </div>
-          <div class="gauge-values">
-            <div class="gauge-current">${wFmt(gaugeData.purchase_value||0)}</div>
-            <div class="gauge-target">목표 ${wFmt(periodRevGoal)}</div>
-            ${gaugeDiff(gaugeData.purchase_value||0, periodRevGoal, false)}
-          </div>
-        </div>
-
-        <div class="gauge-card">
-          <div class="gauge-label">${periodSpendLabel} ROAS</div>
-          <div class="gauge-wrap">
-            <canvas id="gaugeRoas"></canvas>
-            <div class="gauge-center">
-              <div class="gauge-pct" style="color:#22c55e">${Math.round(roasPct)}%</div>
-              <div class="gauge-pct-sub">달성</div>
-            </div>
-          </div>
-          <div class="gauge-values">
-            <div class="gauge-current">${(gaugeData.roas||0).toFixed(2)}x</div>
-            <div class="gauge-target">목표 ${goals.roas}x</div>
-            ${gaugeDiff(gaugeData.roas||0, goals.roas, true)}
-          </div>
-        </div>
-
-        <div class="gauge-card">
-          <div class="gauge-label">${periodSpendLabel} 광고비 집행</div>
-          <div class="gauge-wrap">
-            <canvas id="gaugeSpend"></canvas>
-            <div class="gauge-center">
-              <div class="gauge-pct" style="color:#f59e0b">${Math.round(spendPct)}%</div>
-              <div class="gauge-pct-sub">집행</div>
-            </div>
-          </div>
-          <div class="gauge-values">
-            <div class="gauge-current">${wFmt(gaugeData.spend||0)}</div>
-            <div class="gauge-target">목표 ${wFmt(periodSpdGoal)}</div>
-            ${gaugeDiff(gaugeData.spend||0, periodSpdGoal, false)}
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- ③ 캠페인별 현황 (기간 탭) -->
-    <div class="asc-section">
-      <div class="sec-hdr" style="flex-direction:column;align-items:stretch;gap:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div class="sec-title">🚀 ${periodFullLabel} 캠페인별 현황</div>
-          <div style="font-size:12px;color:var(--muted)">ROAS 목표 <strong style="color:var(--text)">${goals.roas}x</strong></div>
-        </div>
-        <div class="period-tabs-row">
-          <button class="period-tab ${currentPeriod==='this_month'?'active':''}" onclick="switchPeriod('this_month', this)">이번 달<span class="tab-date">${tabThis.fullLabel}</span></button>
-          <button class="period-tab ${currentPeriod==='last_month'?'active':''}" onclick="switchPeriod('last_month', this)">저번 달<span class="tab-date">${tabLast.fullLabel}</span></button>
-          <button class="period-tab ${currentPeriod==='this_week'?'active':''}" onclick="switchPeriod('this_week', this)">이번 주<span class="tab-date">${tabThisW.fullLabel}</span></button>
-          <button class="period-tab ${currentPeriod==='last_week'?'active':''}" onclick="switchPeriod('last_week', this)">저번 주<span class="tab-date">${tabLastW.fullLabel}</span></button>
-        </div>
-      </div>
-      <div class="asc-grid" id="asc-grid">${ascCards}</div>
-    </div>
-
-    <!-- ④ 기간별 추이 차트 -->
-    <div class="weekly-section">
-      <div class="sec-hdr">
-        <div class="sec-title">📈 ${periodFullLabel} 광고비·매출 추이</div>
-        <div class="week-meta">
-          <div class="week-stat">
-            <div class="week-stat-val" style="color:var(--accent)">${wFmt(periodTotal)}</div>
-            <div class="week-stat-lbl">${periodFullLabel} 누적 매출</div>
-          </div>
-          <div class="week-stat">
-            <div class="week-stat-val" style="color:var(--muted)">${wFmt(periodSpend)}</div>
-            <div class="week-stat-lbl">${periodFullLabel} 총 광고비</div>
-          </div>
-          ${monthGoal > 0 ? `<div class="week-goal-line">
-            <span style="color:var(--yellow)">●</span>
-            목표까지 <strong style="color:var(--text)">${wFmt(monthLeft)}</strong> 남음 (${monthPct}% 달성)
-          </div>` : ''}
-        </div>
-      </div>
-      <div class="chart-wrap"><canvas id="weeklyChart"></canvas></div>
-    </div>
-
-  </div>`;
-
-  makeGauge('gaugeRevenue', revenuePct, '#4f6ef7');
-  makeGauge('gaugeRoas',    roasPct,    '#22c55e');
-  makeGauge('gaugeSpend',   spendPct,   '#f59e0b');
-
-  const wCtx = document.getElementById('weeklyChart').getContext('2d');
-  if (gaugeCharts['weeklyChart']) gaugeCharts['weeklyChart'].destroy();
-  gaugeCharts['weeklyChart'] = new Chart(wCtx, {
-    type: 'bar',
-    data: {
-      labels: chartLabels,
-      datasets: [
-        {
-          type: 'line', label: '매출(구매금액)',
-          data: chartRevenue,
-          borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,.08)',
-          tension: .4, fill: true, pointRadius: 4, pointBackgroundColor: '#22c55e',
-          yAxisID: 'y2', order: 1,
-        },
-        {
-          type: 'bar', label: '광고비',
-          data: chartSpend,
-          backgroundColor: 'rgba(79,110,247,.45)',
-          borderRadius: 5, yAxisID: 'y1', order: 2,
-        },
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: { legend: { labels: { color: '#8892b0', boxWidth: 12, font: { size: 11 } }, position: 'top' } },
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => {
+              const v = ctx.raw;
+              if (_trendMode === 'spend')     return `${v.toLocaleString()}만원`;
+              if (_trendMode === 'roas')      return `${v.toFixed(2)}x`;
+              if (_trendMode === 'purchases') return `${v}건`;
+              return v;
+            }
+          }
+        }
+      },
       scales: {
-        x: { ticks: { color: '#8892b0' }, grid: { color: 'rgba(46,50,80,.4)' } },
-        y1: {
-          position: 'left', min: 0,
-          ticks: { color: '#8892b0', callback: v => v.toLocaleString()+'만원' },
-          grid: { color: 'rgba(46,50,80,.4)' },
-          title: { display: true, text: '광고비 (만원)', color: '#8892b0', font: { size: 11 } },
-        },
-        y2: {
-          position: 'right',
-          ticks: { color: '#4f6ef7', callback: v => v.toLocaleString()+'만원' },
-          grid: { display: false },
-          title: { display: true, text: '매출 (만원)', color: '#4f6ef7', font: { size: 11 } },
-        },
+        x: { ticks: { color: '#6b7280', font: { size: 11 } }, grid: { color: 'rgba(45,49,72,.5)' } },
+        y: { ticks: { color: '#6b7280', font: { size: 11 } }, grid: { color: 'rgba(45,49,72,.5)' },
+             beginAtZero: true }
       }
     }
   });
-
-  const upd = document.getElementById('last-updated');
-  if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${s.last_updated_kst || '방금'}</span>`;
 }
 
+function switchTrend(mode, btn) {
+  _trendMode = mode;
+  document.querySelectorAll('.trend-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (window._lastDailyData) drawTrendChart(window._lastDailyData);
+}
+
+// ── 데이터 로드 ────────────────────────────────────────────
 async function loadData() {
   try {
-    const [s, d, c, p, g] = await Promise.all([
+    const [s, d, c, p] = await Promise.all([
       fetch(`${RAW}/summary.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/daily_history.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/campaigns.json?t=${Date.now()}`).then(r => r.json()),
       fetch(`${RAW}/period_campaigns.json?t=${Date.now()}`).then(r => r.json()).catch(() => null),
-      fetch(`${RAW}/goals.json?t=${Date.now()}`).then(r => r.json()).catch(() => null),
     ]);
-    render(s, d, c, p, g);
+    window._lastDailyData = (d.data || []).slice(-14);
+    render(s, d, c, p);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
-      `<div class="loading" style="color:var(--red)">
-        ⚠ 데이터를 불러오지 못했습니다.<br>
-        <small style="color:var(--muted)">${e.message}</small><br><br>
-        <button onclick="loadData()" style="background:var(--accent);border:none;color:#fff;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px;">다시 시도</button>
-      </div>`;
+      `<div class="loading" style="color:#ff4d6d">⚠ 데이터를 불러오지 못했습니다.<br><small style="color:#6b7280">${e.message}</small><br><br>
+      <button onclick="loadData()" style="background:#6c63ff;border:none;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer">다시 시도</button></div>`;
   }
 }
 
+// ── 1시간마다 자동 갱신 ─────────────────────────────────────
 loadData();
 setInterval(loadData, 60 * 60 * 1000);
 </script>

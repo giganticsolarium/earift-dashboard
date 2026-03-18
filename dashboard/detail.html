@@ -508,8 +508,8 @@ function getKpiForPeriod(s, d) {
       return { cur, prev, label: 'vs 이전 30일' };
     }
     case 'month': {
-      const rows = allData.filter(x => x.date && x.date.startsWith(thisMonth));
-      const cur  = rows.length ? aggregateDays(rows) : (s.monthly||s.month||{});
+      // summary.monthly는 Meta API this_month 직접 호출값 → 가장 정확한 소스
+      const cur = s.monthly || s.month || {};
       return { cur, prev: {}, label: '' };
     }
     case 'this_week': {
