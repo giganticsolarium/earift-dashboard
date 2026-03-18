@@ -117,13 +117,15 @@ def get_ad_insights_yesterday():
     })
 
 
-def get_activity_log(since_date, until_date):
-    """광고 운영 변경 이력 — on/off, 예산 수정 등 (지정 기간)"""
-    # activities 엔드포인트는 time_range JSON이 아닌 since/until 직접 파라미터 사용
+def get_activity_log(since_ts, until_ts):
+    """광고 운영 변경 이력 — on/off, 예산 수정 등
+    since_ts / until_ts : Unix timestamp (int)
+    Meta /activities 엔드포인트는 date string 이 아닌 Unix timestamp 를 요구함
+    """
     return api_get(AD_ACCOUNT_ID + '/activities', {
-        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_name,object_type,translated_event_type',
-        'since': since_date,
-        'until': until_date,
+        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_type',
+        'since': since_ts,
+        'until': until_ts,
         'limit': 200,
     })
 
@@ -375,24 +377,36 @@ def main():
         print(f"  ⚠️ campaign_daily.json 저장 실패 (대시보드 영향 없음): {e}")
 
     # ⑧ 광고 운영 변경 이력 (activity_log.json) — 증분 수집 후 누적 저장
+    import calendar, traceback as _tb
+    print("\n  [activity_log] 수집 시작...")
+
+    def date_to_unix(date_str):
+        """YYYY-MM-DD → UTC 기준 Unix timestamp (int)"""
+        dt = datetime.strptime(date_str, '%Y-%m-%d')
+        return int(calendar.timegm(dt.timetuple()))
+
     try:
         # 기존 누적 데이터 불러오기
-        old_act = load_json('activity_log.json', {})
+        old_act    = load_json('activity_log.json', {})
         old_events = old_act.get('events', [])
 
-        # 이미 저장된 가장 최근 event_time 이후 데이터만 새로 요청
-        # (없으면 최초 실행 → 최근 30일치 한 번만 가져옴)
+        # 수집 기간 결정: 기존 데이터 있으면 최근 2일만 재수집, 없으면 최초 30일
         if old_events:
-            # 가장 최근 이벤트 날짜 기준으로 어제~오늘만 재수집 (하루 여유)
-            # old_events는 최신순 정렬이므로 [0]이 가장 최근
-            all_times = [e['event_time'][:10] for e in old_events if e.get('event_time')]
+            all_times   = [e['event_time'][:10] for e in old_events if e.get('event_time')]
             latest_date = max(all_times) if all_times else today_str
             fetch_since = (datetime.strptime(latest_date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
         else:
             fetch_since = (now_kst - timedelta(days=30)).strftime('%Y-%m-%d')
         fetch_until = today_str
 
-        act_resp = get_activity_log(fetch_since, fetch_until)
+        since_ts = date_to_unix(fetch_since)
+        until_ts = date_to_unix(fetch_until) + 86399  # 해당 날짜 23:59:59 까지 포함
+        print(f"  [activity_log] 조회 기간: {fetch_since} ~ {fetch_until}  (ts: {since_ts}~{until_ts})")
+
+        act_resp   = get_activity_log(since_ts, until_ts)
+        raw_count  = len(act_resp.get('data', []))
+        print(f"  [activity_log] API 응답: {raw_count}건")
+
         new_events = []
         for item in act_resp.get('data', []):
             extra = {}
@@ -419,23 +433,23 @@ def main():
                 'event_time':  item.get('event_time', ''),
                 'event_type':  event_type_raw,
                 'category':    category,
-                'object_id':   item.get('object_id', ''),
-                'object_name': item.get('object_name', ''),
+                'object_id':   str(item.get('object_id', '')),
+                'object_name': item.get('object_name', item.get('object_id', '')),  # object_name 없으면 id로 대체
                 'object_type': item.get('object_type', ''),
                 'actor_name':  item.get('actor_name', ''),
                 'extra':       extra,
             })
 
-        # 기존 이벤트와 병합 — event_time + object_id 기준 중복 제거
+        # 기존 이벤트와 병합 — event_time + object_id + event_type 기준 중복 제거
         def evt_key(e):
-            return e['event_time'] + '_' + e['object_id'] + '_' + e['event_type']
+            return f"{e['event_time']}_{e['object_id']}_{e['event_type']}"
 
         merged = {evt_key(e): e for e in old_events}
         for e in new_events:
-            merged[evt_key(e)] = e  # 새 데이터로 덮어씌움 (최신 우선)
+            merged[evt_key(e)] = e
 
-        # 최신순 정렬 후 90일 초과분 제거 (데이터 무한 증가 방지)
-        cutoff_act = (now_kst - timedelta(days=90)).strftime('%Y-%m-%d')
+        # 최신순 정렬 후 90일 초과분 제거
+        cutoff_act  = (now_kst - timedelta(days=90)).strftime('%Y-%m-%d')
         merged_list = sorted(merged.values(), key=lambda x: x['event_time'], reverse=True)
         merged_list = [e for e in merged_list if e['event_time'][:10] >= cutoff_act]
 
@@ -444,10 +458,10 @@ def main():
             'events':       merged_list,
         })
         print(f"  ✓ activity_log.json 저장 완료: 신규 {len(new_events)}건 / 누적 {len(merged_list)}건")
+
     except Exception as e:
-        import traceback
-        print(f"  ⚠️ activity_log.json 수집/저장 실패 (대시보드 영향 없음): {e}")
-        print(f"  ⚠️ 상세 오류:\n{traceback.format_exc()}")
+        print(f"  ⚠️ activity_log.json 수집/저장 실패: {e}")
+        print(f"  ⚠️ 상세 오류:\n{_tb.format_exc()}")
 
     print(f"\n✅ 수집 완료 | 이번달 지출: {monthly.get('spend',0):,.0f}원 | ROAS: {monthly.get('roas',0)}")
 
