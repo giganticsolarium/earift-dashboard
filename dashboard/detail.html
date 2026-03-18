@@ -1017,6 +1017,7 @@ setInterval(checkAndHideYesterdayData, 60 * 60 * 1000);
 // ── 운영 이력 팝업 ──────────────────────────────
 let _actEvents = [];
 let _actLevel  = 'all';
+let _actCategoryFilter = 'all';
 
 function openActivityModal() {
   const today    = new Date();
@@ -1052,6 +1053,10 @@ function setActLevel(lv) {
   document.querySelectorAll('.act-ltab').forEach(b => b.classList.toggle('active', b.dataset.lv === lv));
   renderActTimeline();
 }
+function setActCategory(cat) {
+  _actCategoryFilter = (_actCategoryFilter === cat) ? 'all' : cat;
+  renderActTimeline();
+}
 function renderActTimeline() {
   const from = document.getElementById('actFrom').value;
   const to   = document.getElementById('actTo').value;
@@ -1073,11 +1078,15 @@ function renderActTimeline() {
   const onCnt  = evts.filter(e => e.category === 'status_on').length;
   const offCnt = evts.filter(e => e.category === 'status_off').length;
   const budCnt = evts.filter(e => e.category === 'budget_up' || e.category === 'budget_down').length;
+  if (_actCategoryFilter === 'on')     evts = evts.filter(e => e.category === 'status_on');
+  if (_actCategoryFilter === 'off')    evts = evts.filter(e => e.category === 'status_off');
+  if (_actCategoryFilter === 'budget') evts = evts.filter(e => e.category === 'budget_up' || e.category === 'budget_down');
+  const isActive = (cat) => _actCategoryFilter === cat ? 'style="outline:2px solid var(--accent);outline-offset:2px;border-radius:10px;cursor:pointer;"' : 'style="cursor:pointer;"';
   document.getElementById('actStats').innerHTML =
-    '<div class="act-stat"><div class="act-stat-num">' + total + '</div><div class="act-stat-label">전체 변경</div></div>' +
-    '<div class="act-stat"><div class="act-stat-num" style="color:var(--green)">' + onCnt + '</div><div class="act-stat-label">ON 전환</div></div>' +
-    '<div class="act-stat"><div class="act-stat-num" style="color:var(--red)">' + offCnt + '</div><div class="act-stat-label">OFF 전환</div></div>' +
-    '<div class="act-stat"><div class="act-stat-num" style="color:var(--accent)">' + budCnt + '</div><div class="act-stat-label">예산 변경</div></div>';
+    '<div class="act-stat" onclick="setActCategory(\'all\')"    ' + isActive('all')    + '><div class="act-stat-num">' + total + '</div><div class="act-stat-label">전체 변경</div></div>' +
+    '<div class="act-stat" onclick="setActCategory(\'on\')"     ' + isActive('on')     + '><div class="act-stat-num" style="color:var(--green)">' + onCnt + '</div><div class="act-stat-label">ON 전환</div></div>' +
+    '<div class="act-stat" onclick="setActCategory(\'off\')"    ' + isActive('off')    + '><div class="act-stat-num" style="color:var(--red)">' + offCnt + '</div><div class="act-stat-label">OFF 전환</div></div>' +
+    '<div class="act-stat" onclick="setActCategory(\'budget\')" ' + isActive('budget') + '><div class="act-stat-num" style="color:var(--accent)">' + budCnt + '</div><div class="act-stat-label">예산 변경</div></div>';
   if (!evts.length) {
     document.getElementById('actTimeline').innerHTML = '<div class="act-empty">해당 기간 운영 이력이 없습니다.</div>';
     return;
