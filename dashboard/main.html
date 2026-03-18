@@ -226,10 +226,10 @@
       <button class="page-tab active">🎯 목표 현황</button>
       <button class="page-tab" onclick="location.href='detail.html'">📈 상세 데이터</button>
       <button class="page-tab" onclick="location.href='hourly.html'">🕐 시간별 히스토리</button>
-      <button class="page-tab" onclick="location.href='activity.html'">📋 운영 이력</button>
     </div>
   </div>
   <div class="nav-right">
+    <button class="goal-btn" onclick="openActivityModal()">📋 운영 이력</button>
     <button class="goal-btn" onclick="openGoalsModal()">⚙️ 목표 설정</button>
     <div class="nbadge">광고 계정 <span>이어리프트</span></div>
     <div class="nbadge" id="last-updated"><span class="pulse"></span>로딩 중...</div>
@@ -828,9 +828,6 @@ setInterval(loadData, 60 * 60 * 1000);
 .act-actor::before { content: '·'; margin-right: 4px; }
 .act-empty { text-align: center; color: var(--muted); font-size: 14px; padding: 56px 0; }
 </style>
-
-<!-- 플로팅 버튼 -->
-<button class="act-float-btn" onclick="openActivityModal()">📋 운영 이력</button>
 
 <!-- 운영 이력 모달 -->
 <div class="act-overlay" id="actOverlay" onclick="actCloseOutside(event)">
