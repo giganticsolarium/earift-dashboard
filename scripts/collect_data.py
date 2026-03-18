@@ -117,6 +117,17 @@ def get_ad_insights_yesterday():
     })
 
 
+def get_activity_log(days=30):
+    """광고 운영 변경 이력 — on/off, 예산 수정 등 (최근 N일)"""
+    since = (datetime.now(KST) - timedelta(days=days)).strftime('%Y-%m-%d')
+    until = datetime.now(KST).strftime('%Y-%m-%d')
+    return api_get(AD_ACCOUNT_ID + '/activities', {
+        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_name,object_type',
+        'time_range': json.dumps({'since': since, 'until': until}),
+        'limit': 300,
+    })
+
+
 # ── 데이터 파싱 헬퍼 ────────────────────────────────────────
 def extract(items, action_type):
     """actions / action_values 배열에서 특정 타입 값 추출"""
@@ -362,6 +373,52 @@ def main():
         save('campaign_daily.json', {'last_updated': now_kst.isoformat(), 'data': camp_daily_rows})
     except Exception as e:
         print(f"  ⚠️ campaign_daily.json 저장 실패 (대시보드 영향 없음): {e}")
+
+    # ⑧ 광고 운영 변경 이력 (activity_log.json) — 실패해도 기존 데이터에 영향 없음
+    try:
+        act_resp = get_activity_log(days=30)
+        act_events = []
+        for item in act_resp.get('data', []):
+            extra = {}
+            try:
+                extra = json.loads(item.get('extra_data', '{}') or '{}')
+            except Exception:
+                pass
+
+            event_type_raw = item.get('event_type', '')
+            # 이벤트 분류: status 변경 / 예산 변경 / 기타 수정
+            if 'status' in event_type_raw.lower() or event_type_raw in ('ad_enabled', 'ad_disabled',
+                'adset_enabled', 'adset_disabled', 'campaign_enabled', 'campaign_disabled'):
+                new_status = extra.get('new_value', extra.get('status', ''))
+                category = 'status_on' if str(new_status).upper() in ('ACTIVE', '1', 'TRUE', 'ON') else 'status_off'
+            elif 'budget' in event_type_raw.lower() or 'bid' in event_type_raw.lower():
+                old_b = float(extra.get('old_value', extra.get('old_budget', 0)) or 0)
+                new_b = float(extra.get('new_value', extra.get('new_budget', 0)) or 0)
+                category = 'budget_up' if new_b >= old_b else 'budget_down'
+            else:
+                category = 'edit'
+
+            act_events.append({
+                'event_time':   item.get('event_time', ''),
+                'event_type':   event_type_raw,
+                'category':     category,
+                'object_id':    item.get('object_id', ''),
+                'object_name':  item.get('object_name', ''),
+                'object_type':  item.get('object_type', ''),
+                'actor_name':   item.get('actor_name', ''),
+                'extra':        extra,
+            })
+
+        # 최신순 정렬
+        act_events.sort(key=lambda x: x['event_time'], reverse=True)
+        save('activity_log.json', {
+            'last_updated': now_kst.isoformat(),
+            'period_days':  30,
+            'events':       act_events,
+        })
+        print(f"  ✓ activity_log.json 저장 완료: {len(act_events)}건")
+    except Exception as e:
+        print(f"  ⚠️ activity_log.json 수집/저장 실패 (대시보드 영향 없음): {e}")
 
     print(f"\n✅ 수집 완료 | 이번달 지출: {monthly.get('spend',0):,.0f}원 | ROAS: {monthly.get('roas',0)}")
 
