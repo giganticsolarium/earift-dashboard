@@ -117,14 +117,12 @@ def get_ad_insights_yesterday():
     })
 
 
-def get_activity_log(days=30):
-    """광고 운영 변경 이력 — on/off, 예산 수정 등 (최근 N일)"""
-    since = (datetime.now(KST) - timedelta(days=days)).strftime('%Y-%m-%d')
-    until = datetime.now(KST).strftime('%Y-%m-%d')
+def get_activity_log(since_date, until_date):
+    """광고 운영 변경 이력 — on/off, 예산 수정 등 (지정 기간)"""
     return api_get(AD_ACCOUNT_ID + '/activities', {
         'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_name,object_type',
-        'time_range': json.dumps({'since': since, 'until': until}),
-        'limit': 300,
+        'time_range': json.dumps({'since': since_date, 'until': until_date}),
+        'limit': 200,
     })
 
 
@@ -374,10 +372,24 @@ def main():
     except Exception as e:
         print(f"  ⚠️ campaign_daily.json 저장 실패 (대시보드 영향 없음): {e}")
 
-    # ⑧ 광고 운영 변경 이력 (activity_log.json) — 실패해도 기존 데이터에 영향 없음
+    # ⑧ 광고 운영 변경 이력 (activity_log.json) — 증분 수집 후 누적 저장
     try:
-        act_resp = get_activity_log(days=30)
-        act_events = []
+        # 기존 누적 데이터 불러오기
+        old_act = load_json('activity_log.json', {})
+        old_events = old_act.get('events', [])
+
+        # 이미 저장된 가장 최근 event_time 이후 데이터만 새로 요청
+        # (없으면 최초 실행 → 최근 30일치 한 번만 가져옴)
+        if old_events:
+            # 가장 최근 이벤트 날짜 기준으로 어제~오늘만 재수집 (하루 여유)
+            latest_date = old_events[0]['event_time'][:10]
+            fetch_since = (datetime.strptime(latest_date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        else:
+            fetch_since = (now_kst - timedelta(days=30)).strftime('%Y-%m-%d')
+        fetch_until = today_str
+
+        act_resp = get_activity_log(fetch_since, fetch_until)
+        new_events = []
         for item in act_resp.get('data', []):
             extra = {}
             try:
@@ -386,9 +398,10 @@ def main():
                 pass
 
             event_type_raw = item.get('event_type', '')
-            # 이벤트 분류: status 변경 / 예산 변경 / 기타 수정
-            if 'status' in event_type_raw.lower() or event_type_raw in ('ad_enabled', 'ad_disabled',
-                'adset_enabled', 'adset_disabled', 'campaign_enabled', 'campaign_disabled'):
+            if 'status' in event_type_raw.lower() or event_type_raw in (
+                    'ad_enabled', 'ad_disabled',
+                    'adset_enabled', 'adset_disabled',
+                    'campaign_enabled', 'campaign_disabled'):
                 new_status = extra.get('new_value', extra.get('status', ''))
                 category = 'status_on' if str(new_status).upper() in ('ACTIVE', '1', 'TRUE', 'ON') else 'status_off'
             elif 'budget' in event_type_raw.lower() or 'bid' in event_type_raw.lower():
@@ -398,25 +411,35 @@ def main():
             else:
                 category = 'edit'
 
-            act_events.append({
-                'event_time':   item.get('event_time', ''),
-                'event_type':   event_type_raw,
-                'category':     category,
-                'object_id':    item.get('object_id', ''),
-                'object_name':  item.get('object_name', ''),
-                'object_type':  item.get('object_type', ''),
-                'actor_name':   item.get('actor_name', ''),
-                'extra':        extra,
+            new_events.append({
+                'event_time':  item.get('event_time', ''),
+                'event_type':  event_type_raw,
+                'category':    category,
+                'object_id':   item.get('object_id', ''),
+                'object_name': item.get('object_name', ''),
+                'object_type': item.get('object_type', ''),
+                'actor_name':  item.get('actor_name', ''),
+                'extra':       extra,
             })
 
-        # 최신순 정렬
-        act_events.sort(key=lambda x: x['event_time'], reverse=True)
+        # 기존 이벤트와 병합 — event_time + object_id 기준 중복 제거
+        def evt_key(e):
+            return e['event_time'] + '_' + e['object_id'] + '_' + e['event_type']
+
+        merged = {evt_key(e): e for e in old_events}
+        for e in new_events:
+            merged[evt_key(e)] = e  # 새 데이터로 덮어씌움 (최신 우선)
+
+        # 최신순 정렬 후 90일 초과분 제거 (데이터 무한 증가 방지)
+        cutoff_act = (now_kst - timedelta(days=90)).strftime('%Y-%m-%d')
+        merged_list = sorted(merged.values(), key=lambda x: x['event_time'], reverse=True)
+        merged_list = [e for e in merged_list if e['event_time'][:10] >= cutoff_act]
+
         save('activity_log.json', {
             'last_updated': now_kst.isoformat(),
-            'period_days':  30,
-            'events':       act_events,
+            'events':       merged_list,
         })
-        print(f"  ✓ activity_log.json 저장 완료: {len(act_events)}건")
+        print(f"  ✓ activity_log.json 저장 완료: 신규 {len(new_events)}건 / 누적 {len(merged_list)}건")
     except Exception as e:
         print(f"  ⚠️ activity_log.json 수집/저장 실패 (대시보드 영향 없음): {e}")
 
