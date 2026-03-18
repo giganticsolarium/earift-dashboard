@@ -130,21 +130,6 @@
       text-transform:uppercase; letter-spacing:.4px; border-bottom:1px solid var(--border); text-align:center;
     }
     .ts-table th.name-col { text-align:left; min-width:130px; }
-    .ts-table th.sortable { cursor:pointer; user-select:none; transition:color .15s; }
-    .ts-table th.sortable:hover { color:var(--text); }
-    .ts-table th.sort-asc  { color:var(--accent); }
-    .ts-table th.sort-desc { color:var(--accent); }
-    .sort-icon { font-size:9px; margin-left:3px; opacity:.5; }
-    .sort-asc  .sort-icon, .sort-desc .sort-icon { opacity:1; }
-    /* 지표 색상 */
-    .val-green  { color:var(--green)  !important; font-weight:700; }
-    .val-yellow { color:var(--yellow) !important; font-weight:700; }
-    .val-red    { color:var(--red)    !important; font-weight:700; }
-    /* 전날 대비 화살표 */
-    .delta-up   { font-size:10px; margin-left:3px; color:var(--green); }
-    .delta-down { font-size:10px; margin-left:3px; color:var(--red); }
-    .delta-up.bad   { color:var(--red); }
-    .delta-down.bad { color:var(--green); }
     .ts-table td { padding:10px 10px; border-bottom:1px solid rgba(46,50,80,.4); text-align:center; vertical-align:middle; }
     .ts-table td.name-col { text-align:left; }
     .ts-table tr:last-child td { border-bottom:none; }
@@ -183,133 +168,6 @@
 
     /* ── TOOLTIP ── */
     [title] { cursor: default; }
-
-    /* ── 변경 이력 버튼 ── */
-    .activity-btn {
-      display: flex; align-items: center; gap: 6px;
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 8px; padding: 5px 14px; font-size: 12px; font-weight: 600;
-      color: var(--muted); cursor: pointer; transition: all .2s;
-    }
-    .activity-btn:hover { color: var(--text); border-color: var(--accent); background: var(--surface3); }
-    .activity-btn .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--yellow); }
-
-    /* ── 팝업 오버레이 ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; z-index: 1000;
-      background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
-      align-items: center; justify-content: center;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 18px; width: 780px; max-width: 95vw;
-      max-height: 80vh; display: flex; flex-direction: column;
-      box-shadow: 0 24px 64px rgba(0,0,0,.6);
-    }
-    .modal-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 22px; border-bottom: 1px solid var(--border); flex-shrink: 0;
-    }
-    .modal-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .modal-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-    .modal-close {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 8px; padding: 4px 12px; font-size: 13px; font-weight: 600;
-      color: var(--muted); cursor: pointer; transition: all .15s;
-    }
-    .modal-close:hover { color: var(--red); border-color: var(--red)88; }
-    .modal-filter {
-      display: flex; align-items: center; gap: 8px; padding: 11px 22px;
-      border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap;
-    }
-    .modal-filter-row2 {
-      display: flex; align-items: center; gap: 8px; padding: 10px 22px;
-      border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap;
-      background: var(--surface2);
-    }
-    .mftab {
-      padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
-      cursor: pointer; border: 1px solid var(--border);
-      background: transparent; color: var(--muted); transition: all .18s;
-    }
-    .mftab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .mftab:hover:not(.active) { color: var(--text); border-color: var(--accent)88; }
-    .mftab.date-tab.active { background: var(--surface3); color: var(--text); border-color: var(--cyan); }
-    .filter-sep { width: 1px; height: 16px; background: var(--border); }
-    .date-input-wrap {
-      display: none; align-items: center; gap: 6px; flex-wrap: wrap;
-    }
-    .date-input-wrap.show { display: flex; }
-    .act-date-input {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); padding: 4px 10px;
-      font-size: 12px; cursor: pointer;
-    }
-    .act-date-input:focus { outline: none; border-color: var(--cyan); }
-    .date-range-sep { font-size: 12px; color: var(--muted); }
-    .apply-btn {
-      background: var(--accent); border: none; border-radius: 8px;
-      color: #fff; padding: 4px 12px; font-size: 12px; font-weight: 600;
-      cursor: pointer; transition: opacity .15s;
-    }
-    .apply-btn:hover { opacity: .85; }
-    .filter-label { font-size: 11px; color: var(--muted); font-weight: 600; }
-    .modal-body { overflow-y: auto; padding: 0 22px 18px; flex: 1; }
-
-    /* 날짜 구분 */
-    .act-date-div {
-      display: flex; align-items: center; gap: 10px; padding: 16px 0 8px;
-    }
-    .act-date-div span { font-size: 11px; font-weight: 700; color: var(--muted); white-space: nowrap; }
-    .act-date-div::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-    /* 이벤트 행 */
-    .act-row {
-      display: grid; grid-template-columns: 48px 28px 1fr auto;
-      align-items: flex-start; gap: 10px;
-      padding: 9px 10px; border-radius: 10px; transition: background .15s;
-    }
-    .act-row:hover { background: var(--surface2); }
-    .act-time { font-size: 11px; color: var(--muted); padding-top: 3px; white-space: nowrap; }
-    .act-icon {
-      width: 28px; height: 28px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; font-size: 13px;
-    }
-    .act-icon.on     { background: #22c55e22; }
-    .act-icon.off    { background: #ef444422; }
-    .act-icon.budget { background: #f59e0b22; }
-    .act-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-    .act-main { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .act-lv {
-      font-size: 10px; font-weight: 700; padding: 2px 7px;
-      border-radius: 5px; flex-shrink: 0; letter-spacing: .3px;
-    }
-    .act-lv.campaign { background: #4f6ef722; color: #7b9ef5; border: 1px solid #4f6ef744; }
-    .act-lv.adset    { background: #a855f722; color: #c084fc; border: 1px solid #a855f744; }
-    .act-lv.ad       { background: #06b6d422; color: #22d3ee; border: 1px solid #06b6d444; }
-    .act-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 340px; }
-    .act-desc { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
-    .ch-before { text-decoration: line-through; }
-    .ch-arrow  { color: var(--border); font-size: 11px; }
-    .ch-after.up  { color: var(--green); font-weight: 700; }
-    .ch-after.dn  { color: var(--red);   font-weight: 700; }
-    .ch-after.on  { color: var(--green); font-weight: 700; }
-    .ch-after.off { color: var(--red);   font-weight: 700; }
-    .act-by::before { content: '·'; margin-right: 4px; }
-    .act-by .author { color: var(--accent); font-weight: 600; }
-    .act-badge {
-      font-size: 11px; font-weight: 700; padding: 3px 9px;
-      border-radius: 6px; white-space: nowrap; align-self: center;
-    }
-    .act-badge.on   { background: #22c55e18; color: var(--green); border: 1px solid #22c55e44; }
-    .act-badge.off  { background: #ef444418; color: var(--red);   border: 1px solid #ef444444; }
-    .act-badge.up   { background: #f59e0b18; color: var(--yellow); border: 1px solid #f59e0b44; }
-    .act-badge.dn   { background: #ef444418; color: var(--red);    border: 1px solid #ef444444; }
-    .act-notice {
-      text-align: center; padding: 28px; color: var(--muted);
-      font-size: 13px; line-height: 1.7;
-    }
   </style>
 </head>
 <body>
@@ -330,56 +188,10 @@
     </div>
   </div>
   <div class="nav-right">
-    <button class="activity-btn" onclick="openActivityModal()">
-      <span class="dot"></span> 운영 변경 이력
-    </button>
     <div class="nbadge">광고 계정 <span>이어리프트</span></div>
     <div class="nbadge" id="last-updated"><span class="pulse"></span>로딩 중...</div>
   </div>
 </nav>
-
-<!-- 운영 변경 이력 팝업 -->
-<div class="modal-overlay" id="activityModal" onclick="if(event.target===this)closeActivityModal()">
-  <div class="modal-box">
-    <div class="modal-head">
-      <div class="modal-title"><span class="dot"></span> 운영 변경 이력</div>
-      <button class="modal-close" onclick="closeActivityModal()">✕ 닫기</button>
-    </div>
-    <!-- 1행: 레벨 필터 -->
-    <div class="modal-filter">
-      <span class="filter-label">대상</span>
-      <button class="mftab active" onclick="filterActivity('all',this)">전체</button>
-      <button class="mftab" onclick="filterActivity('campaign',this)">캠페인</button>
-      <button class="mftab" onclick="filterActivity('adset',this)">광고 세트</button>
-      <button class="mftab" onclick="filterActivity('ad',this)">광고</button>
-    </div>
-    <!-- 2행: 날짜 필터 -->
-    <div class="modal-filter-row2">
-      <span class="filter-label">기간</span>
-      <button class="mftab date-tab active" onclick="setDateFilter('today',this)">오늘</button>
-      <button class="mftab date-tab" onclick="setDateFilter('yesterday',this)">어제</button>
-      <div class="filter-sep"></div>
-      <button class="mftab date-tab" onclick="setDateFilter('single',this)">날짜 선택</button>
-      <div class="date-input-wrap" id="singleDateWrap">
-        <input type="date" class="act-date-input" id="singleDateInput" onchange="renderActivityLog()">
-      </div>
-      <div class="filter-sep"></div>
-      <button class="mftab date-tab" onclick="setDateFilter('range',this)">기간 선택</button>
-      <div class="date-input-wrap" id="rangeDateWrap">
-        <input type="date" class="act-date-input" id="rangeStart">
-        <span class="date-range-sep">~</span>
-        <input type="date" class="act-date-input" id="rangeEnd">
-        <button class="apply-btn" onclick="renderActivityLog()">조회</button>
-      </div>
-    </div>
-    <div class="modal-body" id="activityBody">
-      <div class="act-notice">
-        📋 이 기능은 준비 중입니다.<br>
-        <span style="font-size:12px;">Meta API 변경 이력 연동 후 캠페인·세트·광고의<br>ON/OFF, 예산 변경, 수정자 정보가 여기에 표시됩니다.</span>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- DATE BAR -->
 <div class="date-bar">
@@ -508,8 +320,8 @@ function getKpiForPeriod(s, d) {
       return { cur, prev, label: 'vs 이전 30일' };
     }
     case 'month': {
-      // summary.monthly는 Meta API this_month 직접 호출값 → 가장 정확한 소스
-      const cur = s.monthly || s.month || {};
+      const rows = allData.filter(x => x.date && x.date.startsWith(thisMonth));
+      const cur  = rows.length ? aggregateDays(rows) : (s.monthly||s.month||{});
       return { cur, prev: {}, label: '' };
     }
     case 'this_week': {
@@ -582,9 +394,8 @@ function wFmt(n) {
 function render(s, d, c, a, h, p, g) {
   window._lastData = {s, d, c, a, h, p, g};
   const {cur: today, prev: yesterday, label: periodLabel} = getKpiForPeriod(s, d);
-  // 기간에 맞는 캠페인 데이터 선택 (period_campaigns.json에서 직접 로드)
+  // 기간에 맞는 캠페인 데이터 선택
   const periodCampData = {
-    today:      (p && Array.isArray(p.today))      ? p.today      : null,
     this_week:  (p && Array.isArray(p.this_week))  ? p.this_week  : null,
     last_week:  (p && Array.isArray(p.last_week))  ? p.last_week  : null,
     last_month: (p && Array.isArray(p.last_month)) ? p.last_month : null,
@@ -592,13 +403,11 @@ function render(s, d, c, a, h, p, g) {
   const camps = periodCampData[currentPeriod] !== null && periodCampData[currentPeriod] !== undefined
     ? periodCampData[currentPeriod]
     : (c && (c.data || c.campaigns)) || s.campaigns || [];
-  const _hasPeriodData = periodCampData[currentPeriod] !== null && periodCampData[currentPeriod] !== undefined;
-  const campPeriodLabel = _hasPeriodData
-    ? ({ today:'오늘', yesterday:'어제', this_week:'이번 주', last_week:'저번 주',
-         month:'이번 달', last_month:'저번 달', '7d':'최근 7일', '30d':'최근 30일',
-         custom: customStart ? `${customStart} ~ ${customEnd}` : '직접 선택'
-       }[currentPeriod] || '이번 달')
-    : '이번 달';
+  const campPeriodLabel = { today:'오늘 (이번 달 기준)', yesterday:'어제 (이번 달 기준)',
+    this_week:'이번 주', last_week:'저번 주', month:'이번 달', last_month:'저번 달',
+    '7d':'최근 7일 (이번 달 기준)', '30d':'최근 30일 (이번 달 기준)',
+    custom: customStart ? `${customStart} ~ ${customEnd}` : '직접 선택 (이번 달 기준)'
+  }[currentPeriod] || '이번 달';
   const ads = (a && a.data) || [];
   // localStorage 우선 → goals.json(g) → summary.json(s.goals) → 하드코딩 기본값
   const goals = getStoredGoals() || g || s.goals || { budget: 3000000, roas: 2.5, revenue: 7500000, spend: 3000000 };
@@ -612,52 +421,16 @@ function render(s, d, c, a, h, p, g) {
     return `<span class="${cls}">${sign} ${val}</span>`;
   }
 
-  // 성과 추이 차트 데이터 (오늘 선택 시 = 시간별 누적, 그 외 = 일별)
-  function aggregateSnap(snap) {
-    const cs = snap.campaigns || [];
-    const spend         = cs.reduce((a, c) => a + (c.spend||0), 0);
-    const impressions   = cs.reduce((a, c) => a + (c.impressions||0), 0);
-    const clicks        = cs.reduce((a, c) => a + (c.clicks||0), 0);
-    const purchases     = cs.reduce((a, c) => a + (c.purchases||0), 0);
-    const purchase_value= cs.reduce((a, c) => a + (c.purchase_value||0), 0);
-    const roas = spend > 0 ? Math.round(purchase_value / spend * 100) / 100 : 0;
-    const cpa  = purchases > 0 ? Math.round(spend / purchases) : 0;
-    const ctr  = impressions > 0 ? Math.round(clicks / impressions * 10000) / 100 : 0;
-    const cpm  = impressions > 0 ? Math.round(spend / impressions * 1000) : 0;
-    return { spend, impressions, clicks, purchases, purchase_value, roas, cpa, ctr, cpm };
-  }
-
-  const _chartNow = new Date();
-  const _chartTodayStr = `${_chartNow.getFullYear()}-${String(_chartNow.getMonth()+1).padStart(2,'0')}-${String(_chartNow.getDate()).padStart(2,'0')}`;
-  const _todaySnapsForChart = ((h && h.snapshots) || [])
-    .filter(s => s.date === _chartTodayStr)
-    .sort((a, b) => a.hour - b.hour);
-  const _useHourly = (currentPeriod === 'today' && _todaySnapsForChart.length > 0);
-
-  let labels, dsRoas, dsCpa, dsSpend, dsImp, dsClick, dsCtr, dsCpm;
-  if (_useHourly) {
-    // 시간별 누적 데이터 (hourly_snapshots 기반)
-    labels  = _todaySnapsForChart.map(s => `${String(s.hour).padStart(2,'0')}:00`);
-    const snAgg = _todaySnapsForChart.map(s => aggregateSnap(s));
-    dsRoas  = snAgg.map(x => x.roas);
-    dsCpa   = snAgg.map(x => Math.round(x.cpa / 1000));
-    dsSpend = snAgg.map(x => Math.round(x.spend / 10000));
-    dsImp   = snAgg.map(x => Math.round(x.impressions / 1000));
-    dsClick = snAgg.map(x => Math.round(x.clicks / 100) * 100 / 1000);
-    dsCtr   = snAgg.map(x => x.ctr);
-    dsCpm   = snAgg.map(x => Math.round(x.cpm / 1000));
-  } else {
-    // 일별 데이터 (daily_history 기반)
-    const dailyArr = getChartDays(d);
-    labels  = dailyArr.map(x => (x.date||'').slice(5));
-    dsRoas  = dailyArr.map(x => x.roas||0);
-    dsCpa   = dailyArr.map(x => Math.round((x.cpa||0)/1000));
-    dsSpend = dailyArr.map(x => Math.round((x.spend||0)/10000));
-    dsImp   = dailyArr.map(x => Math.round((x.impressions||0)/1000));
-    dsClick = dailyArr.map(x => Math.round((x.clicks||0)/100)*100/1000);
-    dsCtr   = dailyArr.map(x => x.ctr||0);
-    dsCpm   = dailyArr.map(x => Math.round((x.cpm||0)/1000));
-  }
+  // 일별 차트 데이터
+  const dailyArr  = getChartDays(d);
+  const labels    = dailyArr.map(x => (x.date||'').slice(5));
+  const dsRoas    = dailyArr.map(x => x.roas||0);
+  const dsCpa     = dailyArr.map(x => Math.round((x.cpa||0)/1000));
+  const dsSpend   = dailyArr.map(x => Math.round((x.spend||0)/10000));
+  const dsImp     = dailyArr.map(x => Math.round((x.impressions||0)/1000));
+  const dsClick   = dailyArr.map(x => Math.round((x.clicks||0)/100)*100/1000);
+  const dsCtr     = dailyArr.map(x => x.ctr||0);
+  const dsCpm     = dailyArr.map(x => Math.round((x.cpm||0)/1000));
 
   const dsMap = {
     roas:  { label:'ROAS',        data: dsRoas,  color:'#4f6ef7', y:'y1' },
@@ -825,7 +598,7 @@ function render(s, d, c, a, h, p, g) {
     <!-- 성과 추이 차트 -->
     <div class="chart-section">
       <div class="sec-hdr">
-        <div class="sec-title">성과 추이 그래프${_useHourly ? ' <span style="font-size:11px;color:var(--accent);font-weight:400;margin-left:6px;">⏱ 시간별 누적 · 오늘</span>' : ''}</div>
+        <div class="sec-title">성과 추이 그래프</div>
         <div class="metric-toggles">
           <button class="mtog on"  data-m="roas"  onclick="toggleMetric(this)">ROAS</button>
           <button class="mtog on"  data-m="cpa"   onclick="toggleMetric(this)">CPA</button>
@@ -869,16 +642,11 @@ function render(s, d, c, a, h, p, g) {
           <div class="sec-title">📊 금일 콘텐츠 TOP 리스트</div>
           <div style="font-size:11px;color:var(--muted);">지출 기준 정렬 · META 실측값</div>
         </div>
-        <table class="ts-table" id="ads-table" style="margin-top:14px;">
+        <table class="ts-table" style="margin-top:14px;">
           <thead>
             <tr>
               <th class="name-col">콘텐츠명</th>
-              <th class="sortable" onclick="sortAdsBy('spend')"   id="ads-th-spend">지출<span class="sort-icon">▼</span></th>
-              <th class="sortable" onclick="sortAdsBy('purchases')" id="ads-th-purchases">구매<span class="sort-icon">↕</span></th>
-              <th class="sortable" onclick="sortAdsBy('roas')"    id="ads-th-roas">ROAS<span class="sort-icon">↕</span></th>
-              <th class="sortable" onclick="sortAdsBy('ctr')"     id="ads-th-ctr">CTR<span class="sort-icon">↕</span></th>
-              <th class="sortable" onclick="sortAdsBy('cpm')"     id="ads-th-cpm">CPM<span class="sort-icon">↕</span></th>
-              <th class="sortable" onclick="sortAdsBy('cpa')"     id="ads-th-cpa">CPA<span class="sort-icon">↕</span></th>
+              <th>지출</th><th>구매</th><th>ROAS</th><th>CTR</th><th>CPM</th><th>CPA</th>
             </tr>
           </thead>
           <tbody id="ads-tbody">
@@ -942,11 +710,34 @@ function render(s, d, c, a, h, p, g) {
   window._labels = labels;
   window._chart  = mainChart;
 
-  // 금일 콘텐츠 TOP 리스트 — 전역 데이터 저장 후 렌더 함수 호출
-  window._adsData = (a && a.data) || [];
-  window._adsYesterday = {};
-  ((a && a.yesterday_data) || []).forEach(r => { if (r.ad_id) window._adsYesterday[r.ad_id] = r; });
-  renderAdsTable();
+  // 금일 콘텐츠 TOP 리스트 렌더 (META 실측값 그대로)
+  const adsBody = document.getElementById('ads-tbody');
+  if (adsBody) {
+    if (ads.length > 0) {
+      const sortedAds = [...ads].sort((a, b) => (b.spend || 0) - (a.spend || 0));
+      adsBody.innerHTML = sortedAds.map((ad, i) => {
+        const adName = ad.ad_name || `광고 ${i+1}`;
+        const spend = ad.spend || 0;
+        const purchases = ad.purchases || 0;
+        const roas = ad.roas || 0;
+        const ctr = ad.ctr || 0;
+        const cpm = ad.cpm || 0;
+        const cpa = ad.cpa || 0;
+        const displayName = adName.length > 20 ? adName.slice(0, 20)+'…' : adName;
+        return `<tr>
+          <td class="name-col"><span class="camp-name" title="${adName}">${displayName}</span></td>
+          <td>${wFmt(spend)}</td>
+          <td>${purchases}건</td>
+          <td>${roas.toFixed(2)}x</td>
+          <td>${ctr.toFixed(2)}%</td>
+          <td>${wFmt(cpm)}</td>
+          <td>${wFmt(cpa)}</td>
+        </tr>`;
+      }).join('');
+    } else {
+      adsBody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px;">광고 데이터가 없습니다.</td></tr>';
+    }
+  }
 
   const upd = document.getElementById('last-updated');
   if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${s.last_updated_kst||'방금'}</span>`;
@@ -1004,228 +795,6 @@ loadData();
 checkAndHideYesterdayData();
 setInterval(loadData, 60 * 60 * 1000);
 setInterval(checkAndHideYesterdayData, 60 * 60 * 1000);
-
-// ── 콘텐츠 TOP 리스트: 정렬 · 색상 · 전날 대비 ──────────────
-let _adsSortKey = 'spend';
-let _adsSortDir = 'desc';
-
-// 지표별 색상 기준 (dir: high = 높을수록 좋음, low = 낮을수록 좋음)
-const _adThresholds = {
-  roas:      { green: 2.0,   yellow: 1.0,   dir: 'high' },
-  ctr:       { green: 2.0,   yellow: 1.0,   dir: 'high' },
-  cpm:       { green: 20000, yellow: 40000, dir: 'low'  },
-  cpa:       { green: 30000, yellow: 60000, dir: 'low'  },
-  purchases: { green: 5,     yellow: 1,     dir: 'high' },
-};
-
-function metricClass(key, val) {
-  const t = _adThresholds[key];
-  if (!t || val === 0) return '';
-  if (t.dir === 'high') {
-    if (val >= t.green)  return 'val-green';
-    if (val >= t.yellow) return 'val-yellow';
-    return 'val-red';
-  } else {
-    if (val <= t.green)  return 'val-green';
-    if (val <= t.yellow) return 'val-yellow';
-    return 'val-red';
-  }
-}
-
-function deltaArrow(key, todayVal, adId) {
-  const y = window._adsYesterday[adId];
-  if (!y) return '';
-  const yVal = y[key] || 0;
-  if (yVal === 0) return '';
-  const diff = todayVal - yVal;
-  if (Math.abs(diff) / Math.max(yVal, 0.001) < 0.02) return ''; // 2% 미만 변화 무시
-  const up = diff > 0;
-  const t  = _adThresholds[key];
-  const good = t ? ((t.dir === 'high' && up) || (t.dir === 'low' && !up)) : up;
-  const cls = up ? (good ? 'delta-up' : 'delta-up bad') : (good ? 'delta-down bad' : 'delta-down');
-  return `<span class="${cls}">${up ? '▲' : '▼'}</span>`;
-}
-
-function sortAdsBy(key) {
-  if (_adsSortKey === key) {
-    _adsSortDir = _adsSortDir === 'desc' ? 'asc' : 'desc';
-  } else {
-    _adsSortKey = key;
-    _adsSortDir = 'desc';
-  }
-  // 헤더 스타일 업데이트
-  document.querySelectorAll('#ads-table th.sortable').forEach(th => {
-    th.classList.remove('sort-asc', 'sort-desc');
-    th.querySelector('.sort-icon').textContent = '↕';
-  });
-  const activeTh = document.getElementById(`ads-th-${key}`);
-  if (activeTh) {
-    activeTh.classList.add(_adsSortDir === 'desc' ? 'sort-desc' : 'sort-asc');
-    activeTh.querySelector('.sort-icon').textContent = _adsSortDir === 'desc' ? '▼' : '▲';
-  }
-  renderAdsTable();
-}
-
-function renderAdsTable() {
-  const adsBody = document.getElementById('ads-tbody');
-  if (!adsBody) return;
-  const data = window._adsData || [];
-  if (!data.length) {
-    adsBody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px;">광고 데이터가 없습니다.</td></tr>';
-    return;
-  }
-  const sorted = [...data].sort((a, b) => {
-    const av = a[_adsSortKey] || 0, bv = b[_adsSortKey] || 0;
-    return _adsSortDir === 'desc' ? bv - av : av - bv;
-  });
-  adsBody.innerHTML = sorted.map((ad, i) => {
-    const adName  = ad.ad_name || `광고 ${i+1}`;
-    const display = adName.length > 22 ? adName.slice(0, 22) + '…' : adName;
-    const spend    = ad.spend     || 0;
-    const purchases= ad.purchases || 0;
-    const roas     = ad.roas      || 0;
-    const ctr      = ad.ctr       || 0;
-    const cpm      = ad.cpm       || 0;
-    const cpa      = ad.cpa       || 0;
-    const id       = ad.ad_id     || '';
-    return `<tr>
-      <td class="name-col"><span class="camp-name" title="${adName}">${display}</span><div class="camp-total" style="font-size:10px;color:var(--muted);">${ad.campaign_name||''}</div></td>
-      <td>${wFmt(spend)}${deltaArrow('spend',spend,id)}</td>
-      <td class="${metricClass('purchases',purchases)}">${purchases}건${deltaArrow('purchases',purchases,id)}</td>
-      <td class="${metricClass('roas',roas)}">${roas.toFixed(2)}x${deltaArrow('roas',roas,id)}</td>
-      <td class="${metricClass('ctr',ctr)}">${ctr.toFixed(2)}%${deltaArrow('ctr',ctr,id)}</td>
-      <td class="${metricClass('cpm',cpm)}">${wFmt(cpm)}${deltaArrow('cpm',cpm,id)}</td>
-      <td class="${metricClass('cpa',cpa)}">${wFmt(cpa)}${deltaArrow('cpa',cpa,id)}</td>
-    </tr>`;
-  }).join('');
-
-  // 초기 헤더 상태 반영
-  const activeTh = document.getElementById(`ads-th-${_adsSortKey}`);
-  if (activeTh) {
-    activeTh.classList.add(_adsSortDir === 'desc' ? 'sort-desc' : 'sort-asc');
-    activeTh.querySelector('.sort-icon').textContent = _adsSortDir === 'desc' ? '▼' : '▲';
-  }
-}
-
-// ── 운영 변경 이력 팝업 ──────────────────────────────────────
-function openActivityModal() {
-  document.getElementById('activityModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  renderActivityLog();
-}
-function closeActivityModal() {
-  document.getElementById('activityModal').classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeActivityModal(); });
-
-// ── 필터 상태 ──
-let _actFilter   = 'all';    // 레벨 필터
-let _actDateMode = 'today';  // 날짜 필터 모드
-
-// 레벨 필터 (1행)
-function filterActivity(type, btn) {
-  _actFilter = type;
-  document.querySelectorAll('.modal-filter .mftab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderActivityLog();
-}
-
-// 날짜 필터 (2행)
-function setDateFilter(mode, btn) {
-  _actDateMode = mode;
-  document.querySelectorAll('.date-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  // 날짜 입력창 표시 제어
-  document.getElementById('singleDateWrap').classList.toggle('show', mode === 'single');
-  document.getElementById('rangeDateWrap').classList.toggle('show', mode === 'range');
-  // single/range는 입력 후 조회하므로 즉시 렌더 안 함
-  if (mode !== 'single' && mode !== 'range') renderActivityLog();
-}
-
-// ── 샘플 데이터 (Meta API 연동 전 목업) — isoDate 필드 추가 ──
-const _kst = () => new Date(Date.now() + 9*60*60*1000);
-const _fmt  = d => d.toISOString().slice(0,10);
-const _todayIso     = _fmt(_kst());
-const _yesterdayIso = _fmt(new Date(_kst().getTime() - 86400000));
-const _d1515        = '2026-03-15';
-
-const _activitySample = [
-  { isoDate:_todayIso,     date:'오늘',  time:'14:32', type:'budget', level:'adset',    name:'260303_밀린전환_리타겟_여성30대',       before:'₩50,000',  after:'₩80,000 (+60%)',  dir:'up',  author:'조형준' },
-  { isoDate:_todayIso,     date:'오늘',  time:'11:05', type:'on',     level:'campaign', name:'260303 밀린 전환 캠페인',               before:'OFF',      after:'ON',              dir:'on',  author:'조형준' },
-  { isoDate:_todayIso,     date:'오늘',  time:'09:18', type:'budget', level:'campaign', name:'260216_ASC_1차광고',                   before:'₩200,000', after:'₩150,000 (-25%)', dir:'dn',  author:'조형준' },
-  { isoDate:_yesterdayIso, date:'어제',  time:'22:41', type:'off',    level:'ad',       name:'[영상] 이어리프트_착용후기_30초_v3',    before:'ON',       after:'OFF',             dir:'off', author:'조형준' },
-  { isoDate:_yesterdayIso, date:'어제',  time:'16:22', type:'on',     level:'adset',    name:'ASC_1차_전체타겟_구매최적화',           before:'OFF',      after:'ON',              dir:'on',  author:'조형준' },
-  { isoDate:_yesterdayIso, date:'어제',  time:'10:07', type:'budget', level:'adset',    name:'260303_전환_신규_여성25-44',            before:'₩30,000',  after:'₩60,000 (+100%)', dir:'up',  author:'조형준' },
-  { isoDate:_d1515,        date:'3월 15일', time:'19:55', type:'off', level:'campaign', name:'260307_ASC_2차광고',                   before:'ON',       after:'OFF',             dir:'off', author:'조형준' },
-  { isoDate:_d1515,        date:'3월 15일', time:'11:30', type:'budget',level:'campaign',name:'전환 메신저 [전환수 목표]',             before:'₩500,000', after:'₩700,000 (+40%)', dir:'up',  author:'조형준' },
-];
-
-const _typeIcon = { on:'🟢', off:'🔴', budget:'💰' };
-const _badgeMap = { on:'on', off:'off', up:'up', dn:'dn' };
-
-function renderActivityLog() {
-  const body = document.getElementById('activityBody');
-
-  // ── 날짜 범위 계산 ──
-  let dateFrom = null, dateTo = null;
-  if (_actDateMode === 'today') {
-    dateFrom = dateTo = _todayIso;
-  } else if (_actDateMode === 'yesterday') {
-    dateFrom = dateTo = _yesterdayIso;
-  } else if (_actDateMode === 'single') {
-    const v = document.getElementById('singleDateInput').value;
-    if (!v) { body.innerHTML = '<div class="act-notice">날짜를 선택해주세요.</div>'; return; }
-    dateFrom = dateTo = v;
-  } else if (_actDateMode === 'range') {
-    dateFrom = document.getElementById('rangeStart').value;
-    dateTo   = document.getElementById('rangeEnd').value;
-    if (!dateFrom || !dateTo) { body.innerHTML = '<div class="act-notice">시작일과 종료일을 선택해주세요.</div>'; return; }
-    if (dateFrom > dateTo) { body.innerHTML = '<div class="act-notice">시작일이 종료일보다 늦을 수 없어요.</div>'; return; }
-  }
-
-  // ── 레벨 + 날짜 동시 필터 ──
-  let filtered = _activitySample.filter(r => {
-    const levelOk = _actFilter === 'all' || r.level === _actFilter;
-    const dateOk  = !dateFrom || (r.isoDate >= dateFrom && r.isoDate <= dateTo);
-    return levelOk && dateOk;
-  });
-
-  if (!filtered.length) {
-    body.innerHTML = '<div class="act-notice">해당 조건의 변경 이력이 없습니다.</div>';
-    return;
-  }
-
-  let html = '';
-  let lastDate = '';
-  filtered.forEach(r => {
-    if (r.date !== lastDate) {
-      html += `<div class="act-date-div"><span>${r.date}</span></div>`;
-      lastDate = r.date;
-    }
-    const isStatus = r.type === 'on' || r.type === 'off';
-    const changeHTML = isStatus
-      ? `상태 <span class="ch-before">${r.before}</span><span class="ch-arrow"> → </span><span class="ch-after ${r.dir}">${r.after}</span>`
-      : `예산 <span class="ch-before">${r.before}</span><span class="ch-arrow"> → </span><span class="ch-after ${r.dir}">${r.after}</span>`;
-    html += `
-    <div class="act-row">
-      <div class="act-time">${r.time}</div>
-      <div class="act-icon ${r.type === 'budget' ? 'budget' : r.dir}">${_typeIcon[r.type]}</div>
-      <div class="act-body">
-        <div class="act-main">
-          <span class="act-lv ${r.level}">${r.level === 'campaign' ? '캠페인' : r.level === 'adset' ? '광고 세트' : '광고'}</span>
-          <span class="act-name">${r.name}</span>
-        </div>
-        <div class="act-desc">
-          ${changeHTML}
-          <span class="act-by">수정자: <span class="author">${r.author}</span></span>
-        </div>
-      </div>
-      <div class="act-badge ${_badgeMap[r.dir]}">${isStatus ? r.after : (r.dir === 'up' ? '예산 ▲' : '예산 ▼')}</div>
-    </div>`;
-  });
-  body.innerHTML = html;
-}
 </script>
 </body>
 </html>
