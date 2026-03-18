@@ -742,5 +742,245 @@ async function loadData() {
 loadData();
 setInterval(loadData, 60 * 60 * 1000);
 </script>
+
+<!-- ══════════════════════════════════════════════════
+     운영 이력 팝업 (플로팅 버튼 + 모달)
+══════════════════════════════════════════════════ -->
+<style>
+/* ── 플로팅 버튼 ── */
+.act-float-btn {
+  position: fixed; bottom: 28px; right: 28px; z-index: 900;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); border-radius: 50px;
+  padding: 11px 20px; font-size: 13px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,.4);
+  transition: all .2s; display: flex; align-items: center; gap: 7px;
+}
+.act-float-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 28px rgba(79,110,247,.45); }
+
+/* ── 오버레이 ── */
+.act-overlay { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.65); backdrop-filter: blur(6px); align-items: center; justify-content: center; }
+.act-overlay.open { display: flex; }
+
+/* ── 모달 박스 ── */
+.act-modal {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+  width: 740px; max-width: 96vw; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,.6);
+}
+
+/* ── 헤더 ── */
+.act-hdr { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0; gap: 12px; }
+.act-hdr-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.act-title { font-size: 16px; font-weight: 800; white-space: nowrap; }
+.act-date-range {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 5px 12px;
+}
+.act-date-range input[type="date"] { background: transparent; border: none; color: var(--text); font-size: 12px; font-family: inherit; cursor: pointer; outline: none; width: 108px; }
+.act-date-range input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(.55); cursor: pointer; }
+.act-date-sep { color: var(--muted); font-size: 12px; }
+.act-close-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: all .2s; flex-shrink: 0; }
+.act-close-btn:hover { background: var(--surface3); color: var(--text); }
+
+/* ── 필터 바 ── */
+.act-filter-bar { padding: 12px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.act-level-tabs { display: flex; gap: 4px; background: var(--surface2); border-radius: 10px; padding: 3px; width: fit-content; }
+.act-ltab { padding: 5px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all .2s; }
+.act-ltab.active { background: var(--accent); color: #fff; }
+
+/* ── 통계 ── */
+.act-stats { display: flex; padding: 14px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.act-stat { flex: 1; text-align: center; border-right: 1px solid var(--border); padding: 0 12px; }
+.act-stat:first-child { padding-left: 0; }
+.act-stat:last-child { border-right: none; padding-right: 0; }
+.act-stat-num { font-size: 22px; font-weight: 800; }
+.act-stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ── 타임라인 ── */
+.act-timeline-wrap { overflow-y: auto; flex: 1; padding: 8px 24px 20px; }
+.act-date-divider { font-size: 11px; font-weight: 700; color: var(--muted); padding: 10px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 4px; margin-top: 12px; letter-spacing: .5px; }
+.act-date-divider:first-child { margin-top: 0; }
+.act-event { display: flex; align-items: flex-start; gap: 12px; padding: 9px 10px; border-radius: 10px; transition: background .15s; margin-bottom: 1px; }
+.act-event:hover { background: var(--surface2); }
+.act-evt-icon { font-size: 16px; width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.act-evt-icon.on   { background: rgba(34,197,94,.15); }
+.act-evt-icon.off  { background: rgba(239,68,68,.15); }
+.act-evt-icon.up   { background: rgba(79,110,247,.15); }
+.act-evt-icon.down { background: rgba(245,158,11,.15); }
+.act-evt-icon.edit { background: rgba(136,146,176,.12); }
+.act-evt-body { flex: 1; min-width: 0; }
+.act-evt-top { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-bottom: 2px; }
+.act-lvl-badge { font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px; background: var(--surface3); color: var(--muted); flex-shrink: 0; }
+.act-obj-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px; }
+.act-st-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; }
+.act-st-badge.on   { background: rgba(34,197,94,.18);  color: #22c55e; }
+.act-st-badge.off  { background: rgba(239,68,68,.18);  color: #ef4444; }
+.act-st-badge.up   { background: rgba(79,110,247,.18); color: #4f6ef7; }
+.act-st-badge.down { background: rgba(245,158,11,.18); color: #f59e0b; }
+.act-st-badge.edit { background: rgba(136,146,176,.15);color: #8892b0; }
+.act-evt-detail { font-size: 12px; color: var(--muted); margin-bottom: 2px; }
+.act-evt-detail .chg-arrow { color: var(--accent); font-weight: 700; margin: 0 4px; }
+.act-evt-meta { display: flex; align-items: center; gap: 6px; }
+.act-time  { font-size: 11px; color: var(--muted); }
+.act-actor { font-size: 11px; color: var(--muted); }
+.act-actor::before { content: '·'; margin-right: 4px; }
+.act-empty { text-align: center; color: var(--muted); font-size: 14px; padding: 56px 0; }
+</style>
+
+<!-- 플로팅 버튼 -->
+<button class="act-float-btn" onclick="openActivityModal()">📋 운영 이력</button>
+
+<!-- 운영 이력 모달 -->
+<div class="act-overlay" id="actOverlay" onclick="actCloseOutside(event)">
+  <div class="act-modal" id="actModal">
+    <div class="act-hdr">
+      <div class="act-hdr-left">
+        <span class="act-title">📋 운영 이력</span>
+        <div class="act-date-range">
+          <input type="date" id="actFrom" onchange="renderActTimeline()">
+          <span class="act-date-sep">~</span>
+          <input type="date" id="actTo" onchange="renderActTimeline()">
+        </div>
+      </div>
+      <button class="act-close-btn" onclick="closeActivityModal()">✕</button>
+    </div>
+    <div class="act-filter-bar">
+      <div class="act-level-tabs">
+        <button class="act-ltab active" data-lv="all"      onclick="setActLevel('all')">전체</button>
+        <button class="act-ltab"        data-lv="campaign" onclick="setActLevel('campaign')">캠페인</button>
+        <button class="act-ltab"        data-lv="adset"    onclick="setActLevel('adset')">광고세트</button>
+        <button class="act-ltab"        data-lv="ad"       onclick="setActLevel('ad')">광고</button>
+      </div>
+    </div>
+    <div class="act-stats" id="actStats"></div>
+    <div class="act-timeline-wrap" id="actTimeline"><div class="act-empty">불러오는 중...</div></div>
+  </div>
+</div>
+
+<script>
+// ── 운영 이력 팝업 ──────────────────────────────
+let _actEvents = [];
+let _actLevel  = 'all';
+
+function openActivityModal() {
+  const today     = new Date();
+  const firstDay  = new Date(today.getFullYear(), today.getMonth(), 1);
+  const fmt = d => d.toISOString().slice(0, 10);
+  const fromEl = document.getElementById('actFrom');
+  const toEl   = document.getElementById('actTo');
+  if (!fromEl.value) fromEl.value = fmt(firstDay);
+  if (!toEl.value)   toEl.value   = fmt(today);
+  document.getElementById('actOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  fetchActData();
+}
+function closeActivityModal() {
+  document.getElementById('actOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function actCloseOutside(e) {
+  if (e.target === document.getElementById('actOverlay')) closeActivityModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeActivityModal(); });
+
+async function fetchActData() {
+  try {
+    const r = await fetch(RAW + '/activity_log.json?t=' + Date.now());
+    const d = await r.json();
+    _actEvents = d.events || [];
+  } catch(_) { _actEvents = []; }
+  renderActTimeline();
+}
+function setActLevel(lv) {
+  _actLevel = lv;
+  document.querySelectorAll('.act-ltab').forEach(b => b.classList.toggle('active', b.dataset.lv === lv));
+  renderActTimeline();
+}
+function renderActTimeline() {
+  const from = document.getElementById('actFrom').value;
+  const to   = document.getElementById('actTo').value;
+  let evts = _actEvents.filter(e => {
+    const d = e.event_time.slice(0, 10);
+    if (from && d < from) return false;
+    if (to   && d > to)   return false;
+    if (_actLevel !== 'all') {
+      const t = (e.object_type || '').toLowerCase();
+      if (_actLevel === 'campaign' && !t.includes('campaign')) return false;
+      if (_actLevel === 'adset'    && !t.includes('adset') && !t.includes('ad_set')) return false;
+      if (_actLevel === 'ad') {
+        if (t.includes('campaign') || t.includes('adset') || t.includes('ad_set')) return false;
+      }
+    }
+    return true;
+  });
+  const total  = evts.length;
+  const onCnt  = evts.filter(e => e.category === 'status_on').length;
+  const offCnt = evts.filter(e => e.category === 'status_off').length;
+  const budCnt = evts.filter(e => e.category === 'budget_up' || e.category === 'budget_down').length;
+  document.getElementById('actStats').innerHTML =
+    `<div class="act-stat"><div class="act-stat-num">${total}</div><div class="act-stat-label">전체 변경</div></div>` +
+    `<div class="act-stat"><div class="act-stat-num" style="color:var(--green)">${onCnt}</div><div class="act-stat-label">ON 전환</div></div>` +
+    `<div class="act-stat"><div class="act-stat-num" style="color:var(--red)">${offCnt}</div><div class="act-stat-label">OFF 전환</div></div>` +
+    `<div class="act-stat"><div class="act-stat-num" style="color:var(--accent)">${budCnt}</div><div class="act-stat-label">예산 변경</div></div>`;
+  if (!evts.length) {
+    document.getElementById('actTimeline').innerHTML = '<div class="act-empty">해당 기간 운영 이력이 없습니다.</div>';
+    return;
+  }
+  const byDate = {};
+  evts.forEach(e => { const d = e.event_time.slice(0,10); (byDate[d] = byDate[d]||[]).push(e); });
+  let html = '';
+  Object.keys(byDate).sort().reverse().forEach(date => {
+    html += '<div class="act-date-divider">' + date.replace(/-/g,'.') + '</div>';
+    byDate[date].forEach(e => {
+      const info   = _actInfo(e.category);
+      const time   = e.event_time.slice(11,16);
+      const lvl    = _actLvl(e.object_type);
+      const detail = _actDetail(e.extra);
+      html += '<div class="act-event">' +
+        '<div class="act-evt-icon ' + info.cls + '">' + info.icon + '</div>' +
+        '<div class="act-evt-body">' +
+          '<div class="act-evt-top">' +
+            '<span class="act-lvl-badge">' + lvl + '</span>' +
+            '<span class="act-obj-name">' + (e.object_name || e.object_id || '-') + '</span>' +
+            '<span class="act-st-badge ' + info.cls + '">' + info.label + '</span>' +
+          '</div>' +
+          (detail ? '<div class="act-evt-detail">' + detail + '</div>' : '') +
+          '<div class="act-evt-meta">' +
+            '<span class="act-time">' + time + '</span>' +
+            (e.actor_name ? '<span class="act-actor">' + e.actor_name + '</span>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    });
+  });
+  document.getElementById('actTimeline').innerHTML = html;
+}
+function _actInfo(cat) {
+  if (cat === 'status_on')   return { icon:'🟢', cls:'on',   label:'ON' };
+  if (cat === 'status_off')  return { icon:'🔴', cls:'off',  label:'OFF' };
+  if (cat === 'budget_up')   return { icon:'📈', cls:'up',   label:'예산 증액' };
+  if (cat === 'budget_down') return { icon:'📉', cls:'down', label:'예산 감소' };
+  return { icon:'✏️', cls:'edit', label:'수정' };
+}
+function _actLvl(type) {
+  const t = (type||'').toLowerCase();
+  if (t.includes('campaign')) return '캠페인';
+  if (t.includes('adset') || t.includes('ad_set')) return '광고세트';
+  if (t.includes('ad')) return '광고';
+  return type || '-';
+}
+function _actDetail(x) {
+  if (!x) return '';
+  const oldV = x.old_value !== undefined ? x.old_value : (x.old_budget !== undefined ? x.old_budget : null);
+  const newV = x.new_value !== undefined ? x.new_value : (x.new_budget !== undefined ? x.new_budget : null);
+  if (oldV !== null && newV !== null && String(oldV) !== String(newV)) {
+    const fmt = v => { const n = parseFloat(v); return (!isNaN(n) && n > 999) ? n.toLocaleString() + '원' : String(v); };
+    return fmt(oldV) + '<span class="chg-arrow">→</span>' + fmt(newV);
+  }
+  return '';
+}
+</script>
 </body>
 </html>
