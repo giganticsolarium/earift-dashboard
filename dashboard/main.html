@@ -220,7 +220,7 @@ const won  = wFmt;
 function buildGauge(pctVal, color) {
   const r = 54, circ = 2 * Math.PI * r;
   const filled = Math.min(pctVal / 100, 1) * circ;
-  const colorMap = { green:var(--green)||'#00d97e', accent:'#6c63ff', yellow:'#ffd60a', red:'#ff4d6d' };
+  // colorMap 제거 (unused, var(--green)은 JS SyntaxError)
   const stroke = { green:'#00d97e', accent:'#6c63ff', yellow:'#ffd60a', red:'#ff4d6d' }[color] || '#6c63ff';
   return `<svg width="130" height="130" viewBox="0 0 130 130">
     <circle class="gauge-bg" cx="65" cy="65" r="${r}"/>
@@ -394,9 +394,9 @@ function render(summary, daily, campaigns, periodData) {
       <div class="trend-header">
         <p class="section-title" style="margin:0">광고비·성과 추이 (최근 14일)</p>
         <div class="trend-tabs">
-          <button class="trend-tab ${_trendMode==='spend'?'active':''}"     onclick="switchTrend('spend',this)">광고비</button>
-          <button class="trend-tab ${_trendMode==='roas'?'active':''}"      onclick="switchTrend('roas',this)">ROAS</button>
-          <button class="trend-tab ${_trendMode==='purchases'?'active':''}" onclick="switchTrend('purchases',this)">구매</button>
+          <button class="trend-tab" id="ttab-spend"     onclick="switchTrend('spend',this)">광고비</button>
+          <button class="trend-tab" id="ttab-roas"      onclick="switchTrend('roas',this)">ROAS</button>
+          <button class="trend-tab" id="ttab-purchases" onclick="switchTrend('purchases',this)">구매</button>
         </div>
       </div>
       <canvas id="trendChart" height="200"></canvas>
@@ -421,7 +421,11 @@ function render(summary, daily, campaigns, periodData) {
 
   // ─ Chart.js 추이 차트 그리기
   const dailyData = (daily.data || []).slice(-14);
+  window._lastDailyData = dailyData;
   drawTrendChart(dailyData);
+  // 현재 선택된 탭 활성화
+  const activeTab = document.getElementById('ttab-' + _trendMode);
+  if (activeTab) activeTab.classList.add('active');
 }
 
 function drawTrendChart(dailyData) {
