@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>이어리프트 광고 대시보드</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root {
     --bg: #0f1117; --card: #1a1d2e; --card2: #222538;
@@ -53,18 +52,15 @@
   .up   { color:var(--green); }
   .down { color:var(--red); }
 
-  /* ─── 주간 차트 ─────────────────────────────── */
+  /* ─── 일별 차트 ─────────────────────────────── */
   .chart-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
   .chart-header  { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-  .chart-tabs { display:flex; gap:8px; }
-  .tab-btn { background:none; border:1px solid var(--border); color:var(--muted); padding:5px 12px; border-radius:6px; font-size:12px; cursor:pointer; }
-  .tab-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-  #chart-canvas { width:100%; height:200px; position:relative; }
-  .chart-bars { display:flex; align-items:flex-end; gap:6px; height:160px; padding-bottom:24px; position:relative; }
-  .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; }
-  .chart-bar { width:100%; border-radius:4px 4px 0 0; min-height:2px; transition:height .5s ease; cursor:pointer; position:relative; }
+  #chart-canvas { width:100%; height:200px; position:relative; overflow:hidden; }
+  .chart-bars { display:flex; align-items:flex-end; gap:6px; height:160px; padding-bottom:24px; }
+  .chart-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; min-width:0; }
+  .chart-bar { width:100%; border-radius:4px 4px 0 0; min-height:2px; cursor:pointer; position:relative; }
   .chart-bar:hover::after { content:attr(data-tooltip); position:absolute; top:-28px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:4px 8px; border-radius:4px; font-size:11px; white-space:nowrap; z-index:10; }
-  .chart-date { font-size:10px; color:var(--muted); }
+  .chart-date { font-size:10px; color:var(--muted); white-space:nowrap; }
   .chart-empty { text-align:center; color:var(--muted); padding:60px 0; font-size:14px; }
 
   /* ─── 캠페인 목록 ───────────────────────────── */
@@ -92,41 +88,9 @@
   .spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .8s linear infinite; margin-right:10px; }
   @keyframes spin { to { transform:rotate(360deg); } }
 
-  /* ─── 오늘 광고비 현황 (개편) ──────────────────── */
-  .today-spend-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
-  .today-spend-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-  .today-spend-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px; margin-bottom:20px; }
-  .today-stat { background:var(--card2); border-radius:12px; padding:16px 18px; position:relative; }
-  .today-stat-label { font-size:11px; color:var(--muted); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
-  .today-stat-value { font-size:24px; font-weight:800; color:var(--text); line-height:1; }
-  .today-stat-sub { font-size:12px; color:var(--muted); margin-top:6px; display:flex; align-items:center; gap:4px; }
-  .today-stat-bar { margin-top:10px; height:3px; background:var(--border); border-radius:2px; overflow:hidden; }
-  .today-stat-bar-fill { height:100%; border-radius:2px; transition:width .6s ease; }
-
-  /* ─── 오늘 캠페인 미니 테이블 ───────────────────── */
-  .today-camps { margin-top:4px; }
-  .today-camp-row { display:grid; grid-template-columns:1fr 90px 70px 70px 70px; gap:8px; padding:9px 10px; border-radius:8px; align-items:center; }
-  .today-camp-row:hover { background:var(--card2); }
-  .today-camp-row.header { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; font-weight:600; padding-bottom:6px; border-bottom:1px solid var(--border); }
-  .today-camp-row.header:hover { background:none; }
-  .tc-name { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .tc-val { font-size:13px; text-align:right; }
-  .tc-roas-g { color:var(--green); } .tc-roas-y { color:var(--yellow); } .tc-roas-r { color:var(--red); }
-
-  /* ─── 추이 차트 (Chart.js 기반) ────────────────── */
-  .trend-section { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; margin-bottom:28px; }
-  .trend-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
-  .trend-tabs { display:flex; gap:6px; }
-  .trend-tab { background:none; border:1px solid var(--border); color:var(--muted); padding:4px 12px; border-radius:6px; font-size:12px; cursor:pointer; }
-  .trend-tab.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-  #trendChart { height:200px; }
-
   @media (max-width:768px) {
     .goals-grid { grid-template-columns:1fr; }
     .kpi-grid   { grid-template-columns:repeat(2,1fr); }
-    .today-spend-grid { grid-template-columns:repeat(2,1fr); }
-    .today-camp-row { grid-template-columns:1fr 80px 60px; }
-    .today-camp-row > *:nth-child(4), .today-camp-row > *:nth-child(5) { display:none; }
   }
 </style>
 </head>
@@ -171,7 +135,7 @@
 const REPO = 'giganticsolarium/earift-dashboard';
 const RAW  = `https://raw.githubusercontent.com/${REPO}/main/data`;
 
-// ── 기본 목표값 (localStorage 우선) ───────────────────────
+// ── 목표값 ─────────────────────────────────────────────────
 function getGoals() {
   return {
     budget:    parseFloat(localStorage.getItem('goal_budget')    || 3000000),
@@ -197,30 +161,20 @@ function toggleSettings() {
   }
 }
 
-// ── 숫자 포맷 (한국식: 만원/억원) ──────────────────────────
+// ── 숫자 포맷 (한국식 만원/억원) ──────────────────────────
 function wFmt(n) {
   n = Math.round(+n || 0);
   if (n >= 100000000) { const v = n/100000000; return (v%1===0 ? v : v.toFixed(1)) + '억원'; }
   if (n >= 10000)     return Math.round(n/10000).toLocaleString() + '만원';
   return n.toLocaleString() + '원';
 }
-// 간단 원화 (소수점 없이, 단위 표시)
-function wShort(n) {
-  n = Math.round(+n || 0);
-  if (n >= 100000000) return (n/100000000).toFixed(1) + '억';
-  if (n >= 10000)     return Math.round(n/10000).toLocaleString() + '만';
-  return n.toLocaleString();
-}
-const num  = n => (+n || 0).toLocaleString('ko-KR');
-const pct  = n => (+n || 0).toFixed(1) + '%';
-// 구버전 호환용
-const won  = wFmt;
+const num = n => (+n || 0).toLocaleString('ko-KR');
+const pct = n => (+n || 0).toFixed(1) + '%';
 
 // ── 게이지 SVG ─────────────────────────────────────────────
 function buildGauge(pctVal, color) {
   const r = 54, circ = 2 * Math.PI * r;
   const filled = Math.min(pctVal / 100, 1) * circ;
-  // colorMap 제거 (unused, var(--green)은 JS SyntaxError)
   const stroke = { green:'#00d97e', accent:'#6c63ff', yellow:'#ffd60a', red:'#ff4d6d' }[color] || '#6c63ff';
   return `<svg width="130" height="130" viewBox="0 0 130 130">
     <circle class="gauge-bg" cx="65" cy="65" r="${r}"/>
@@ -232,291 +186,144 @@ function buildGauge(pctVal, color) {
   </svg>`;
 }
 
-// ── 차트 인스턴스 ──────────────────────────────────────────
-let _trendChart = null;
-let _trendMode  = 'spend'; // 'spend' | 'roas' | 'purchases'
-
 // ── 메인 렌더 ──────────────────────────────────────────────
-function render(summary, daily, campaigns, periodData) {
+function render(summary, daily, campaigns) {
   const goals = getGoals();
-  const m = summary.monthly   || {};
-  const t = summary.today     || {};
-  const y = summary.yesterday || {};
+  const m = summary.monthly  || {};
+  const t = summary.today    || {};
+  const y = summary.yesterday|| {};
 
-  // 오늘 캠페인 데이터 (period_campaigns.json.today 우선)
-  const todayCamps = (periodData && Array.isArray(periodData.today) && periodData.today.length > 0)
-    ? periodData.today
-    : (campaigns.data || []).slice(0, 8);
-
-  const budgetPct    = goals.budget    > 0 ? Math.min((m.spend / goals.budget * 100), 999)    : 0;
-  const roasPct      = goals.roas      > 0 ? Math.min((m.roas  / goals.roas   * 100), 999)    : 0;
-  const purchasesPct = goals.purchases > 0 ? Math.min((m.purchases / goals.purchases * 100), 999) : 0;
+  const budgetPct    = goals.budget    > 0 ? (m.spend / goals.budget * 100) : 0;
+  const roasPct      = goals.roas      > 0 ? (m.roas  / goals.roas   * 100) : 0;
+  const purchasesPct = goals.purchases > 0 ? (m.purchases / goals.purchases * 100) : 0;
 
   const budgetColor    = budgetPct > 90 ? 'red' : budgetPct > 70 ? 'yellow' : 'accent';
   const roasColor      = roasPct   > 80 ? 'green' : roasPct > 50 ? 'yellow' : 'red';
   const purchasesColor = purchasesPct > 80 ? 'green' : purchasesPct > 50 ? 'yellow' : 'accent';
 
-  // ─ 어제 대비 델타
-  function delta(curr, prev, isRoas) {
+  function deltaHtml(curr, prev) {
     if (!prev) return '';
     const d = curr - prev;
     const cls = d >= 0 ? 'up' : 'down';
     const sign = d >= 0 ? '▲' : '▼';
-    const val  = isRoas ? Math.abs(d).toFixed(2) : wFmt(Math.abs(d));
-    return `<span class="kpi-delta ${cls}">${sign} ${val}</span>`;
+    return '<div class="kpi-delta ' + cls + '">' + sign + ' ' + wFmt(Math.abs(d)) + '</div>';
+  }
+  function roasDelta(curr, prev) {
+    if (!prev) return '';
+    const d = curr - prev;
+    const cls = d >= 0 ? 'up' : 'down';
+    const sign = d >= 0 ? '▲' : '▼';
+    return '<div class="kpi-delta ' + cls + '">' + sign + ' ' + Math.abs(d).toFixed(2) + '</div>';
   }
 
-  // ─ 이번달 캠페인 테이블
+  // ─ 캠페인 테이블
   let campRows = '';
   if (campaigns.data && campaigns.data.length) {
-    campaigns.data.slice(0, 8).forEach(c => {
+    campaigns.data.slice(0, 8).forEach(function(c) {
       const roasClass = c.roas >= 3 ? 'roas-good' : c.roas >= 2 ? 'roas-mid' : 'roas-bad';
-      campRows += `<tr>
-        <td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.campaign_name||'—'}</td>
-        <td>${wFmt(c.spend)}</td>
-        <td>${num(c.impressions)}</td>
-        <td>${pct(c.ctr)}</td>
-        <td>${num(c.purchases)}</td>
-        <td><span class="roas-badge ${roasClass}">${(c.roas||0).toFixed(2)}x</span></td>
-        <td>${c.cpa > 0 ? wFmt(c.cpa) : '—'}</td>
-      </tr>`;
+      campRows += '<tr>'
+        + '<td style="font-weight:600;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (c.campaign_name||'—') + '</td>'
+        + '<td>' + wFmt(c.spend) + '</td>'
+        + '<td>' + num(c.impressions) + '</td>'
+        + '<td>' + pct(c.ctr) + '</td>'
+        + '<td>' + num(c.purchases) + '</td>'
+        + '<td><span class="roas-badge ' + roasClass + '">' + (c.roas||0).toFixed(2) + 'x</span></td>'
+        + '<td>' + (c.cpa > 0 ? wFmt(c.cpa) : '—') + '</td>'
+        + '</tr>';
     });
   } else {
-    campRows = `<tr><td colspan="7" class="camp-empty">캠페인 데이터를 불러오는 중입니다.<br>GitHub Actions가 처음 실행되면 자동으로 채워집니다.</td></tr>`;
+    campRows = '<tr><td colspan="7" class="camp-empty">캠페인 데이터를 불러오는 중입니다.<br>GitHub Actions가 처음 실행되면 자동으로 채워집니다.</td></tr>';
   }
 
-  // ─ 오늘 캠페인 미니 테이블
-  let todayCampRows = '';
-  if (todayCamps.length) {
-    todayCamps.slice(0, 6).forEach(c => {
-      const rc = (c.roas||0) >= (goals.roas||3) ? 'tc-roas-g' : (c.roas||0) >= 1.5 ? 'tc-roas-y' : 'tc-roas-r';
-      todayCampRows += `<div class="today-camp-row">
-        <div class="tc-name" title="${c.campaign_name||''}">${(c.campaign_name||'—').length > 20 ? (c.campaign_name||'').slice(0,20)+'…' : (c.campaign_name||'—')}</div>
-        <div class="tc-val">${wFmt(c.spend||0)}</div>
-        <div class="tc-val ${rc}">${(c.roas||0).toFixed(1)}x</div>
-        <div class="tc-val">${c.purchases||0}건</div>
-        <div class="tc-val">${c.cpa > 0 ? wFmt(c.cpa) : '—'}</div>
-      </div>`;
+  // ─ 일별 차트
+  const dailyData = daily.data || [];
+  let chartHtml = '';
+  if (dailyData.length > 0) {
+    const slice = dailyData.slice(-14);
+    const maxSpend = Math.max.apply(null, slice.map(function(d){ return d.spend||0; }).concat([1]));
+    let bars = '';
+    slice.forEach(function(d) {
+      const h = Math.max(((d.spend||0) / maxSpend) * 140, 2);
+      const dateShort = d.date ? d.date.slice(5) : '';
+      bars += '<div class="chart-bar-wrap">'
+        + '<div class="chart-bar" style="height:' + h + 'px;background:linear-gradient(180deg,#6c63ff,#9d97ff)" data-tooltip="' + dateShort + ' ' + wFmt(d.spend||0) + '"></div>'
+        + '<div class="chart-date">' + dateShort + '</div>'
+        + '</div>';
     });
+    chartHtml = '<div class="chart-bars">' + bars + '</div>';
   } else {
-    todayCampRows = `<div style="color:var(--muted);font-size:13px;padding:16px;text-align:center;">오늘 캠페인 데이터 수집 중...</div>`;
+    chartHtml = '<div class="chart-empty">📊 첫 번째 GitHub Actions 실행 후 차트가 표시됩니다</div>';
   }
 
-  // ─ 오늘 지출 vs 일 예산
-  const dailyBudget = goals.budget > 0 ? Math.round(goals.budget / 30) : 0;
-  const spendPct    = dailyBudget > 0 ? Math.min(Math.round(t.spend / dailyBudget * 100), 100) : 0;
-  const spendBarColor = spendPct > 90 ? '#ff4d6d' : spendPct > 70 ? '#ffd60a' : '#6c63ff';
+  const budgetPctColor = budgetColor === 'red' ? '#ff4d6d' : budgetColor === 'yellow' ? '#ffd60a' : '#6c63ff';
+  const roasPctColor   = roasColor === 'green' ? '#00d97e' : roasColor === 'yellow' ? '#ffd60a' : '#ff4d6d';
 
-  document.getElementById('main-content').innerHTML = `
+  document.getElementById('main-content').innerHTML =
+    '<p class="section-title">이번 달 목표 달성률</p>'
+    + '<div class="goals-grid">'
+    +   '<div class="goal-card">'
+    +     '<div class="gauge-wrap">' + buildGauge(budgetPct, budgetColor)
+    +       '<div class="gauge-center"><div class="gauge-pct" style="color:' + budgetPctColor + '">' + budgetPct.toFixed(0) + '%</div><div class="gauge-label-sub">예산소진</div></div>'
+    +     '</div>'
+    +     '<div class="goal-name">월 광고비 예산</div>'
+    +     '<div class="goal-values"><span>목표 <b>' + wFmt(goals.budget) + '</b></span><span class="current">' + wFmt(m.spend||0) + ' 사용</span></div>'
+    +   '</div>'
+    +   '<div class="goal-card" style="--accent:#00d97e">'
+    +     '<div class="gauge-wrap">' + buildGauge(roasPct, roasColor)
+    +       '<div class="gauge-center"><div class="gauge-pct" style="color:' + roasPctColor + '">' + roasPct.toFixed(0) + '%</div><div class="gauge-label-sub">ROAS</div></div>'
+    +     '</div>'
+    +     '<div class="goal-name">ROAS 목표</div>'
+    +     '<div class="goal-values"><span>목표 <b>' + goals.roas + 'x</b></span><span class="current">' + (m.roas||0).toFixed(2) + 'x 달성</span></div>'
+    +   '</div>'
+    +   '<div class="goal-card">'
+    +     '<div class="gauge-wrap">' + buildGauge(purchasesPct, purchasesColor)
+    +       '<div class="gauge-center"><div class="gauge-pct" style="color:#6c63ff">' + purchasesPct.toFixed(0) + '%</div><div class="gauge-label-sub">구매</div></div>'
+    +     '</div>'
+    +     '<div class="goal-name">월 구매 목표</div>'
+    +     '<div class="goal-values"><span>목표 <b>' + num(goals.purchases) + '건</b></span><span class="current">' + num(m.purchases||0) + '건 달성</span></div>'
+    +   '</div>'
+    + '</div>'
 
-    <!-- ① 목표 게이지 -->
-    <p class="section-title">이번 달 목표 달성률</p>
-    <div class="goals-grid">
-      <div class="goal-card">
-        <div class="gauge-wrap">${buildGauge(budgetPct, budgetColor)}<div class="gauge-center"><div class="gauge-pct" style="color:${budgetColor==='red'?'#ff4d6d':budgetColor==='yellow'?'#ffd60a':'#6c63ff'}">${budgetPct.toFixed(0)}%</div><div class="gauge-label-sub">예산소진</div></div></div>
-        <div class="goal-name">월 광고비 예산</div>
-        <div class="goal-values"><span>목표 <b>${wFmt(goals.budget)}</b></span><span class="current">${wFmt(m.spend||0)} 사용</span></div>
-      </div>
-      <div class="goal-card" style="--accent:#00d97e">
-        <div class="gauge-wrap">${buildGauge(roasPct, roasColor)}<div class="gauge-center"><div class="gauge-pct" style="color:${roasColor==='green'?'#00d97e':roasColor==='yellow'?'#ffd60a':'#ff4d6d'}">${roasPct.toFixed(0)}%</div><div class="gauge-label-sub">ROAS</div></div></div>
-        <div class="goal-name">ROAS 목표</div>
-        <div class="goal-values"><span>목표 <b>${goals.roas}x</b></span><span class="current">${(m.roas||0).toFixed(2)}x 달성</span></div>
-      </div>
-      <div class="goal-card">
-        <div class="gauge-wrap">${buildGauge(purchasesPct, purchasesColor)}<div class="gauge-center"><div class="gauge-pct" style="color:#6c63ff">${purchasesPct.toFixed(0)}%</div><div class="gauge-label-sub">구매</div></div></div>
-        <div class="goal-name">월 구매 목표</div>
-        <div class="goal-values"><span>목표 <b>${num(goals.purchases)}건</b></span><span class="current">${num(m.purchases||0)}건 달성</span></div>
-      </div>
-    </div>
+    + '<p class="section-title">오늘 성과</p>'
+    + '<div class="kpi-grid">'
+    +   '<div class="kpi-card"><div class="kpi-label">오늘 광고비</div><div class="kpi-value">' + wFmt(t.spend||0) + '</div>' + deltaHtml(t.spend||0, y.spend||0) + '<div class="kpi-sub">어제 ' + wFmt(y.spend||0) + '</div></div>'
+    +   '<div class="kpi-card"><div class="kpi-label">오늘 ROAS</div><div class="kpi-value">' + (t.roas||0).toFixed(2) + 'x</div>' + roasDelta(t.roas||0, y.roas||0) + '<div class="kpi-sub">어제 ' + (y.roas||0).toFixed(2) + 'x</div></div>'
+    +   '<div class="kpi-card"><div class="kpi-label">오늘 구매</div><div class="kpi-value">' + num(t.purchases||0) + '건</div>' + deltaHtml(t.purchases||0, y.purchases||0) + '<div class="kpi-sub">어제 ' + num(y.purchases||0) + '건</div></div>'
+    +   '<div class="kpi-card"><div class="kpi-label">오늘 구매금액</div><div class="kpi-value">' + wFmt(t.purchase_value||0) + '</div>' + deltaHtml(t.purchase_value||0, y.purchase_value||0) + '<div class="kpi-sub">어제 ' + wFmt(y.purchase_value||0) + '</div></div>'
+    + '</div>'
 
-    <!-- ② 오늘 광고비 집행 현황 -->
-    <div class="today-spend-section">
-      <div class="today-spend-header">
-        <p class="section-title" style="margin:0">오늘 전체 광고비 집행 현황</p>
-        <span style="font-size:11px;color:var(--muted);">vs 어제 비교</span>
-      </div>
+    + '<div class="chart-section">'
+    +   '<div class="chart-header"><div class="section-title" style="margin:0">일별 광고비 추이 (최근 14일)</div></div>'
+    +   '<div id="chart-canvas">' + chartHtml + '</div>'
+    + '</div>'
 
-      <div class="today-spend-grid">
-        <!-- 광고비 -->
-        <div class="today-stat">
-          <div class="today-stat-label">광고비</div>
-          <div class="today-stat-value">${wFmt(t.spend||0)}</div>
-          <div class="today-stat-sub">
-            ${delta(t.spend||0, y.spend||0, false)}
-            <span style="margin-left:2px;">어제 ${wFmt(y.spend||0)}</span>
-          </div>
-          ${dailyBudget > 0 ? `<div class="today-stat-bar"><div class="today-stat-bar-fill" style="width:${spendPct}%;background:${spendBarColor}"></div></div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;">일 예산 ${wFmt(dailyBudget)} 대비 ${spendPct}%</div>` : ''}
-        </div>
-        <!-- ROAS -->
-        <div class="today-stat">
-          <div class="today-stat-label">ROAS</div>
-          <div class="today-stat-value" style="color:${(t.roas||0) >= (goals.roas||3) ? 'var(--green)' : (t.roas||0) >= 1.5 ? 'var(--yellow)' : 'var(--red)'}">${(t.roas||0).toFixed(2)}x</div>
-          <div class="today-stat-sub">
-            ${delta(t.roas||0, y.roas||0, true)}
-            <span style="margin-left:2px;">어제 ${(y.roas||0).toFixed(2)}x</span>
-          </div>
-          <div class="today-stat-bar"><div class="today-stat-bar-fill" style="width:${Math.min(roasPct,100)}%;background:${roasColor==='green'?'#00d97e':roasColor==='yellow'?'#ffd60a':'#ff4d6d'}"></div></div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;">목표 ${goals.roas}x 대비 ${roasPct.toFixed(0)}%</div>
-        </div>
-        <!-- 구매 -->
-        <div class="today-stat">
-          <div class="today-stat-label">구매 건수</div>
-          <div class="today-stat-value">${num(t.purchases||0)}건</div>
-          <div class="today-stat-sub">
-            ${delta(t.purchases||0, y.purchases||0, false)}
-            <span style="margin-left:2px;">어제 ${num(y.purchases||0)}건</span>
-          </div>
-        </div>
-        <!-- 구매금액 -->
-        <div class="today-stat">
-          <div class="today-stat-label">구매 금액</div>
-          <div class="today-stat-value">${wFmt(t.purchase_value||0)}</div>
-          <div class="today-stat-sub">
-            ${delta(t.purchase_value||0, y.purchase_value||0, false)}
-            <span style="margin-left:2px;">어제 ${wFmt(y.purchase_value||0)}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 오늘 캠페인별 미니 테이블 -->
-      ${todayCamps.length > 0 ? `
-      <div class="today-camps">
-        <div class="today-camp-row header">
-          <div>캠페인</div><div class="tc-val">지출</div><div class="tc-val">ROAS</div><div class="tc-val">구매</div><div class="tc-val">CPA</div>
-        </div>
-        ${todayCampRows}
-      </div>` : ''}
-    </div>
-
-    <!-- ③ 추이 차트 (Chart.js) -->
-    <div class="trend-section">
-      <div class="trend-header">
-        <p class="section-title" style="margin:0">광고비·성과 추이 (최근 14일)</p>
-        <div class="trend-tabs">
-          <button class="trend-tab" id="ttab-spend"     onclick="switchTrend('spend',this)">광고비</button>
-          <button class="trend-tab" id="ttab-roas"      onclick="switchTrend('roas',this)">ROAS</button>
-          <button class="trend-tab" id="ttab-purchases" onclick="switchTrend('purchases',this)">구매</button>
-        </div>
-      </div>
-      <canvas id="trendChart" height="200"></canvas>
-    </div>
-
-    <!-- ④ 이번 달 캠페인 테이블 -->
-    <div class="campaigns-section">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <p class="section-title" style="margin:0">이번 달 캠페인 성과</p>
-        <a href="detail.html" style="font-size:12px;color:var(--accent);text-decoration:none">전체 보기 →</a>
-      </div>
-      <table class="camp-table">
-        <thead><tr>
-          <th>캠페인</th><th>지출</th><th>노출</th><th>CTR</th><th>구매</th><th>ROAS</th><th>CPA</th>
-        </tr></thead>
-        <tbody>${campRows}</tbody>
-      </table>
-    </div>
-  `;
+    + '<div class="campaigns-section">'
+    +   '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">'
+    +     '<p class="section-title" style="margin:0">이번 달 캠페인 성과</p>'
+    +     '<a href="detail.html" style="font-size:12px;color:var(--accent);text-decoration:none">전체 보기 →</a>'
+    +   '</div>'
+    +   '<table class="camp-table"><thead><tr><th>캠페인</th><th>지출</th><th>노출</th><th>CTR</th><th>구매</th><th>ROAS</th><th>CPA</th></tr></thead><tbody>' + campRows + '</tbody></table>'
+    + '</div>';
 
   document.getElementById('last-updated').textContent = '최종 업데이트: ' + (summary.last_updated_kst || '—');
-
-  // ─ Chart.js 추이 차트 그리기
-  const dailyData = (daily.data || []).slice(-14);
-  window._lastDailyData = dailyData;
-  drawTrendChart(dailyData);
-  // 현재 선택된 탭 활성화
-  const activeTab = document.getElementById('ttab-' + _trendMode);
-  if (activeTab) activeTab.classList.add('active');
-}
-
-function drawTrendChart(dailyData) {
-  if (_trendChart) { _trendChart.destroy(); _trendChart = null; }
-  const ctx = document.getElementById('trendChart');
-  if (!ctx || !dailyData.length) return;
-
-  const labels = dailyData.map(d => (d.date||'').slice(5));
-
-  let dataset, yLabel, color;
-  if (_trendMode === 'roas') {
-    dataset = dailyData.map(d => d.roas||0);
-    yLabel  = 'ROAS';
-    color   = '#00d97e';
-  } else if (_trendMode === 'purchases') {
-    dataset = dailyData.map(d => d.purchases||0);
-    yLabel  = '구매 (건)';
-    color   = '#6c63ff';
-  } else {
-    dataset = dailyData.map(d => Math.round((d.spend||0) / 10000)); // 만원 단위
-    yLabel  = '지출 (만원)';
-    color   = '#6c63ff';
-  }
-
-  _trendChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: yLabel,
-        data: dataset,
-        backgroundColor: color + '44',
-        borderColor: color,
-        borderWidth: 2,
-        borderRadius: 5,
-        borderSkipped: false,
-        hoverBackgroundColor: color + '88',
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => {
-              const v = ctx.raw;
-              if (_trendMode === 'spend')     return `${v.toLocaleString()}만원`;
-              if (_trendMode === 'roas')      return `${v.toFixed(2)}x`;
-              if (_trendMode === 'purchases') return `${v}건`;
-              return v;
-            }
-          }
-        }
-      },
-      scales: {
-        x: { ticks: { color: '#6b7280', font: { size: 11 } }, grid: { color: 'rgba(45,49,72,.5)' } },
-        y: { ticks: { color: '#6b7280', font: { size: 11 } }, grid: { color: 'rgba(45,49,72,.5)' },
-             beginAtZero: true }
-      }
-    }
-  });
-}
-
-function switchTrend(mode, btn) {
-  _trendMode = mode;
-  document.querySelectorAll('.trend-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  if (window._lastDailyData) drawTrendChart(window._lastDailyData);
 }
 
 // ── 데이터 로드 ────────────────────────────────────────────
 async function loadData() {
   try {
-    const [s, d, c, p] = await Promise.all([
-      fetch(`${RAW}/summary.json?t=${Date.now()}`).then(r => r.json()),
-      fetch(`${RAW}/daily_history.json?t=${Date.now()}`).then(r => r.json()),
-      fetch(`${RAW}/campaigns.json?t=${Date.now()}`).then(r => r.json()),
-      fetch(`${RAW}/period_campaigns.json?t=${Date.now()}`).then(r => r.json()).catch(() => null),
+    const [s, d, c] = await Promise.all([
+      fetch(RAW + '/summary.json?t=' + Date.now()).then(function(r){ return r.json(); }),
+      fetch(RAW + '/daily_history.json?t=' + Date.now()).then(function(r){ return r.json(); }),
+      fetch(RAW + '/campaigns.json?t=' + Date.now()).then(function(r){ return r.json(); }),
     ]);
-    window._lastDailyData = (d.data || []).slice(-14);
-    render(s, d, c, p);
+    render(s, d, c);
   } catch(e) {
     document.getElementById('main-content').innerHTML =
-      `<div class="loading" style="color:#ff4d6d">⚠ 데이터를 불러오지 못했습니다.<br><small style="color:#6b7280">${e.message}</small><br><br>
-      <button onclick="loadData()" style="background:#6c63ff;border:none;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer">다시 시도</button></div>`;
+      '<div class="loading" style="color:#ff4d6d">⚠ 데이터를 불러오지 못했습니다.<br><small style="color:#6b7280">' + e.message + '</small><br><br>'
+      + '<button onclick="loadData()" style="background:#6c63ff;border:none;color:#fff;padding:8px 18px;border-radius:8px;cursor:pointer">다시 시도</button></div>';
   }
 }
 
-// ── 1시간마다 자동 갱신 ─────────────────────────────────────
 loadData();
 setInterval(loadData, 60 * 60 * 1000);
 </script>
