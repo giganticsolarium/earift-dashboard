@@ -228,6 +228,10 @@ let mainChart = null;
 let activeMetrics = ['roas','cpa','spend'];
 let currentPeriod = 'today';
 let customStart = '', customEnd = '';
+let adsSortKey = 'spend';
+let adsSortDir = 'desc';
+let _adsCache = [];
+let _adsGoals = null;
 
 // ── hourly_snapshots.json에서 전날 데이터 숨김 ──────────────────────────────────────────────
 async function checkAndHideYesterdayData() {
@@ -320,8 +324,8 @@ function getKpiForPeriod(s, d) {
       return { cur, prev, label: 'vs 이전 30일' };
     }
     case 'month': {
-      const rows = allData.filter(x => x.date && x.date.startsWith(thisMonth));
-      const cur  = rows.length ? aggregateDays(rows) : (s.monthly||s.month||{});
+      // summary.monthly = Meta API this_month 직접 호출값 → 가장 정확한 소스
+      const cur = s.monthly || s.month || {};
       return { cur, prev: {}, label: '' };
     }
     case 'this_week': {
@@ -421,16 +425,50 @@ function render(s, d, c, a, h, p, g) {
     return `<span class="${cls}">${sign} ${val}</span>`;
   }
 
-  // 일별 차트 데이터
-  const dailyArr  = getChartDays(d);
-  const labels    = dailyArr.map(x => (x.date||'').slice(5));
-  const dsRoas    = dailyArr.map(x => x.roas||0);
-  const dsCpa     = dailyArr.map(x => Math.round((x.cpa||0)/1000));
-  const dsSpend   = dailyArr.map(x => Math.round((x.spend||0)/10000));
-  const dsImp     = dailyArr.map(x => Math.round((x.impressions||0)/1000));
-  const dsClick   = dailyArr.map(x => Math.round((x.clicks||0)/100)*100/1000);
-  const dsCtr     = dailyArr.map(x => x.ctr||0);
-  const dsCpm     = dailyArr.map(x => Math.round((x.cpm||0)/1000));
+  // ── 성과 추이 차트 데이터 (오늘 → 시간별 누적, 그 외 → 일별) ──────────────
+  function aggregateSnap(snap) {
+    const cs = snap.campaigns || [];
+    const spend          = cs.reduce((a, c) => a + (c.spend||0), 0);
+    const impressions    = cs.reduce((a, c) => a + (c.impressions||0), 0);
+    const clicks         = cs.reduce((a, c) => a + (c.clicks||0), 0);
+    const purchases      = cs.reduce((a, c) => a + (c.purchases||0), 0);
+    const purchase_value = cs.reduce((a, c) => a + (c.purchase_value||0), 0);
+    const roas = spend > 0 ? Math.round(purchase_value / spend * 100) / 100 : 0;
+    const cpa  = purchases > 0 ? Math.round(spend / purchases) : 0;
+    const ctr  = impressions > 0 ? Math.round(clicks / impressions * 10000) / 100 : 0;
+    const cpm  = impressions > 0 ? Math.round(spend / impressions * 1000) : 0;
+    return { spend, impressions, clicks, purchases, purchase_value, roas, cpa, ctr, cpm };
+  }
+
+  const _chartNow = new Date();
+  const _chartTodayStr = `${_chartNow.getFullYear()}-${String(_chartNow.getMonth()+1).padStart(2,'0')}-${String(_chartNow.getDate()).padStart(2,'0')}`;
+  const _todaySnapsForChart = ((h && h.snapshots) || [])
+    .filter(sn => sn.date === _chartTodayStr)
+    .sort((a, b) => a.hour - b.hour);
+  const _useHourly = (currentPeriod === 'today' && _todaySnapsForChart.length > 0);
+
+  let labels, dsRoas, dsCpa, dsSpend, dsImp, dsClick, dsCtr, dsCpm;
+  if (_useHourly) {
+    labels  = _todaySnapsForChart.map(sn => `${String(sn.hour).padStart(2,'0')}:00`);
+    const snAgg = _todaySnapsForChart.map(sn => aggregateSnap(sn));
+    dsRoas  = snAgg.map(x => x.roas);
+    dsCpa   = snAgg.map(x => Math.round(x.cpa / 1000));
+    dsSpend = snAgg.map(x => Math.round(x.spend / 10000));
+    dsImp   = snAgg.map(x => Math.round(x.impressions / 1000));
+    dsClick = snAgg.map(x => Math.round(x.clicks / 100) * 100 / 1000);
+    dsCtr   = snAgg.map(x => x.ctr);
+    dsCpm   = snAgg.map(x => Math.round(x.cpm / 1000));
+  } else {
+    const dailyArr = getChartDays(d);
+    labels  = dailyArr.map(x => (x.date||'').slice(5));
+    dsRoas  = dailyArr.map(x => x.roas||0);
+    dsCpa   = dailyArr.map(x => Math.round((x.cpa||0)/1000));
+    dsSpend = dailyArr.map(x => Math.round((x.spend||0)/10000));
+    dsImp   = dailyArr.map(x => Math.round((x.impressions||0)/1000));
+    dsClick = dailyArr.map(x => Math.round((x.clicks||0)/100)*100/1000);
+    dsCtr   = dailyArr.map(x => x.ctr||0);
+    dsCpm   = dailyArr.map(x => Math.round((x.cpm||0)/1000));
+  }
 
   const dsMap = {
     roas:  { label:'ROAS',        data: dsRoas,  color:'#4f6ef7', y:'y1' },
@@ -598,7 +636,7 @@ function render(s, d, c, a, h, p, g) {
     <!-- 성과 추이 차트 -->
     <div class="chart-section">
       <div class="sec-hdr">
-        <div class="sec-title">성과 추이 그래프</div>
+        <div class="sec-title">성과 추이 그래프${_useHourly ? ' <span style="font-size:11px;color:var(--accent);font-weight:400;margin-left:6px;">⏱ 시간별 누적 · 오늘</span>' : ''}</div>
         <div class="metric-toggles">
           <button class="mtog on"  data-m="roas"  onclick="toggleMetric(this)">ROAS</button>
           <button class="mtog on"  data-m="cpa"   onclick="toggleMetric(this)">CPA</button>
@@ -640,13 +678,18 @@ function render(s, d, c, a, h, p, g) {
       <div class="ts-section">
         <div class="sec-hdr">
           <div class="sec-title">📊 금일 콘텐츠 TOP 리스트</div>
-          <div style="font-size:11px;color:var(--muted);">지출 기준 정렬 · META 실측값</div>
+          <div style="font-size:11px;color:var(--muted);">컬럼 클릭 → 정렬 · ▲▼ 평균 대비</div>
         </div>
         <table class="ts-table" style="margin-top:14px;">
           <thead>
             <tr>
               <th class="name-col">콘텐츠명</th>
-              <th>지출</th><th>구매</th><th>ROAS</th><th>CTR</th><th>CPM</th><th>CPA</th>
+              <th id="ads-th-spend" style="cursor:pointer;user-select:none;" onclick="sortAdsTable('spend')">지출</th>
+              <th id="ads-th-purchases" style="cursor:pointer;user-select:none;" onclick="sortAdsTable('purchases')">구매</th>
+              <th id="ads-th-roas" style="cursor:pointer;user-select:none;" onclick="sortAdsTable('roas')">ROAS</th>
+              <th id="ads-th-ctr" style="cursor:pointer;user-select:none;" onclick="sortAdsTable('ctr')">CTR</th>
+              <th id="ads-th-cpm" style="cursor:pointer;user-select:none;" onclick="sortAdsTable('cpm')">CPM</th>
+              <th id="ads-th-cpa" style="cursor:pointer;user-select:none;" onclick="sortAdsTable('cpa')">CPA</th>
             </tr>
           </thead>
           <tbody id="ads-tbody">
@@ -710,34 +753,10 @@ function render(s, d, c, a, h, p, g) {
   window._labels = labels;
   window._chart  = mainChart;
 
-  // 금일 콘텐츠 TOP 리스트 렌더 (META 실측값 그대로)
-  const adsBody = document.getElementById('ads-tbody');
-  if (adsBody) {
-    if (ads.length > 0) {
-      const sortedAds = [...ads].sort((a, b) => (b.spend || 0) - (a.spend || 0));
-      adsBody.innerHTML = sortedAds.map((ad, i) => {
-        const adName = ad.ad_name || `광고 ${i+1}`;
-        const spend = ad.spend || 0;
-        const purchases = ad.purchases || 0;
-        const roas = ad.roas || 0;
-        const ctr = ad.ctr || 0;
-        const cpm = ad.cpm || 0;
-        const cpa = ad.cpa || 0;
-        const displayName = adName.length > 20 ? adName.slice(0, 20)+'…' : adName;
-        return `<tr>
-          <td class="name-col"><span class="camp-name" title="${adName}">${displayName}</span></td>
-          <td>${wFmt(spend)}</td>
-          <td>${purchases}건</td>
-          <td>${roas.toFixed(2)}x</td>
-          <td>${ctr.toFixed(2)}%</td>
-          <td>${wFmt(cpm)}</td>
-          <td>${wFmt(cpa)}</td>
-        </tr>`;
-      }).join('');
-    } else {
-      adsBody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px;">광고 데이터가 없습니다.</td></tr>';
-    }
-  }
+  // 금일 콘텐츠 TOP 리스트 - 정렬/화살표 지원
+  _adsCache = ads;
+  _adsGoals = goals;
+  renderAdsTable();
 
   const upd = document.getElementById('last-updated');
   if (upd) upd.innerHTML = `<span class="pulse"></span>업데이트 <span>${s.last_updated_kst||'방금'}</span>`;
@@ -767,6 +786,86 @@ function toggleCard(card, metric) {
   card.classList.toggle('selected');
   const btn = document.querySelector(`.mtog[data-m="${metric}"]`);
   if (btn) btn.click();
+}
+
+function sortAdsTable(key) {
+  if (adsSortKey === key) {
+    adsSortDir = adsSortDir === 'desc' ? 'asc' : 'desc';
+  } else {
+    adsSortKey = key;
+    adsSortDir = 'desc';
+  }
+  renderAdsTable();
+}
+
+function renderAdsTable() {
+  const adsBody = document.getElementById('ads-tbody');
+  if (!adsBody) return;
+
+  // 정렬 방향 표시 업데이트
+  const cols = ['spend','purchases','roas','ctr','cpm','cpa'];
+  cols.forEach(col => {
+    const th = document.getElementById('ads-th-' + col);
+    if (!th) return;
+    const labels = { spend:'지출', purchases:'구매', roas:'ROAS', ctr:'CTR', cpm:'CPM', cpa:'CPA' };
+    if (col === adsSortKey) {
+      th.innerHTML = labels[col] + ' ' + (adsSortDir === 'desc' ? '↓' : '↑');
+      th.style.color = 'var(--accent)';
+    } else {
+      th.innerHTML = labels[col];
+      th.style.color = '';
+    }
+  });
+
+  if (!_adsCache || _adsCache.length === 0) {
+    adsBody.innerHTML = '<tr><td colspan="7" style="color:var(--muted);text-align:center;padding:20px;">광고 데이터가 없습니다.</td></tr>';
+    return;
+  }
+
+  // 정렬
+  const sorted = [..._adsCache].sort((a, b) => {
+    const av = a[adsSortKey] || 0, bv = b[adsSortKey] || 0;
+    return adsSortDir === 'desc' ? bv - av : av - bv;
+  });
+
+  // 평균 계산 (화살표 색상 기준)
+  const avg = {};
+  cols.forEach(k => {
+    const vals = _adsCache.map(x => x[k] || 0).filter(v => v > 0);
+    avg[k] = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+  });
+
+  // 지표별 "높을수록 좋은가"
+  const higherIsBetter = { spend: true, purchases: true, roas: true, ctr: true, cpm: false, cpa: false };
+
+  function arrow(val, key) {
+    if (!avg[key] || avg[key] === 0) return '';
+    const isHigher = val > avg[key];
+    const good = higherIsBetter[key] ? isHigher : !isHigher;
+    const sym  = isHigher ? '▲' : '▼';
+    const color = good ? 'var(--green)' : 'var(--red)';
+    return `<span style="font-size:10px;color:${color};margin-left:3px;">${sym}</span>`;
+  }
+
+  adsBody.innerHTML = sorted.map((ad, i) => {
+    const adName    = ad.ad_name || `광고 ${i+1}`;
+    const spend     = ad.spend     || 0;
+    const purchases = ad.purchases || 0;
+    const roas      = ad.roas      || 0;
+    const ctr       = ad.ctr       || 0;
+    const cpm       = ad.cpm       || 0;
+    const cpa       = ad.cpa       || 0;
+    const displayName = adName.length > 20 ? adName.slice(0,20)+'…' : adName;
+    return `<tr>
+      <td class="name-col"><span class="camp-name" title="${adName}">${displayName}</span></td>
+      <td>${wFmt(spend)}${arrow(spend,'spend')}</td>
+      <td>${purchases}건${arrow(purchases,'purchases')}</td>
+      <td>${roas.toFixed(2)}x${arrow(roas,'roas')}</td>
+      <td>${ctr.toFixed(2)}%${arrow(ctr,'ctr')}</td>
+      <td>${wFmt(cpm)}${arrow(cpm,'cpm')}</td>
+      <td>${wFmt(cpa)}${arrow(cpa,'cpa')}</td>
+    </tr>`;
+  }).join('');
 }
 
 async function loadData() {
