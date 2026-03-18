@@ -301,7 +301,8 @@ function aggregateDays(rows) {
   const roas = spend > 0 ? Math.round(purchase_value / spend * 100) / 100 : 0;
   const cpa  = purchases > 0 ? Math.round(spend / purchases) : 0;
   const ctr  = impressions > 0 ? Math.round(clicks / impressions * 10000) / 100 : 0;
-  return { spend, purchases, purchase_value, impressions, clicks, roas, cpa, ctr };
+  const cpm  = impressions > 0 ? Math.round(spend / impressions * 1000) : 0;
+  return { spend, purchases, purchase_value, impressions, clicks, roas, cpa, ctr, cpm };
 }
 
 function getKpiForPeriod(s, d) {
