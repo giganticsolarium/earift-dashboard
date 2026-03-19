@@ -117,17 +117,62 @@ def get_ad_insights_yesterday():
     })
 
 
+def get_ad_creatives(ad_ids):
+    """광고 ID 배치로 크리에이티브 썸네일 URL, 타입, video_id 조회
+    Meta Graph API: GET /?ids=id1,id2&fields=creative{...}
+    """
+    if not ad_ids:
+        return {}
+    try:
+        params = {
+            'ids': ','.join(str(i) for i in ad_ids),
+            'fields': 'creative{thumbnail_url,object_type,video_id}',
+            'access_token': ACCESS_TOKEN,
+        }
+        r = requests.get(f'{BASE_URL}/', params=params, timeout=30)
+        r.raise_for_status()
+        resp = r.json()
+        result = {}
+        for ad_id, ad_data in resp.items():
+            if isinstance(ad_data, dict):
+                creative = ad_data.get('creative', {})
+                result[str(ad_id)] = {
+                    'thumbnail_url': creative.get('thumbnail_url', ''),
+                    'creative_type': creative.get('object_type', ''),
+                    'video_id':      creative.get('video_id', ''),
+                }
+        return result
+    except Exception as ex:
+        print(f"  ⚠️ 크리에이티브 배치 조회 실패: {ex}")
+        return {}
+
+
 def get_activity_log(since_ts, until_ts):
     """광고 운영 변경 이력 — on/off, 예산 수정 등
     since_ts / until_ts : Unix timestamp (int)
     Meta /activities 엔드포인트는 date string 이 아닌 Unix timestamp 를 요구함
     """
     return api_get(AD_ACCOUNT_ID + '/activities', {
-        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_name,object_type',
+        'fields': 'actor_name,event_type,event_time,extra_data,object_id,object_type',
         'since': since_ts,
         'until': until_ts,
         'limit': 200,
     })
+
+
+def lookup_object_names(object_ids):
+    """object_id 목록으로 실제 이름을 Meta API에서 조회
+    캠페인/광고세트/광고 모두 /{id}?fields=id,name 으로 조회 가능
+    """
+    name_map = {}
+    for oid in object_ids:
+        try:
+            resp = api_get(str(oid), {'fields': 'id,name'})
+            name_map[str(oid)] = resp.get('name', str(oid))
+        except Exception as ex:
+            print(f"    ⚠️ name 조회 실패 ({oid}): {ex}")
+            name_map[str(oid)] = str(oid)
+    return name_map
 
 
 # ── 데이터 파싱 헬퍼 ────────────────────────────────────────
@@ -231,7 +276,20 @@ def main():
         ads.append(parsed)
     ads.sort(key=lambda x: x['spend'], reverse=True)
 
-    # ④-b 어제 광고(소재)별 — 전날 대비 비교용
+    # ④-b 크리에이티브 썸네일 수집 (실패해도 나머지 수집에 영향 없음)
+    try:
+        ad_ids = [a['ad_id'] for a in ads if a.get('ad_id')]
+        creative_map = get_ad_creatives(ad_ids)
+        for ad in ads:
+            c = creative_map.get(str(ad.get('ad_id', '')), {})
+            ad['thumbnail_url']  = c.get('thumbnail_url', '')
+            ad['creative_type']  = c.get('creative_type', '')
+            ad['video_id']       = c.get('video_id', '')
+        print(f"  ✓ 크리에이티브 썸네일 수집 완료: {len(creative_map)}개")
+    except Exception as e:
+        print(f"  ⚠️ 크리에이티브 수집 실패 (썸네일 없이 계속): {e}")
+
+    # ④-c 어제 광고(소재)별 — 전날 대비 비교용
     try:
         yesterday_ads_resp = get_ad_insights_yesterday()
         yesterday_ads = []
@@ -421,19 +479,33 @@ def main():
                     'adset_enabled', 'adset_disabled',
                     'campaign_enabled', 'campaign_disabled'):
                 new_status = extra.get('new_value', extra.get('status', ''))
-                category = 'status_on' if str(new_status).upper() in ('ACTIVE', '1', 'TRUE', 'ON') else 'status_off'
+                # run_status.new_value == 1 이면 활성, 한국어 "활성" 도 처리
+                run_status_new = None
+                if isinstance(extra.get('run_status'), dict):
+                    run_status_new = extra['run_status'].get('new_value')
+                is_on = (
+                    str(new_status).upper() in ('ACTIVE', '1', 'TRUE', 'ON', 'ENABLED') or
+                    str(new_status) in ('활성',) or
+                    run_status_new == 1
+                )
+                category = 'status_on' if is_on else 'status_off'
             elif 'budget' in event_type_raw.lower() or 'bid' in event_type_raw.lower():
                 def _num(v):
-                    # Meta API가 예산을 {"value": 50000, "currency": "KRW"} 형태로 반환할 수 있음
+                    # Meta API 예산 딕셔너리: {"type":"payment_amount","old_value":100000,...}
+                    # or {"value": 50000, "currency": "KRW"} 등 다양한 형태 처리
                     if isinstance(v, dict):
-                        v = v.get('value', v.get('amount', 0))
+                        v = v.get('value', v.get('amount',
+                            v.get('old_value', v.get('new_value', 0))))
                     try:
                         return float(v or 0)
                     except (TypeError, ValueError):
                         return 0.0
                 old_b = _num(extra.get('old_value', extra.get('old_budget', 0)))
                 new_b = _num(extra.get('new_value', extra.get('new_budget', 0)))
-                category = 'budget_up' if new_b >= old_b else 'budget_down'
+                if old_b == 0 and new_b == 0:
+                    category = 'edit'  # 파싱 실패시 수정으로 분류
+                else:
+                    category = 'budget_up' if new_b >= old_b else 'budget_down'
             else:
                 category = 'edit'
 
@@ -442,11 +514,34 @@ def main():
                 'event_type':  event_type_raw,
                 'category':    category,
                 'object_id':   str(item.get('object_id', '')),
-                'object_name': item.get('object_name', item.get('object_id', '')),  # object_name 없으면 id로 대체
+                'object_name': str(item.get('object_id', '')),  # 일단 ID로 세팅, 아래에서 실제 이름으로 교체
                 'object_type': item.get('object_type', ''),
                 'actor_name':  item.get('actor_name', ''),
                 'extra':       extra,
             })
+
+        # ── object_id → 실제 이름 조회 ─────────────────────────────
+        # 신규 이벤트의 unique IDs
+        new_ids = list({e['object_id'] for e in new_events if e['object_id']})
+        # 기존 이벤트 중 아직 실제 이름이 없는 것(=id와 같은 것)의 IDs
+        old_ids_needing_names = list({
+            e['object_id'] for e in old_events
+            if e.get('object_id') and e.get('object_name', '') == e.get('object_id', 'X')
+        })
+        all_lookup_ids = list(set(new_ids) | set(old_ids_needing_names))
+        print(f"  [activity_log] 이름 조회 대상: {len(all_lookup_ids)}개 object_id")
+        name_map = lookup_object_names(all_lookup_ids)
+
+        # 신규 이벤트에 실제 이름 적용
+        for e in new_events:
+            oid = e['object_id']
+            e['object_name'] = name_map.get(oid, oid)
+
+        # 기존 이벤트에도 실제 이름 업데이트 (ID로 저장된 것만)
+        for e in old_events:
+            oid = e.get('object_id', '')
+            if oid and e.get('object_name', '') == oid and oid in name_map:
+                e['object_name'] = name_map[oid]
 
         # 기존 이벤트와 병합 — event_time + object_id + event_type 기준 중복 제거
         def evt_key(e):
