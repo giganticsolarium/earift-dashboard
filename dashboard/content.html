@@ -480,7 +480,7 @@ function renderCards(){
     });
 
     const container = document.getElementById('adsetGroups');
-    container.innerHTML = sortedGroups.map(([key, grp]) => {
+    container.innerHTML = sortedGroups.map(([key, grp], gIdx) => {
       const totalSpend = grp.ads.reduce((s,a)=>s+a.spend,0);
       const totalPurchases = grp.ads.reduce((s,a)=>s+a.purchases,0);
       const totalValue = grp.ads.reduce((s,a)=>s+a.purchase_value,0);
@@ -503,7 +503,7 @@ function renderCards(){
             <span>구매 <strong>${totalPurchases}건</strong></span>
           </div>
         </div>
-        <div class="adset-cards ${isCollapsed ? 'collapsed' : ''}" id="set_${btoa(key).replace(/[^a-z0-9]/gi,'')}">${cardsHtml}</div>
+        <div class="adset-cards ${isCollapsed ? 'collapsed' : ''}" id="set_g${gIdx}">${cardsHtml}</div>
       </div>`;
     }).join('');
   }
