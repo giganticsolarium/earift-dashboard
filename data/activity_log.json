@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-20T02:00:30.050331+09:00",
+  "last_updated": "2026-03-20T02:50:05.208725+09:00",
   "events": [
     {
       "event_time": "2026-03-19T14:26:24+0000",
@@ -551,6 +551,25 @@
         "run_status": {
           "old_value": 1,
           "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T02:59:39+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244102783970020",
+      "object_name": "260318_백지연_주차별2",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "campaign_id": 120244101900510020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 8
         },
         "type": "run_status"
       }
