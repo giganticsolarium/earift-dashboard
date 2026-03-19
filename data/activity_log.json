@@ -1,12 +1,12 @@
 {
-  "last_updated": "2026-03-19T20:09:30.614730+09:00",
+  "last_updated": "2026-03-19T20:30:51.337455+09:00",
   "events": [
     {
       "event_time": "2026-03-19T09:37:22+0000",
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244001362070020",
-      "object_name": "KTX_소프트1_나레이션 - 사본_Group_1",
+      "object_name": "120244001362070020",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -19,7 +19,7 @@
     {
       "event_time": "2026-03-19T08:53:58+0000",
       "event_type": "update_ad_set_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120243967511780020",
       "object_name": "260315_백지연_1차",
       "object_type": "CAMPAIGN",
@@ -55,7 +55,7 @@
     {
       "event_time": "2026-03-19T08:53:48+0000",
       "event_type": "update_ad_set_budget",
-      "category": "budget_up",
+      "category": "budget_down",
       "object_id": "120243967511780020",
       "object_name": "260315_백지연_1차",
       "object_type": "CAMPAIGN",
@@ -119,7 +119,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244001366010020",
-      "object_name": "260307_장윤주_심술보 - 사본_Group_1_DA",
+      "object_name": "120244001366010020",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -168,7 +168,7 @@
     {
       "event_time": "2026-03-19T03:59:12+0000",
       "event_type": "update_ad_set_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244002644110020",
       "object_name": "260316_제로+에디티",
       "object_type": "CAMPAIGN",
@@ -204,7 +204,7 @@
     {
       "event_time": "2026-03-19T03:58:34+0000",
       "event_type": "update_ad_set_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244002644110020",
       "object_name": "260316_제로+에디티",
       "object_type": "CAMPAIGN",
@@ -304,7 +304,7 @@
       "event_type": "ad_account_billing_charge",
       "category": "edit",
       "object_id": "1441821640906256",
-      "object_name": "이어리프트",
+      "object_name": "1441821640906256",
       "object_type": "ACCOUNT",
       "actor_name": "Meta",
       "extra": {
@@ -320,7 +320,7 @@
       "event_type": "ad_account_billing_charge",
       "category": "edit",
       "object_id": "1441821640906256",
-      "object_name": "이어리프트",
+      "object_name": "1441821640906256",
       "object_type": "ACCOUNT",
       "actor_name": "Meta",
       "extra": {
@@ -336,7 +336,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244102873730020",
-      "object_name": "260318_백지연_주차별1_Group_1_DA",
+      "object_name": "120244102873730020",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -351,7 +351,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244102882130020",
-      "object_name": "260318_준_주차별1_Group_1",
+      "object_name": "120244102882130020",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -366,7 +366,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244102875080020",
-      "object_name": "260318_백지연_주차별1_Group_1",
+      "object_name": "120244102875080020",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -379,7 +379,7 @@
     {
       "event_time": "2026-03-18T11:06:03+0000",
       "event_type": "update_ad_set_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120243967511780020",
       "object_name": "260315_백지연_1차",
       "object_type": "CAMPAIGN",
@@ -415,7 +415,7 @@
     {
       "event_time": "2026-03-18T11:05:54+0000",
       "event_type": "update_ad_set_budget",
-      "category": "budget_up",
+      "category": "budget_down",
       "object_id": "120243967511780020",
       "object_name": "260315_백지연_1차",
       "object_type": "CAMPAIGN",
@@ -443,7 +443,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244102880630020",
-      "object_name": "260318_백지연_주차별2_Group_1",
+      "object_name": "120244102880630020",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -458,7 +458,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244001368700020",
-      "object_name": "260307_주단위_장윤주1 - 사본_Group_1_DA",
+      "object_name": "120244001368700020",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -473,7 +473,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244102880750020",
-      "object_name": "260318_준_주차별1_Group_1_DA",
+      "object_name": "120244102880750020",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -501,7 +501,7 @@
     {
       "event_time": "2026-03-18T07:24:11+0000",
       "event_type": "update_ad_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244101900500020",
       "object_name": "260318_백지연_주차별1",
       "object_type": "ADGROUP",
@@ -520,7 +520,7 @@
     {
       "event_time": "2026-03-18T07:24:04+0000",
       "event_type": "update_ad_run_status_to_be_set_after_review",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244101900500020",
       "object_name": "260318_백지연_주차별1",
       "object_type": "ADGROUP",
@@ -666,7 +666,7 @@
     {
       "event_time": "2026-03-18T06:17:15+0000",
       "event_type": "update_ad_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244102807090020",
       "object_name": "260318_준_주차별2",
       "object_type": "ADGROUP",
@@ -685,7 +685,7 @@
     {
       "event_time": "2026-03-18T06:17:09+0000",
       "event_type": "update_ad_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244102783970020",
       "object_name": "260318_백지연_주차별2",
       "object_type": "ADGROUP",
@@ -704,7 +704,7 @@
     {
       "event_time": "2026-03-18T06:16:57+0000",
       "event_type": "update_ad_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244102850510020",
       "object_name": "260318_준_주차별1",
       "object_type": "ADGROUP",
@@ -723,7 +723,7 @@
     {
       "event_time": "2026-03-18T06:16:45+0000",
       "event_type": "update_ad_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244101900500020",
       "object_name": "260318_백지연_주차별1",
       "object_type": "ADGROUP",
@@ -818,7 +818,7 @@
     {
       "event_time": "2026-03-18T06:12:55+0000",
       "event_type": "update_ad_set_run_status",
-      "category": "status_off",
+      "category": "status_on",
       "object_id": "120244101900510020",
       "object_name": "260318_백지연_2차",
       "object_type": "CAMPAIGN",
@@ -896,7 +896,7 @@
     {
       "event_time": "2026-03-18T06:12:48+0000",
       "event_type": "update_campaign_budget_scheduling_state",
-      "category": "budget_up",
+      "category": "edit",
       "object_id": "120244101900510020",
       "object_name": "260318_백지연_2차",
       "object_type": "CAMPAIGN",
@@ -975,7 +975,7 @@
     {
       "event_time": "2026-03-18T06:12:48+0000",
       "event_type": "update_ad_set_bid_strategy",
-      "category": "budget_up",
+      "category": "edit",
       "object_id": "120244101900510020",
       "object_name": "260318_백지연_2차",
       "object_type": "CAMPAIGN",
@@ -1145,7 +1145,7 @@
       "event_type": "ad_account_billing_charge",
       "category": "edit",
       "object_id": "1441821640906256",
-      "object_name": "이어리프트",
+      "object_name": "1441821640906256",
       "object_type": "ACCOUNT",
       "actor_name": "Meta",
       "extra": {
@@ -2019,7 +2019,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002786080020",
-      "object_name": "120244002786080020",
+      "object_name": "제미나이1-2_수정 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2034,7 +2034,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002854840020",
-      "object_name": "120244002854840020",
+      "object_name": "260306 에디티 1.15배속 피치유지 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2049,7 +2049,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786080020",
-      "object_name": "120244002786080020",
+      "object_name": "제미나이1-2_수정 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2068,7 +2068,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002854840020",
-      "object_name": "120244002854840020",
+      "object_name": "260306 에디티 1.15배속 피치유지 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2087,7 +2087,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244001333210020",
-      "object_name": "120244001333210020",
+      "object_name": "260307_주단위_장윤주1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2268,7 +2268,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244015286130020",
-      "object_name": "120244015286130020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2287,7 +2287,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2305,7 +2305,7 @@
       "event_type": "update_ad_set_budget",
       "category": "budget_up",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2331,7 +2331,7 @@
       "event_type": "update_ad_set_budget",
       "category": "budget_up",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2357,7 +2357,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2375,7 +2375,7 @@
       "event_type": "update_ad_set_budget",
       "category": "budget_up",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2401,7 +2401,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244015286130020",
-      "object_name": "120244015286130020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "ADGROUP",
       "actor_name": "두영재",
       "extra": {
@@ -2420,7 +2420,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2438,7 +2438,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244015286130020",
-      "object_name": "120244015286130020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "ADGROUP",
       "actor_name": "두영재",
       "extra": {
@@ -2453,7 +2453,7 @@
       "event_type": "update_campaign_budget_scheduling_state",
       "category": "budget_up",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2467,7 +2467,7 @@
       "event_type": "update_ad_set_target_spec",
       "category": "edit",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2518,7 +2518,7 @@
       "event_type": "update_ad_set_optimization_goal",
       "category": "edit",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2532,7 +2532,7 @@
       "event_type": "update_ad_set_bid_strategy",
       "category": "budget_up",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2556,7 +2556,7 @@
       "event_type": "create_ad_set",
       "category": "edit",
       "object_id": "120244015286120020",
-      "object_name": "120244015286120020",
+      "object_name": "260316 KTX_에디티1",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2575,7 +2575,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120243954846890020",
-      "object_name": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2593,7 +2593,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120243954846890020",
-      "object_name": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2611,7 +2611,7 @@
       "event_type": "update_ad_set_budget",
       "category": "budget_up",
       "object_id": "120243954846890020",
-      "object_name": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
       "object_type": "CAMPAIGN",
       "actor_name": "두영재",
       "extra": {
@@ -2637,7 +2637,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002786070020",
-      "object_name": "120244002786070020",
+      "object_name": "ASC_제미나이3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2652,7 +2652,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002854850020",
-      "object_name": "120244002854850020",
+      "object_name": "ASC_제로제로 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2667,7 +2667,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786070020",
-      "object_name": "120244002786070020",
+      "object_name": "ASC_제미나이3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2686,7 +2686,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002854850020",
-      "object_name": "120244002854850020",
+      "object_name": "ASC_제로제로 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2720,7 +2720,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002786050020",
-      "object_name": "120244002786050020",
+      "object_name": "ASC_제미나이1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2735,7 +2735,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244001333230020",
-      "object_name": "120244001333230020",
+      "object_name": "KTX_소프트1_자막 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2750,7 +2750,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002681490020",
-      "object_name": "120244002681490020",
+      "object_name": "예뻐지려면3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2765,7 +2765,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002681480020",
-      "object_name": "120244002681480020",
+      "object_name": "예뻐지려면1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2780,7 +2780,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002589210020",
-      "object_name": "120244002589210020",
+      "object_name": "ASC_1차_슈링크1_영상 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2795,7 +2795,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002786060020",
-      "object_name": "120244002786060020",
+      "object_name": "ASC_제미나이2 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2810,7 +2810,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002681500020",
-      "object_name": "120244002681500020",
+      "object_name": "예뻐지려면2 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2825,7 +2825,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002589220020",
-      "object_name": "120244002589220020",
+      "object_name": "ASC_1차_슈링크2_영상 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2840,7 +2840,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002854830020",
-      "object_name": "120244002854830020",
+      "object_name": "260227_에디티 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2870,7 +2870,7 @@
       "event_type": "first_delivery_event",
       "category": "edit",
       "object_id": "120244002445030020",
-      "object_name": "120244002445030020",
+      "object_name": "궁금증1-1_수정 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2885,7 +2885,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786050020",
-      "object_name": "120244002786050020",
+      "object_name": "ASC_제미나이1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2904,7 +2904,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002854830020",
-      "object_name": "120244002854830020",
+      "object_name": "260227_에디티 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2923,7 +2923,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002854830020",
-      "object_name": "120244002854830020",
+      "object_name": "260227_에디티 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -2942,7 +2942,7 @@
       "event_type": "update_ad_run_status_to_be_set_after_review",
       "category": "status_off",
       "object_id": "120244002854830020",
-      "object_name": "120244002854830020",
+      "object_name": "260227_에디티 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -2957,7 +2957,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002854830020",
-      "object_name": "120244002854830020",
+      "object_name": "260227_에디티 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -2976,7 +2976,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786060020",
-      "object_name": "120244002786060020",
+      "object_name": "ASC_제미나이2 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -2995,7 +2995,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002854850020",
-      "object_name": "120244002854850020",
+      "object_name": "ASC_제로제로 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3014,7 +3014,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002854840020",
-      "object_name": "120244002854840020",
+      "object_name": "260306 에디티 1.15배속 피치유지 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3033,7 +3033,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002854830020",
-      "object_name": "120244002854830020",
+      "object_name": "260227_에디티 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3052,7 +3052,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002854830020",
-      "object_name": "120244002854830020",
+      "object_name": "260227_에디티 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3067,7 +3067,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002854850020",
-      "object_name": "120244002854850020",
+      "object_name": "ASC_제로제로 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3082,7 +3082,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002854840020",
-      "object_name": "120244002854840020",
+      "object_name": "260306 에디티 1.15배속 피치유지 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3097,7 +3097,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681490020",
-      "object_name": "120244002681490020",
+      "object_name": "예뻐지려면3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3116,7 +3116,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681480020",
-      "object_name": "120244002681480020",
+      "object_name": "예뻐지려면1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3135,7 +3135,7 @@
       "event_type": "update_ad_run_status_to_be_set_after_review",
       "category": "status_off",
       "object_id": "120244002681490020",
-      "object_name": "120244002681490020",
+      "object_name": "예뻐지려면3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3150,7 +3150,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681490020",
-      "object_name": "120244002681490020",
+      "object_name": "예뻐지려면3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3169,7 +3169,7 @@
       "event_type": "update_ad_run_status_to_be_set_after_review",
       "category": "status_off",
       "object_id": "120244002681480020",
-      "object_name": "120244002681480020",
+      "object_name": "예뻐지려면1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3184,7 +3184,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681480020",
-      "object_name": "120244002681480020",
+      "object_name": "예뻐지려면1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3203,7 +3203,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786080020",
-      "object_name": "120244002786080020",
+      "object_name": "제미나이1-2_수정 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3222,7 +3222,7 @@
       "event_type": "update_ad_run_status_to_be_set_after_review",
       "category": "status_off",
       "object_id": "120244002786080020",
-      "object_name": "120244002786080020",
+      "object_name": "제미나이1-2_수정 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3237,7 +3237,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786080020",
-      "object_name": "120244002786080020",
+      "object_name": "제미나이1-2_수정 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3256,7 +3256,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786050020",
-      "object_name": "120244002786050020",
+      "object_name": "ASC_제미나이1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3275,7 +3275,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786070020",
-      "object_name": "120244002786070020",
+      "object_name": "ASC_제미나이3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3294,7 +3294,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786080020",
-      "object_name": "120244002786080020",
+      "object_name": "제미나이1-2_수정 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3313,7 +3313,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002786060020",
-      "object_name": "120244002786060020",
+      "object_name": "ASC_제미나이2 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3332,7 +3332,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002786060020",
-      "object_name": "120244002786060020",
+      "object_name": "ASC_제미나이2 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3347,7 +3347,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002786080020",
-      "object_name": "120244002786080020",
+      "object_name": "제미나이1-2_수정 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3362,7 +3362,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002786070020",
-      "object_name": "120244002786070020",
+      "object_name": "ASC_제미나이3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3377,7 +3377,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002786050020",
-      "object_name": "120244002786050020",
+      "object_name": "ASC_제미나이1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3392,7 +3392,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681480020",
-      "object_name": "120244002681480020",
+      "object_name": "예뻐지려면1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -3426,7 +3426,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681500020",
-      "object_name": "120244002681500020",
+      "object_name": "예뻐지려면2 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -3445,7 +3445,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681490020",
-      "object_name": "120244002681490020",
+      "object_name": "예뻐지려면3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -3464,7 +3464,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681500020",
-      "object_name": "120244002681500020",
+      "object_name": "예뻐지려면2 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3483,7 +3483,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681490020",
-      "object_name": "120244002681490020",
+      "object_name": "예뻐지려면3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3502,7 +3502,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002681480020",
-      "object_name": "120244002681480020",
+      "object_name": "예뻐지려면1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3521,7 +3521,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002681490020",
-      "object_name": "120244002681490020",
+      "object_name": "예뻐지려면3 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3536,7 +3536,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002681500020",
-      "object_name": "120244002681500020",
+      "object_name": "예뻐지려면2 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3551,7 +3551,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002681480020",
-      "object_name": "120244002681480020",
+      "object_name": "예뻐지려면1 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3566,7 +3566,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002589210020",
-      "object_name": "120244002589210020",
+      "object_name": "ASC_1차_슈링크1_영상 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -3585,7 +3585,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120244002644110020",
-      "object_name": "120244002644110020",
+      "object_name": "260316_제로+에디티",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3603,7 +3603,7 @@
       "event_type": "update_campaign_budget_scheduling_state",
       "category": "budget_up",
       "object_id": "120244002644110020",
-      "object_name": "120244002644110020",
+      "object_name": "260316_제로+에디티",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3617,7 +3617,7 @@
       "event_type": "update_ad_set_target_spec",
       "category": "edit",
       "object_id": "120244002644110020",
-      "object_name": "120244002644110020",
+      "object_name": "260316_제로+에디티",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3662,7 +3662,7 @@
       "event_type": "update_ad_set_optimization_goal",
       "category": "edit",
       "object_id": "120244002644110020",
-      "object_name": "120244002644110020",
+      "object_name": "260316_제로+에디티",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3676,7 +3676,7 @@
       "event_type": "update_ad_set_bid_strategy",
       "category": "budget_up",
       "object_id": "120244002644110020",
-      "object_name": "120244002644110020",
+      "object_name": "260316_제로+에디티",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3700,7 +3700,7 @@
       "event_type": "create_ad_set",
       "category": "edit",
       "object_id": "120244002644110020",
-      "object_name": "120244002644110020",
+      "object_name": "260316_제로+에디티",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3719,7 +3719,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002589220020",
-      "object_name": "120244002589220020",
+      "object_name": "ASC_1차_슈링크2_영상 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Meta",
       "extra": {
@@ -3738,7 +3738,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120244002624120020",
-      "object_name": "120244002624120020",
+      "object_name": "260316_제미나이",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3756,7 +3756,7 @@
       "event_type": "update_campaign_budget_scheduling_state",
       "category": "budget_up",
       "object_id": "120244002624120020",
-      "object_name": "120244002624120020",
+      "object_name": "260316_제미나이",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3770,7 +3770,7 @@
       "event_type": "update_ad_set_target_spec",
       "category": "edit",
       "object_id": "120244002624120020",
-      "object_name": "120244002624120020",
+      "object_name": "260316_제미나이",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3815,7 +3815,7 @@
       "event_type": "update_ad_set_optimization_goal",
       "category": "edit",
       "object_id": "120244002624120020",
-      "object_name": "120244002624120020",
+      "object_name": "260316_제미나이",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3829,7 +3829,7 @@
       "event_type": "update_ad_set_bid_strategy",
       "category": "budget_up",
       "object_id": "120244002624120020",
-      "object_name": "120244002624120020",
+      "object_name": "260316_제미나이",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3853,7 +3853,7 @@
       "event_type": "create_ad_set",
       "category": "edit",
       "object_id": "120244002624120020",
-      "object_name": "120244002624120020",
+      "object_name": "260316_제미나이",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3872,7 +3872,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120244002584030020",
-      "object_name": "120244002584030020",
+      "object_name": "260316_예뻐지려면",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3890,7 +3890,7 @@
       "event_type": "update_campaign_budget_scheduling_state",
       "category": "budget_up",
       "object_id": "120244002584030020",
-      "object_name": "120244002584030020",
+      "object_name": "260316_예뻐지려면",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3904,7 +3904,7 @@
       "event_type": "update_ad_set_target_spec",
       "category": "edit",
       "object_id": "120244002584030020",
-      "object_name": "120244002584030020",
+      "object_name": "260316_예뻐지려면",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3949,7 +3949,7 @@
       "event_type": "update_ad_set_optimization_goal",
       "category": "edit",
       "object_id": "120244002584030020",
-      "object_name": "120244002584030020",
+      "object_name": "260316_예뻐지려면",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3963,7 +3963,7 @@
       "event_type": "update_ad_set_bid_strategy",
       "category": "budget_up",
       "object_id": "120244002584030020",
-      "object_name": "120244002584030020",
+      "object_name": "260316_예뻐지려면",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -3987,7 +3987,7 @@
       "event_type": "create_ad_set",
       "category": "edit",
       "object_id": "120244002584030020",
-      "object_name": "120244002584030020",
+      "object_name": "260316_예뻐지려면",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -4006,7 +4006,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002589220020",
-      "object_name": "120244002589220020",
+      "object_name": "ASC_1차_슈링크2_영상 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -4025,7 +4025,7 @@
       "event_type": "update_ad_run_status",
       "category": "status_off",
       "object_id": "120244002589210020",
-      "object_name": "120244002589210020",
+      "object_name": "ASC_1차_슈링크1_영상 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -4044,7 +4044,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002589220020",
-      "object_name": "120244002589220020",
+      "object_name": "ASC_1차_슈링크2_영상 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -4059,7 +4059,7 @@
       "event_type": "create_ad",
       "category": "edit",
       "object_id": "120244002589210020",
-      "object_name": "120244002589210020",
+      "object_name": "ASC_1차_슈링크1_영상 - 사본",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
@@ -4074,7 +4074,7 @@
       "event_type": "update_ad_set_name",
       "category": "edit",
       "object_id": "120244002536410020",
-      "object_name": "120244002536410020",
+      "object_name": "260316_슈링크",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
@@ -4088,7 +4088,7 @@
       "event_type": "update_ad_set_run_status",
       "category": "status_off",
       "object_id": "120244002536410020",
-      "object_name": "120244002536410020",
+      "object_name": "260316_슈링크",
       "object_type": "CAMPAIGN",
       "actor_name": "Jun Jun",
       "extra": {
