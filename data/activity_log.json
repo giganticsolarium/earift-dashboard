@@ -1,6 +1,21 @@
 {
-  "last_updated": "2026-03-19T18:36:41.390429+09:00",
+  "last_updated": "2026-03-19T19:00:29.498454+09:00",
   "events": [
+    {
+      "event_time": "2026-03-19T09:37:22+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244001362070020",
+      "object_name": "KTX_소프트1_나레이션 - 사본_Group_1",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120242695180080020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-19T08:53:58+0000",
       "event_type": "update_ad_set_run_status",
