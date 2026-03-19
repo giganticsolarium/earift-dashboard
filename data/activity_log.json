@@ -1,6 +1,42 @@
 {
-  "last_updated": "2026-03-19T16:42:53.344905+09:00",
+  "last_updated": "2026-03-19T17:00:25.309791+09:00",
   "events": [
+    {
+      "event_time": "2026-03-19T07:46:36+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 7
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T07:46:31+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
     {
       "event_time": "2026-03-19T06:56:14+0000",
       "event_type": "first_delivery_event",
