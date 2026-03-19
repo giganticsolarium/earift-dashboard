@@ -1,6 +1,21 @@
 {
-  "last_updated": "2026-03-19T21:02:49.771504+09:00",
+  "last_updated": "2026-03-19T21:47:36.790271+09:00",
   "events": [
+    {
+      "event_time": "2026-03-19T12:08:27+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244165997500020",
+      "object_name": "260319_이어셀2",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244165997490020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-19T11:45:22+0000",
       "event_type": "first_delivery_event",
