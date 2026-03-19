@@ -75,6 +75,26 @@
     .card-arrow{font-size:18px;color:var(--muted);}
     .card-id{font-size:10px;color:var(--muted);}
 
+    /* ADSET GROUP */
+    .adset-group{margin:0 28px 24px;}
+    .adset-group-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px 10px 0 0;cursor:pointer;user-select:none;}
+    .adset-group-hdr:hover{background:var(--surface2);}
+    .adset-group-title{display:flex;align-items:center;gap:10px;}
+    .adset-toggle{color:var(--muted);font-size:12px;transition:transform .2s;}
+    .adset-toggle.open{transform:rotate(90deg);}
+    .adset-group-name{font-size:13px;font-weight:700;}
+    .adset-group-campaign{font-size:11px;color:var(--muted);}
+    .adset-group-stats{display:flex;gap:16px;font-size:11px;}
+    .adset-group-stats span{color:var(--muted);}
+    .adset-group-stats strong{color:var(--text);}
+    .adset-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;}
+    .adset-cards.collapsed{display:none;}
+
+    /* VIEW MODE TOGGLE */
+    .view-toggle{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px;}
+    .vtbtn{padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;border:none;background:transparent;color:var(--muted);}
+    .vtbtn.active{background:var(--accent);color:#fff;}
+
     /* EMPTY */
     .empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
     .empty-state div:first-child{font-size:36px;margin-bottom:12px;}
@@ -166,7 +186,11 @@
     <div class="live-badge"><div class="live-dot"></div><span id="activeCount">-</span>개 게재 중</div>
     <div class="search-box">
       <span style="color:var(--muted);font-size:13px;">🔍</span>
-      <input type="text" id="searchInput" placeholder="광고명 검색..." oninput="renderCards()">
+      <input type="text" id="searchInput" placeholder="캠페인 / 세트 / 콘텐츠명 검색..." oninput="renderCards()">
+    </div>
+    <div class="view-toggle">
+      <button class="vtbtn" id="btnFlat" onclick="setViewMode('flat',this)">전체</button>
+      <button class="vtbtn active" id="btnGroup" onclick="setViewMode('group',this)">세트별</button>
     </div>
     <select class="sort-select" id="sortSelect" onchange="renderCards()">
       <option value="spend">지출 높은순</option>
@@ -204,7 +228,10 @@
     <div class="spinner"></div>
     <div style="color:var(--muted);font-size:13px;">데이터 불러오는 중...</div>
   </div>
-  <div class="content-grid" id="cardGrid"></div>
+  <!-- 전체 목록 뷰 -->
+  <div class="content-grid" id="cardGrid" style="display:none;"></div>
+  <!-- 세트별 그룹 뷰 -->
+  <div id="adsetGroups"></div>
 </div>
 
 
@@ -355,75 +382,137 @@ function renderSummaryBar(){
   document.getElementById('sb-count').textContent = ads.length + '개';
 }
 
+// ── 뷰 모드 ─────────────────────────────────────────
+let _viewMode = 'group'; // 'flat' | 'group'
+const _collapsedSets = new Set();
+
+function setViewMode(mode, btn){
+  _viewMode = mode;
+  document.querySelectorAll('.vtbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+}
+
+// ── 카드 HTML 생성 헬퍼 ──────────────────────────────
+function makeCardHtml(ad, rank, globalIdx){
+  const yesterdayMap = {};
+  _adsYest.forEach(a => { yesterdayMap[a.ad_id] = a; });
+  const yest = yesterdayMap[ad.ad_id] || {};
+  const roasColor = ad.roas >= 3 ? 'var(--green)' : ad.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
+  const isVideo = (ad.creative_type || '').toUpperCase().includes('VIDEO') || ad.video_id;
+  const g = adGradient(globalIdx);
+  const e = adEmoji(globalIdx);
+  const thumbInner = ad.thumbnail_url
+    ? `<img src="${ad.thumbnail_url}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.parentElement.insertAdjacentHTML('afterbegin','<div style=\\'width:100%;height:100%;${g};display:flex;align-items:center;justify-content:center;font-size:44px;\\'>${e}</div>')">`
+    : `<div style="width:100%;height:100%;${g};display:flex;align-items:center;justify-content:center;font-size:44px;">${e}</div>`;
+  const videoBadge = isVideo
+    ? `<div style="position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,.7);border-radius:6px;padding:3px 8px;font-size:10px;color:#fff;font-weight:600;z-index:1;">▶ 영상</div>`
+    : '';
+  return `<div class="content-card" onclick="showDetail('${ad.ad_id}')">
+    <div class="card-thumb">
+      ${thumbInner}
+      <div class="card-thumb-overlay"></div>
+      <div class="card-rank">#${rank}</div>
+      ${videoBadge}
+    </div>
+    <div class="card-body">
+      <div class="card-title">${ad.ad_name || '-'}</div>
+      <div class="card-kpi-row">
+        <div class="card-kpi"><div class="card-kpi-label">지출</div><div class="card-kpi-val">${fmtW(ad.spend)}</div><div class="card-kpi-chg">${chgHtml(ad.spend, yest.spend)}</div></div>
+        <div class="card-kpi"><div class="card-kpi-label">ROAS</div><div class="card-kpi-val" style="color:${roasColor}">${fmtRoas(ad.roas)}</div><div class="card-kpi-chg">${chgHtml(ad.roas, yest.roas, true)}</div></div>
+        <div class="card-kpi"><div class="card-kpi-label">구매</div><div class="card-kpi-val">${ad.purchases}건</div><div class="card-kpi-chg">${chgHtml(ad.purchases, yest.purchases)}</div></div>
+        <div class="card-kpi"><div class="card-kpi-label">CTR</div><div class="card-kpi-val">${fmtPct(ad.ctr)}</div><div class="card-kpi-chg">${chgHtml(ad.ctr, yest.ctr, false, true)}</div></div>
+      </div>
+      <div class="card-footer">
+        <div class="card-id" style="color:var(--muted);font-size:10px;">${ad.adset_name || ''}</div>
+        <span class="card-arrow">›</span>
+      </div>
+    </div>
+  </div>`;
+}
+
 // ── 카드 렌더링 ─────────────────────────────────────
 function renderCards(){
   const q = document.getElementById('searchInput').value.toLowerCase();
   const sort = document.getElementById('sortSelect').value;
 
   let list = _ads.filter(a =>
-    !q || a.ad_name.toLowerCase().includes(q) ||
-    a.campaign_name.toLowerCase().includes(q) ||
-    a.adset_name.toLowerCase().includes(q)
+    !q ||
+    (a.ad_name || '').toLowerCase().includes(q) ||
+    (a.campaign_name || '').toLowerCase().includes(q) ||
+    (a.adset_name || '').toLowerCase().includes(q)
   );
-
   list.sort((a,b) => (b[sort]||0) - (a[sort]||0));
 
   const grid = document.getElementById('cardGrid');
+
   if (!list.length) {
     grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div>🔍</div><div>검색 결과가 없습니다</div></div>';
+    grid.style.display = 'grid';
+    document.getElementById('adsetGroups').innerHTML = '';
     return;
   }
 
-  // yesterday lookup map
-  const yesterdayMap = {};
-  _adsYest.forEach(a => { yesterdayMap[a.ad_id] = a; });
+  if (_viewMode === 'flat') {
+    // ─── 전체 목록 뷰 ───
+    grid.style.display = 'grid';
+    document.getElementById('adsetGroups').innerHTML = '';
+    grid.innerHTML = list.map((ad, i) => makeCardHtml(ad, i+1, _ads.indexOf(ad))).join('');
 
-  grid.innerHTML = list.map((ad, i) => {
-    const yest = yesterdayMap[ad.ad_id] || {};
-    const rank = i + 1;
-    const roasColor = ad.roas >= 3 ? 'var(--green)' : ad.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
+  } else {
+    // ─── 세트별 그룹 뷰 ───
+    grid.style.display = 'none';
+    grid.innerHTML = '';
 
-    return `<div class="content-card" onclick="showDetail('${ad.ad_id}')">
-      <div class="card-thumb">
-        <div style="width:100%;height:100%;${adGradient(i)};display:flex;align-items:center;justify-content:center;font-size:44px;">
-          ${adEmoji(i)}
+    // 세트 단위로 그룹핑
+    const groups = {};
+    list.forEach(ad => {
+      const key = (ad.adset_name || '알 수 없는 세트') + '||' + (ad.campaign_name || '');
+      if (!groups[key]) groups[key] = { adset_name: ad.adset_name || '-', campaign_name: ad.campaign_name || '-', ads: [] };
+      groups[key].ads.push(ad);
+    });
+
+    // 세트별 지출 합산 기준 정렬
+    const sortedGroups = Object.entries(groups).sort((a,b) => {
+      const sa = a[1].ads.reduce((s,x)=>s+x.spend,0);
+      const sb = b[1].ads.reduce((s,x)=>s+x.spend,0);
+      return sb - sa;
+    });
+
+    const container = document.getElementById('adsetGroups');
+    container.innerHTML = sortedGroups.map(([key, grp]) => {
+      const totalSpend = grp.ads.reduce((s,a)=>s+a.spend,0);
+      const totalPurchases = grp.ads.reduce((s,a)=>s+a.purchases,0);
+      const totalValue = grp.ads.reduce((s,a)=>s+a.purchase_value,0);
+      const grpRoas = totalSpend > 0 ? (totalValue/totalSpend).toFixed(2) : '-';
+      const isCollapsed = _collapsedSets.has(key);
+      const cardsHtml = grp.ads.map((ad, i) => makeCardHtml(ad, i+1, _ads.indexOf(ad))).join('');
+      return `<div class="adset-group">
+        <div class="adset-group-hdr" onclick="toggleAdset('${key.replace(/'/g,"\\'")}')">
+          <div class="adset-group-title">
+            <span class="adset-toggle ${isCollapsed ? '' : 'open'}">▶</span>
+            <div>
+              <div class="adset-group-name">📁 ${grp.adset_name}</div>
+              <div class="adset-group-campaign">${grp.campaign_name}</div>
+            </div>
+          </div>
+          <div class="adset-group-stats">
+            <span>광고 <strong>${grp.ads.length}개</strong></span>
+            <span>지출 <strong>${fmtW(totalSpend)}</strong></span>
+            <span>ROAS <strong>${grpRoas}</strong></span>
+            <span>구매 <strong>${totalPurchases}건</strong></span>
+          </div>
         </div>
-        <div class="card-thumb-overlay"></div>
-        <div class="card-rank">#${rank}</div>
-      </div>
-      <div class="card-body">
-        <div class="card-campaign">${ad.campaign_name || '-'}</div>
-        <div class="card-adset" style="font-size:10px;color:var(--muted);margin-bottom:6px;">📁 ${ad.adset_name || '-'}</div>
-        <div class="card-title">${ad.ad_name || '-'}</div>
-        <div class="card-kpi-row">
-          <div class="card-kpi">
-            <div class="card-kpi-label">지출</div>
-            <div class="card-kpi-val">${fmtW(ad.spend)}</div>
-            <div class="card-kpi-chg">${chgHtml(ad.spend, yest.spend)}</div>
-          </div>
-          <div class="card-kpi">
-            <div class="card-kpi-label">ROAS</div>
-            <div class="card-kpi-val" style="color:${roasColor}">${fmtRoas(ad.roas)}</div>
-            <div class="card-kpi-chg">${chgHtml(ad.roas, yest.roas, true)}</div>
-          </div>
-          <div class="card-kpi">
-            <div class="card-kpi-label">구매</div>
-            <div class="card-kpi-val">${ad.purchases}건</div>
-            <div class="card-kpi-chg">${chgHtml(ad.purchases, yest.purchases)}</div>
-          </div>
-          <div class="card-kpi">
-            <div class="card-kpi-label">CTR</div>
-            <div class="card-kpi-val">${fmtPct(ad.ctr)}</div>
-            <div class="card-kpi-chg">${chgHtml(ad.ctr, yest.ctr, false, true)}</div>
-          </div>
-        </div>
-        <div class="card-footer">
-          <div class="card-id" style="color:var(--muted);font-size:10px;">ID: ${ad.ad_id}</div>
-          <span class="card-arrow">›</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+        <div class="adset-cards ${isCollapsed ? 'collapsed' : ''}" id="set_${btoa(key).replace(/[^a-z0-9]/gi,'')}">${cardsHtml}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function toggleAdset(key){
+  if (_collapsedSets.has(key)) _collapsedSets.delete(key);
+  else _collapsedSets.add(key);
+  renderCards();
 }
 
 // ── 상세 뷰 ─────────────────────────────────────────
@@ -444,8 +533,15 @@ function showDetail(adId){
   const roasColor = ad.roas >= 3 ? 'var(--green)' : ad.roas >= 1.5 ? 'var(--yellow)' : 'var(--red)';
 
   // 헤더
+  const isVid = (ad.creative_type || '').toUpperCase().includes('VIDEO') || ad.video_id;
+  const hdrThumb = ad.thumbnail_url
+    ? `<img src="${ad.thumbnail_url}" style="width:140px;height:140px;object-fit:cover;border-radius:10px;display:block;" onerror="this.style.display='none'">`
+    : `<div style="width:140px;height:140px;border-radius:10px;${adGradient(idx)};display:flex;align-items:center;justify-content:center;font-size:48px;flex-shrink:0;">${adEmoji(idx)}</div>`;
   document.getElementById('detailHdr').innerHTML = `
-    <div class="content-hdr-preview" style="background:${adGradient(idx)};">${adEmoji(idx)}</div>
+    <div style="flex-shrink:0;position:relative;">
+      ${hdrThumb}
+      ${isVid ? `<div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.7);border-radius:6px;padding:2px 8px;font-size:10px;color:#fff;font-weight:600;">▶ 영상</div>` : ''}
+    </div>
     <div class="content-hdr-info">
       <div class="content-hdr-campaign">${ad.campaign_name || '-'}</div>
       <div class="content-hdr-adset">📁 ${ad.adset_name || '-'}</div>
