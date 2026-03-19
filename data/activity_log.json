@@ -1,6 +1,155 @@
 {
-  "last_updated": "2026-03-19T20:30:51.337455+09:00",
+  "last_updated": "2026-03-19T20:59:07.110007+09:00",
   "events": [
+    {
+      "event_time": "2026-03-19T11:45:22+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244001333240020",
+      "object_name": "KTX_소프트1_ASMR - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120242695180080020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-19T11:44:56+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_on",
+      "object_id": "120244165997490020",
+      "object_name": "260319_이어셀2",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T11:44:49+0000",
+      "event_type": "update_campaign_budget_scheduling_state",
+      "category": "edit",
+      "object_id": "120244165997490020",
+      "object_name": "260319_이어셀2",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "new_value": false,
+        "old_value": null,
+        "type": "update_budget_schedule_state"
+      }
+    },
+    {
+      "event_time": "2026-03-19T11:44:49+0000",
+      "event_type": "update_ad_set_target_spec",
+      "category": "edit",
+      "object_id": "120244165997490020",
+      "object_name": "260319_이어셀2",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": [],
+        "new_value": [
+          {
+            "content": "위치 - 거주지:",
+            "children": [
+              "대한민국"
+            ]
+          },
+          {
+            "content": "최소 연령:",
+            "children": [
+              "18"
+            ]
+          },
+          {
+            "content": "연령:",
+            "children": [
+              "18~65+"
+            ]
+          },
+          {
+            "content": "노출 위치:",
+            "children": [
+              "데스크톱 컴퓨터의 피드, Instagram 피드, Instagram 스토리, Instagram 프로필 피드, Instagram 프로필 릴스, Instagram 탐색 홈, Instagram 릴스, Instagram 웹 피드, Instagram 웹 스토리, Instagram Msite 스토리, Instagram 검색, 모바일 기기의 타사 앱 및 웹사이트(Audience Network), 모바일 기기의 피드, 데스크톱 컴퓨터의 오른쪽 칼럼, 모바일 기기의 인스트림 동영상, 데스크톱 컴퓨터의 인스트림 동영상, 데스크톱 컴퓨터의 Marketplace, 모바일 기기의 Marketplace, 모바일 기기의 Facebook 스토리, Messenger 스토리, 데스크톱 기기에서 Marketplace 검색, 모바일 기기에서 Marketplace 검색, 모바일 기기에서 검색, 데스크톱 기기에서 검색, 모바일 기기의 Facebook 프로필 피드, 모바일 기기의 Facebook 릴스 오버레이, Facebook 릴스, 모바일 기기에서 동영상 검색, Threads 피드 또는 Facebook 알림"
+            ]
+          },
+          {
+            "content": "어드밴티지+ 타겟:",
+            "children": [
+              "설정"
+            ]
+          }
+        ],
+        "type": "targets_spec"
+      }
+    },
+    {
+      "event_time": "2026-03-19T11:44:49+0000",
+      "event_type": "update_ad_set_optimization_goal",
+      "category": "edit",
+      "object_id": "120244165997490020",
+      "object_name": "260319_이어셀2",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "new_value": "전환",
+        "old_value": null,
+        "type": "optimization_goal"
+      }
+    },
+    {
+      "event_time": "2026-03-19T11:44:49+0000",
+      "event_type": "update_ad_set_bid_strategy",
+      "category": "edit",
+      "object_id": "120244165997490020",
+      "object_name": "260319_이어셀2",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": null,
+        "new_value": "LOWEST_COST_BID_STRATEGY",
+        "additional_value": {
+          "old_value": null,
+          "new_value": null,
+          "currency": "KRW",
+          "type": "payment_amount"
+        },
+        "adset_minimum_return_on_ad_spend": {
+          "old_value": null,
+          "new_value": null
+        },
+        "type": "bid_type"
+      }
+    },
+    {
+      "event_time": "2026-03-19T11:44:49+0000",
+      "event_type": "create_ad_set",
+      "category": "edit",
+      "object_id": "120244165997490020",
+      "object_name": "260319_이어셀2",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 30000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
     {
       "event_time": "2026-03-19T09:37:22+0000",
       "event_type": "first_delivery_event",
