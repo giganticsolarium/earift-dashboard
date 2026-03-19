@@ -1,6 +1,83 @@
 {
-  "last_updated": "2026-03-19T22:00:32.335565+09:00",
+  "last_updated": "2026-03-19T23:00:30.540888+09:00",
   "events": [
+    {
+      "event_time": "2026-03-19T13:44:53+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_on",
+      "object_id": "120243873004040020",
+      "object_name": "260313 KTX 전환",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T13:44:45+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243873004040020",
+      "object_name": "260313 KTX 전환",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T13:44:45+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120243873004040020",
+      "object_name": "260313 KTX 전환",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 700000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 500000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-19T13:30:24+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244166555450020",
+      "object_name": "120244166555450020",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244165997490020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-19T12:08:27+0000",
       "event_type": "first_delivery_event",
