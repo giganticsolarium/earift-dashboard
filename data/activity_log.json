@@ -1,6 +1,176 @@
 {
-  "last_updated": "2026-03-19T12:00:31.032185+09:00",
+  "last_updated": "2026-03-19T13:00:28.813759+09:00",
   "events": [
+    {
+      "event_time": "2026-03-19T04:00:20+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002536410020",
+      "object_name": "260316_슈링크",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 7
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T04:00:12+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002536410020",
+      "object_name": "260316_슈링크",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T03:59:12+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002644110020",
+      "object_name": "260316_제로+에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T03:59:06+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002644110020",
+      "object_name": "260316_제로+에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T03:58:34+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002644110020",
+      "object_name": "260316_제로+에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T03:58:27+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002644110020",
+      "object_name": "260316_제로+에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T03:58:27+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_up",
+      "object_id": "120244002644110020",
+      "object_name": "260316_제로+에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 50000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 80000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-19T03:57:54+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243967511780020",
+      "object_name": "260315_백지연_1차",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 7
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T03:57:47+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243967511780020",
+      "object_name": "260315_백지연_1차",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
     {
       "event_time": "2026-03-18T23:34:34+0000",
       "event_type": "ad_account_billing_charge",
