@@ -1,10 +1,10 @@
 {
-  "last_updated": "2026-03-20T02:50:05.208725+09:00",
+  "last_updated": "2026-03-20T03:00:29.272112+09:00",
   "campaigns": [
     {
-      "spend": 7405354.0,
-      "impressions": 298835,
-      "clicks": 6090,
+      "spend": 7406330.0,
+      "impressions": 298871,
+      "clicks": 6091,
       "reach": 244273,
       "ctr": 2.04,
       "cpc": 1216.0,
@@ -12,7 +12,7 @@
       "purchases": 139,
       "purchase_value": 9153880.0,
       "roas": 1.24,
-      "cpa": 53276.0,
+      "cpa": 53283.0,
       "campaign_id": "120243403518660020",
       "campaign_name": "260303 일반 전환 캠페인"
     },
@@ -32,17 +32,17 @@
       "campaign_name": "260216_ASC_1차광고"
     },
     {
-      "spend": 926110.0,
-      "impressions": 26826,
+      "spend": 926135.0,
+      "impressions": 26828,
       "clicks": 1707,
       "reach": 11684,
       "ctr": 6.36,
       "cpc": 543.0,
-      "cpm": 34523.0,
+      "cpm": 34521.0,
       "purchases": 1,
       "purchase_value": 64300.0,
       "roas": 0.07,
-      "cpa": 926110.0,
+      "cpa": 926135.0,
       "campaign_id": "120242416319530020",
       "campaign_name": "전환 메신저 [대화수 목표]"
     },
@@ -64,9 +64,9 @@
   ],
   "data": [
     {
-      "spend": 7405354.0,
-      "impressions": 298835,
-      "clicks": 6090,
+      "spend": 7406330.0,
+      "impressions": 298871,
+      "clicks": 6091,
       "reach": 244273,
       "ctr": 2.04,
       "cpc": 1216.0,
@@ -74,7 +74,7 @@
       "purchases": 139,
       "purchase_value": 9153880.0,
       "roas": 1.24,
-      "cpa": 53276.0,
+      "cpa": 53283.0,
       "campaign_id": "120243403518660020",
       "campaign_name": "260303 일반 전환 캠페인"
     },
@@ -94,17 +94,17 @@
       "campaign_name": "260216_ASC_1차광고"
     },
     {
-      "spend": 926110.0,
-      "impressions": 26826,
+      "spend": 926135.0,
+      "impressions": 26828,
       "clicks": 1707,
       "reach": 11684,
       "ctr": 6.36,
       "cpc": 543.0,
-      "cpm": 34523.0,
+      "cpm": 34521.0,
       "purchases": 1,
       "purchase_value": 64300.0,
       "roas": 0.07,
-      "cpa": 926110.0,
+      "cpa": 926135.0,
       "campaign_id": "120242416319530020",
       "campaign_name": "전환 메신저 [대화수 목표]"
     },
