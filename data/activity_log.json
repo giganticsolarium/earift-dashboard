@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-20T17:00:28.154401+09:00",
+  "last_updated": "2026-03-20T17:33:42.735200+09:00",
   "events": [
     {
       "event_time": "2026-03-20T05:26:12+0000",
@@ -205,6 +205,40 @@
       }
     },
     {
+      "event_time": "2026-03-20T01:07:11+0000",
+      "event_type": "update_ad_run_status_to_be_set_after_review",
+      "category": "status_off",
+      "object_id": "120243192106050020",
+      "object_name": "글로브_장윤주1",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "비활성",
+        "campaign_id": 120242695180080020,
+        "type": "run_status_to_set_after_review"
+      }
+    },
+    {
+      "event_time": "2026-03-20T01:07:11+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120243192106050020",
+      "object_name": "글로브_장윤주1",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
       "event_time": "2026-03-19T19:38:12+0000",
       "event_type": "ad_account_billing_charge",
       "category": "edit",
@@ -325,6 +359,25 @@
         "old_value": null,
         "new_value": "게재하기 시작했습니다",
         "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-19T11:49:09+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244165997500020",
+      "object_name": "260319_이어셀2",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120244165997490020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status"
       }
     },
     {
