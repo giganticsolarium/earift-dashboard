@@ -1,6 +1,22 @@
 {
-  "last_updated": "2026-03-21T05:00:27.244054+09:00",
+  "last_updated": "2026-03-21T05:24:58.769303+09:00",
   "events": [
+    {
+      "event_time": "2026-03-20T20:01:49+0000",
+      "event_type": "ad_account_billing_charge",
+      "category": "edit",
+      "object_id": "1441821640906256",
+      "object_name": "1441821640906256",
+      "object_type": "ACCOUNT",
+      "actor_name": "Meta",
+      "extra": {
+        "currency": "KRW",
+        "new_value": 1000000,
+        "transaction_id": "26464420313247839-26358871900469355",
+        "action": 67,
+        "type": "payment_amount"
+      }
+    },
     {
       "event_time": "2026-03-20T12:51:38+0000",
       "event_type": "first_delivery_event",
