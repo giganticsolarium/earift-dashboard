@@ -1,6 +1,61 @@
 {
-  "last_updated": "2026-03-20T13:08:37.737114+09:00",
+  "last_updated": "2026-03-20T14:00:28.237276+09:00",
   "events": [
+    {
+      "event_time": "2026-03-20T04:58:51+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_on",
+      "object_id": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T04:58:44+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "비활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 7,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T04:58:20+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_on",
+      "object_id": "120242651870010020",
+      "object_name": "260210 슈링크- 메신져",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "비활성",
+        "new_value": "활성",
+        "run_status": {
+          "old_value": 7,
+          "new_value": 1
+        },
+        "type": "run_status",
+        "last_learning_exit": 1773136939
+      }
+    },
     {
       "event_time": "2026-03-20T01:09:21+0000",
       "event_type": "update_ad_set_run_status",
