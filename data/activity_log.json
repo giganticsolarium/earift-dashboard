@@ -1,6 +1,21 @@
 {
-  "last_updated": "2026-03-20T21:42:51.656005+09:00",
+  "last_updated": "2026-03-20T22:00:31.127468+09:00",
   "events": [
+    {
+      "event_time": "2026-03-20T12:51:38+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244225255320020",
+      "object_name": "운전1차_롱",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244225255310020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-20T11:45:32+0000",
       "event_type": "first_delivery_event",
