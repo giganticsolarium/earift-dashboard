@@ -1,6 +1,92 @@
 {
-  "last_updated": "2026-03-20T14:00:28.237276+09:00",
+  "last_updated": "2026-03-20T14:46:05.508035+09:00",
   "events": [
+    {
+      "event_time": "2026-03-20T05:26:12+0000",
+      "event_type": "update_budget_flex_toggle_status",
+      "category": "status_off",
+      "object_id": "120243403518660020",
+      "object_name": "260303 일반 전환 캠페인",
+      "object_type": "CAMPAIGN_GROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "new_value": false,
+        "old_value": true,
+        "type": "update_budget_flex_toggle_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T05:16:14+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 7
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T05:16:07+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120243954846890020",
+      "object_name": "260315 KTX 댓글유도",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T05:15:06+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002274780020",
+      "object_name": "260316_궁금증",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "run_status": {
+          "old_value": 17,
+          "new_value": 7
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T05:14:59+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002274780020",
+      "object_name": "260316_궁금증",
+      "object_type": "CAMPAIGN",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
     {
       "event_time": "2026-03-20T04:58:51+0000",
       "event_type": "update_ad_set_run_status",
