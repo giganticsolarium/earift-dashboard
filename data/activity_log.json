@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-20T17:33:42.735200+09:00",
+  "last_updated": "2026-03-20T18:00:28.040011+09:00",
   "events": [
     {
       "event_time": "2026-03-20T05:26:12+0000",
@@ -143,6 +143,62 @@
       }
     },
     {
+      "event_time": "2026-03-20T04:57:33+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120243954964500020",
+      "object_name": "260315 KTX3메신저",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "campaign_id": 120243954941010020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 8
+        },
+        "type": "run_status",
+        "last_learning_exit": 1773673200
+      }
+    },
+    {
+      "event_time": "2026-03-20T04:57:25+0000",
+      "event_type": "update_ad_run_status_to_be_set_after_review",
+      "category": "status_off",
+      "object_id": "120243954964500020",
+      "object_name": "260315 KTX3메신저",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "비활성",
+        "campaign_id": 120243954941010020,
+        "type": "run_status_to_set_after_review",
+        "last_learning_exit": 1773673200
+      }
+    },
+    {
+      "event_time": "2026-03-20T04:57:25+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120243954964500020",
+      "object_name": "260315 KTX3메신저",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "campaign_id": 120243954941010020,
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status",
+        "last_learning_exit": 1773673200
+      }
+    },
+    {
       "event_time": "2026-03-20T01:09:21+0000",
       "event_type": "update_ad_set_run_status",
       "category": "status_on",
@@ -205,6 +261,25 @@
       }
     },
     {
+      "event_time": "2026-03-20T01:07:18+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120243192106050020",
+      "object_name": "글로브_장윤주1",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 8
+        },
+        "type": "run_status"
+      }
+    },
+    {
       "event_time": "2026-03-20T01:07:11+0000",
       "event_type": "update_ad_run_status_to_be_set_after_review",
       "category": "status_off",
@@ -225,6 +300,121 @@
       "category": "status_off",
       "object_id": "120243192106050020",
       "object_name": "글로브_장윤주1",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T01:06:18+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244001333250020",
+      "object_name": "260307_장윤주_심술보 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status",
+        "last_learning_exit": 1772107190
+      }
+    },
+    {
+      "event_time": "2026-03-20T01:06:11+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244001333250020",
+      "object_name": "260307_장윤주_심술보 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T01:05:57+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120243191933630020",
+      "object_name": "무한_B&A_1_1",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T01:05:49+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120243191933630020",
+      "object_name": "무한_B&A_1_1",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T01:05:45+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120243192586280020",
+      "object_name": "이어셀1-2_수정",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-20T01:05:36+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120243192586280020",
+      "object_name": "이어셀1-2_수정",
       "object_type": "ADGROUP",
       "actor_name": "Jun Jun",
       "extra": {
