@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-20T10:27:15.134041+09:00",
+  "last_updated": "2026-03-20T11:00:25.646520+09:00",
   "events": [
     {
       "event_time": "2026-03-20T01:09:21+0000",
@@ -184,6 +184,25 @@
         "old_value": null,
         "new_value": "게재하기 시작했습니다",
         "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-19T11:46:10+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244165997500020",
+      "object_name": "260319_이어셀2",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120244165997490020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
       }
     },
     {
@@ -512,6 +531,25 @@
         "run_status": {
           "old_value": 1,
           "new_value": 17
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-19T04:39:52+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244102807090020",
+      "object_name": "260318_준_주차별2",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "비활성",
+        "campaign_id": 120244101900510020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 8
         },
         "type": "run_status"
       }
