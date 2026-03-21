@@ -1,6 +1,339 @@
 {
-  "last_updated": "2026-03-21T13:00:25.602060+09:00",
+  "last_updated": "2026-03-21T14:00:28.782998+09:00",
   "events": [
+    {
+      "event_time": "2026-03-21T04:49:51+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244263171820020",
+      "object_name": "260321 운전_롱1_메신저",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244263165480020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:47:02+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244263177950020",
+      "object_name": "260321 운전_릴스2_메신저",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244263165480020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:35:26+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244263165470020",
+      "object_name": "260321 운전_숏1_메신저",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244263165480020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:33:29+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244263175160020",
+      "object_name": "260321 운전_릴스1_메신저",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244263165480020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:26:07+0000",
+      "event_type": "update_ad_set_name",
+      "category": "edit",
+      "object_id": "120244263165480020",
+      "object_name": "260321 운전 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "260321 운전",
+        "new_value": "260321 운전 메신저",
+        "type": "name"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:25:08+0000",
+      "event_type": "update_campaign_budget_scheduling_state",
+      "category": "edit",
+      "object_id": "120244263165480020",
+      "object_name": "260321 운전 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "new_value": false,
+        "old_value": null,
+        "type": "update_budget_schedule_state"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:25:08+0000",
+      "event_type": "update_ad_set_target_spec",
+      "category": "edit",
+      "object_id": "120244263165480020",
+      "object_name": "260321 운전 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": [],
+        "new_value": [
+          {
+            "content": "위치 - 거주지:",
+            "children": [
+              "대한민국"
+            ]
+          },
+          {
+            "content": "최소 연령:",
+            "children": [
+              "18"
+            ]
+          },
+          {
+            "content": "연령:",
+            "children": [
+              "18~65+"
+            ]
+          },
+          {
+            "content": "노출 위치:",
+            "children": [
+              "데스크톱 컴퓨터의 피드, Instagram 피드, Instagram 스토리, Instagram 프로필 피드, Instagram 프로필 릴스, Instagram 탐색 홈, Instagram 릴스, 모바일 기기의 타사 앱 및 웹사이트(Audience Network), 모바일 기기의 피드, 모바일 기기의 인스트림 동영상, 데스크톱 컴퓨터의 인스트림 동영상, 데스크톱 컴퓨터의 Marketplace, 모바일 기기의 Marketplace, 모바일 기기의 Facebook 스토리, Messenger 스토리, 데스크톱 기기에서 Marketplace 검색, 모바일 기기에서 Marketplace 검색, 모바일 기기에서 검색, 데스크톱 기기에서 검색, 모바일 기기의 Facebook 프로필 피드, 모바일 기기의 Facebook 릴스 오버레이, Facebook 릴스, 모바일 기기에서 동영상 검색 또는 Facebook 알림"
+            ]
+          },
+          {
+            "content": "어드밴티지+ 타겟:",
+            "children": [
+              "설정"
+            ]
+          }
+        ],
+        "type": "targets_spec"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:25:08+0000",
+      "event_type": "update_ad_set_optimization_goal",
+      "category": "edit",
+      "object_id": "120244263165480020",
+      "object_name": "260321 운전 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "new_value": "답장",
+        "old_value": null,
+        "type": "optimization_goal"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:25:08+0000",
+      "event_type": "update_ad_set_bid_strategy",
+      "category": "edit",
+      "object_id": "120244263165480020",
+      "object_name": "260321 운전 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": null,
+        "new_value": "LOWEST_COST_BID_STRATEGY",
+        "additional_value": {
+          "old_value": null,
+          "new_value": null,
+          "currency": "KRW",
+          "type": "payment_amount"
+        },
+        "adset_minimum_return_on_ad_spend": {
+          "old_value": null,
+          "new_value": null
+        },
+        "type": "bid_type"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:25:08+0000",
+      "event_type": "create_ad_set",
+      "category": "edit",
+      "object_id": "120244263165480020",
+      "object_name": "260321 운전 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:22:17+0000",
+      "event_type": "update_campaign_budget_scheduling_state",
+      "category": "edit",
+      "object_id": "120244263137980020",
+      "object_name": "260321 이어셀2 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "new_value": false,
+        "old_value": null,
+        "type": "update_budget_schedule_state"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:22:17+0000",
+      "event_type": "update_ad_set_target_spec",
+      "category": "edit",
+      "object_id": "120244263137980020",
+      "object_name": "260321 이어셀2 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": [],
+        "new_value": [
+          {
+            "content": "위치 - 거주지:",
+            "children": [
+              "대한민국"
+            ]
+          },
+          {
+            "content": "최소 연령:",
+            "children": [
+              "18"
+            ]
+          },
+          {
+            "content": "연령:",
+            "children": [
+              "18~65+"
+            ]
+          },
+          {
+            "content": "노출 위치:",
+            "children": [
+              "데스크톱 컴퓨터의 피드, Instagram 피드, Instagram 스토리, Instagram 프로필 피드, Instagram 프로필 릴스, Instagram 탐색 홈, Instagram 릴스, 모바일 기기의 타사 앱 및 웹사이트(Audience Network), 모바일 기기의 피드, 모바일 기기의 인스트림 동영상, 데스크톱 컴퓨터의 인스트림 동영상, 데스크톱 컴퓨터의 Marketplace, 모바일 기기의 Marketplace, 모바일 기기의 Facebook 스토리, Messenger 스토리, 데스크톱 기기에서 Marketplace 검색, 모바일 기기에서 Marketplace 검색, 모바일 기기에서 검색, 데스크톱 기기에서 검색, 모바일 기기의 Facebook 프로필 피드, 모바일 기기의 Facebook 릴스 오버레이, Facebook 릴스, 모바일 기기에서 동영상 검색 또는 Facebook 알림"
+            ]
+          },
+          {
+            "content": "어드밴티지+ 타겟:",
+            "children": [
+              "설정"
+            ]
+          }
+        ],
+        "type": "targets_spec"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:22:17+0000",
+      "event_type": "update_ad_set_optimization_goal",
+      "category": "edit",
+      "object_id": "120244263137980020",
+      "object_name": "260321 이어셀2 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "new_value": "답장",
+        "old_value": null,
+        "type": "optimization_goal"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:22:17+0000",
+      "event_type": "update_ad_set_bid_strategy",
+      "category": "edit",
+      "object_id": "120244263137980020",
+      "object_name": "260321 이어셀2 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": null,
+        "new_value": "LOWEST_COST_BID_STRATEGY",
+        "additional_value": {
+          "old_value": null,
+          "new_value": null,
+          "currency": "KRW",
+          "type": "payment_amount"
+        },
+        "adset_minimum_return_on_ad_spend": {
+          "old_value": null,
+          "new_value": null
+        },
+        "type": "bid_type"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:22:17+0000",
+      "event_type": "create_ad_set",
+      "category": "edit",
+      "object_id": "120244263137980020",
+      "object_name": "260321 이어셀2 메신저",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-21T04:11:42+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_up",
+      "object_id": "120243967511780020",
+      "object_name": "260315_백지연_1차",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 30000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 50000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-21T03:58:55+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244262649200020",
+      "object_name": "260319_이어셀2 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120242695180080020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-21T03:56:10+0000",
       "event_type": "update_ad_set_budget",
