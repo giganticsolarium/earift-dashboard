@@ -1,6 +1,58 @@
 {
-  "last_updated": "2026-03-21T16:29:11.927130+09:00",
+  "last_updated": "2026-03-21T17:00:26.310819+09:00",
   "events": [
+    {
+      "event_time": "2026-03-21T07:57:10+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_up",
+      "object_id": "120243954678260020",
+      "object_name": "260315 KTX - 메신저 전환",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 30000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 50000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-21T07:57:04+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120244002644110020",
+      "object_name": "260316_제로+에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 80000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 30000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
     {
       "event_time": "2026-03-21T05:11:33+0000",
       "event_type": "first_delivery_event",
