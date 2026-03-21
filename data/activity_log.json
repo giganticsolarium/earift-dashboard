@@ -1,6 +1,32 @@
 {
-  "last_updated": "2026-03-21T12:00:25.445741+09:00",
+  "last_updated": "2026-03-21T12:59:48.545359+09:00",
   "events": [
+    {
+      "event_time": "2026-03-21T03:56:10+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_up",
+      "object_id": "120244165997490020",
+      "object_name": "260319_이어셀2",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 50000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 75000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
     {
       "event_time": "2026-03-20T20:01:49+0000",
       "event_type": "ad_account_billing_charge",
