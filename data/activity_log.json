@@ -1,6 +1,59 @@
 {
-  "last_updated": "2026-03-21T17:00:26.310819+09:00",
+  "last_updated": "2026-03-21T17:24:32.445888+09:00",
   "events": [
+    {
+      "event_time": "2026-03-21T08:01:28+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120243403518670020",
+      "object_name": "260303 브랜디드 슈링크",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 100000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 70000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data",
+        "last_learning_exit": 1773408145
+      }
+    },
+    {
+      "event_time": "2026-03-21T08:01:20+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_up",
+      "object_id": "120243967511780020",
+      "object_name": "260315_백지연_1차",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 50000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 75000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
     {
       "event_time": "2026-03-21T07:57:10+0000",
       "event_type": "update_ad_set_budget",
