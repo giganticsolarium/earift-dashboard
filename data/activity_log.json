@@ -1,6 +1,21 @@
 {
-  "last_updated": "2026-03-21T14:09:25.850831+09:00",
+  "last_updated": "2026-03-21T15:00:23.411180+09:00",
   "events": [
+    {
+      "event_time": "2026-03-21T05:11:33+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244263137990020",
+      "object_name": "260321 이어셀2 메신저",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244263137980020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-21T04:49:51+0000",
       "event_type": "first_delivery_event",
