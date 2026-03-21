@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-22T08:00:29.861609+09:00",
+  "last_updated": "2026-03-22T08:18:33.623973+09:00",
   "events": [
     {
       "event_time": "2026-03-21T15:08:44+0000",
@@ -45,6 +45,77 @@
         "old_value": null,
         "new_value": "게재하기 시작했습니다",
         "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-21T11:09:01+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244275401890020",
+      "object_name": "260319_이어셀2 - 환불문구",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-21T11:08:57+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244275401890020",
+      "object_name": "260319_이어셀2 - 환불문구",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-21T11:08:49+0000",
+      "event_type": "update_ad_friendly_name",
+      "category": "edit",
+      "object_id": "120244275401890020",
+      "object_name": "260319_이어셀2 - 환불문구",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "260319_이어셀2 - 사본 - 사본",
+        "new_value": "260319_이어셀2 - 환불문구",
+        "type": "name"
+      }
+    },
+    {
+      "event_time": "2026-03-21T11:08:49+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244275401890020",
+      "object_name": "260319_이어셀2 - 환불문구",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "처리 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 17
+        },
+        "type": "run_status"
       }
     },
     {
