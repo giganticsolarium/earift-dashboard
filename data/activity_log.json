@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-21T08:00:26.899806+09:00",
+  "last_updated": "2026-03-21T09:00:29.422295+09:00",
   "events": [
     {
       "event_time": "2026-03-20T20:01:49+0000",
@@ -75,6 +75,25 @@
         "old_value": null,
         "new_value": "게재하기 시작했습니다",
         "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-20T11:10:56+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244227691870020",
+      "object_name": "운전1차_릴스2",
+      "object_type": "ADGROUP",
+      "actor_name": "Jun Jun",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120244225255310020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
       }
     },
     {
