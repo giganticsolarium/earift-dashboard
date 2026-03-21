@@ -1,6 +1,21 @@
 {
-  "last_updated": "2026-03-21T23:00:24.451647+09:00",
+  "last_updated": "2026-03-21T23:21:04.345096+09:00",
   "events": [
+    {
+      "event_time": "2026-03-21T14:16:23+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244275284020020",
+      "object_name": "260321 KTX_에디티",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120243954941010020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-21T11:18:37+0000",
       "event_type": "first_delivery_event",
