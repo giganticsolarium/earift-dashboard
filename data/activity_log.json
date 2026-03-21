@@ -1,6 +1,77 @@
 {
-  "last_updated": "2026-03-21T19:20:12.098847+09:00",
+  "last_updated": "2026-03-21T20:00:27.076244+09:00",
   "events": [
+    {
+      "event_time": "2026-03-21T10:58:08+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244275284020020",
+      "object_name": "260321 KTX_에디티",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120243954941010020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status",
+        "last_learning_exit": 1773673200
+      }
+    },
+    {
+      "event_time": "2026-03-21T10:56:29+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244275284020020",
+      "object_name": "260321 KTX_에디티",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120243954941010020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status",
+        "last_learning_exit": 1773673200
+      }
+    },
+    {
+      "event_time": "2026-03-21T10:55:56+0000",
+      "event_type": "create_ad",
+      "category": "edit",
+      "object_id": "120244275284020020",
+      "object_name": "260321 KTX_에디티",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "campaign_id": {
+          "mutation_input": 120243954941010020,
+          "new": 120243954941010020
+        },
+        "last_learning_exit": 1773673200
+      }
+    },
+    {
+      "event_time": "2026-03-21T10:54:37+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244274243160020",
+      "object_name": "260321 KTX_에디티",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244274243170020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-21T10:13:16+0000",
       "event_type": "update_ad_run_status",
