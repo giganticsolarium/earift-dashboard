@@ -1,6 +1,32 @@
 {
-  "last_updated": "2026-03-22T20:18:36.671690+09:00",
+  "last_updated": "2026-03-22T21:00:28.405753+09:00",
   "events": [
+    {
+      "event_time": "2026-03-22T11:59:03+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120243873004040020",
+      "object_name": "260313 KTX 전환",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 500000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 350000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
     {
       "event_time": "2026-03-22T11:16:42+0000",
       "event_type": "first_delivery_event",
