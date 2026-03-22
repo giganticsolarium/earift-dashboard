@@ -1,6 +1,102 @@
 {
-  "last_updated": "2026-03-22T09:00:38.574708+09:00",
+  "last_updated": "2026-03-22T10:00:29.655610+09:00",
   "events": [
+    {
+      "event_time": "2026-03-22T00:41:13+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120244274243170020",
+      "object_name": "260321 KTX_에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 75000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 20000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-22T00:40:48+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244002644110020",
+      "object_name": "260316_제로+에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "비활성",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 7
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T00:40:23+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120243873004040020",
+      "object_name": "260313 KTX 전환",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 500000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 400000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-22T00:37:42+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120244165997490020",
+      "object_name": "260319_이어셀2",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 75000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 50000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
     {
       "event_time": "2026-03-21T15:08:44+0000",
       "event_type": "ad_account_billing_charge",
