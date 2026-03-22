@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-22T15:00:27.188415+09:00",
+  "last_updated": "2026-03-22T15:42:21.816647+09:00",
   "events": [
     {
       "event_time": "2026-03-22T04:50:23+0000",
@@ -14,6 +14,25 @@
         "old_value": null,
         "new_value": "게재하기 시작했습니다",
         "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-22T04:42:44+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244306740420020",
+      "object_name": "260319_이어셀2 - 효과게런티",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status"
       }
     },
     {
@@ -40,6 +59,25 @@
           "additional_value": "(일일 기준)"
         },
         "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-22T04:41:04+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244306740420020",
+      "object_name": "260319_이어셀2 - 효과게런티",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
       }
     },
     {
@@ -96,6 +134,271 @@
         "old_value": null,
         "new_value": "게재하기 시작했습니다",
         "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:07:17+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244304373540020",
+      "object_name": "운전1차_릴스2 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:07:16+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244304373560020",
+      "object_name": "운전1차_롱 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:07:07+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244304373570020",
+      "object_name": "운전1차_릴스1 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:07:05+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244304373550020",
+      "object_name": "운전1차_숏 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:40+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244304373560020",
+      "object_name": "운전1차_롱 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:39+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244304373570020",
+      "object_name": "운전1차_릴스1 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:37+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244304373540020",
+      "object_name": "운전1차_릴스2 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:34+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244304373550020",
+      "object_name": "운전1차_숏 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:27+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_on",
+      "object_id": "120244304297290020",
+      "object_name": "260318_준_주차별1 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "old_value": "검토 대기 중",
+        "new_value": "활성",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 9,
+          "new_value": 1
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:07+0000",
+      "event_type": "create_ad",
+      "category": "edit",
+      "object_id": "120244304373540020",
+      "object_name": "운전1차_릴스2 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "campaign_id": {
+          "mutation_input": 120242695180080020,
+          "new": 120242695180080020
+        }
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:07+0000",
+      "event_type": "create_ad",
+      "category": "edit",
+      "object_id": "120244304373550020",
+      "object_name": "운전1차_숏 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "campaign_id": {
+          "mutation_input": 120242695180080020,
+          "new": 120242695180080020
+        }
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:07+0000",
+      "event_type": "create_ad",
+      "category": "edit",
+      "object_id": "120244304373560020",
+      "object_name": "운전1차_롱 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "campaign_id": {
+          "mutation_input": 120242695180080020,
+          "new": 120242695180080020
+        }
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:05:07+0000",
+      "event_type": "create_ad",
+      "category": "edit",
+      "object_id": "120244304373570020",
+      "object_name": "운전1차_릴스1 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "campaign_id": {
+          "mutation_input": 120242695180080020,
+          "new": 120242695180080020
+        }
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:03:51+0000",
+      "event_type": "update_ad_run_status",
+      "category": "status_off",
+      "object_id": "120244304297290020",
+      "object_name": "260318_준_주차별1 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "처리 대기 중",
+        "new_value": "검토 대기 중",
+        "campaign_id": 120242695180080020,
+        "run_status": {
+          "old_value": 17,
+          "new_value": 9
+        },
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-22T02:03:21+0000",
+      "event_type": "create_ad",
+      "category": "edit",
+      "object_id": "120244304297290020",
+      "object_name": "260318_준_주차별1 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "campaign_id": {
+          "mutation_input": 120242695180080020,
+          "new": 120242695180080020
+        }
       }
     },
     {
