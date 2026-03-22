@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-23T00:20:05.462999+09:00",
+  "last_updated": "2026-03-23T01:00:27.717818+09:00",
   "data": [
     {
       "spend": 104073.0,
@@ -520,31 +520,31 @@
       "date": "2026-03-21"
     },
     {
-      "spend": 1352880.0,
-      "impressions": 31312,
-      "clicks": 850,
+      "spend": 1353048.0,
+      "impressions": 31319,
+      "clicks": 851,
       "reach": 25816,
-      "ctr": 2.71,
-      "cpc": 1592.0,
-      "cpm": 43206.0,
-      "purchases": 40,
-      "purchase_value": 2560310.0,
-      "roas": 1.89,
-      "cpa": 33822.0,
+      "ctr": 2.72,
+      "cpc": 1590.0,
+      "cpm": 43202.0,
+      "purchases": 41,
+      "purchase_value": 2679910.0,
+      "roas": 1.98,
+      "cpa": 33001.0,
       "date": "2026-03-22"
     },
     {
-      "spend": 14613.0,
-      "impressions": 394,
-      "clicks": 16,
-      "reach": 110,
-      "ctr": 4.06,
-      "cpc": 913.0,
-      "cpm": 37089.0,
-      "purchases": 0,
-      "purchase_value": 0.0,
-      "roas": 0.0,
-      "cpa": 0.0,
+      "spend": 48683.0,
+      "impressions": 1187,
+      "clicks": 32,
+      "reach": 983,
+      "ctr": 2.7,
+      "cpc": 1521.0,
+      "cpm": 41013.0,
+      "purchases": 1,
+      "purchase_value": 118643.0,
+      "roas": 2.44,
+      "cpa": 48683.0,
       "date": "2026-03-23"
     }
   ]
