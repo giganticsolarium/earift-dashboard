@@ -1,6 +1,21 @@
 {
-  "last_updated": "2026-03-22T21:00:28.405753+09:00",
+  "last_updated": "2026-03-22T21:35:53.106916+09:00",
   "events": [
+    {
+      "event_time": "2026-03-22T12:34:20+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244228338050020",
+      "object_name": "120244228338050020",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244225255310020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-22T11:59:03+0000",
       "event_type": "update_ad_set_budget",
