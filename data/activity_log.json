@@ -1,6 +1,21 @@
 {
-  "last_updated": "2026-03-23T21:00:31.122637+09:00",
+  "last_updated": "2026-03-23T21:51:55.703321+09:00",
   "events": [
+    {
+      "event_time": "2026-03-23T12:30:42+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244351823010020",
+      "object_name": "주차별_장윤주",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244351776700020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-23T11:18:41+0000",
       "event_type": "first_delivery_event",
