@@ -1,6 +1,66 @@
 {
-  "last_updated": "2026-03-23T14:00:28.460664+09:00",
+  "last_updated": "2026-03-23T15:00:26.557799+09:00",
   "events": [
+    {
+      "event_time": "2026-03-23T05:52:20+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244228385220020",
+      "object_name": "120244228385220020",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244225255310020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-23T05:29:10+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244336754770020",
+      "object_name": "260323_KTX_독백_asmr",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244336327230020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-23T05:07:30+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244336765980020",
+      "object_name": "260323_KTX_독백_숏",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244336327230020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-23T05:05:32+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244336327220020",
+      "object_name": "260323_KTX_독백",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244336327230020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-23T04:36:35+0000",
       "event_type": "update_ad_set_run_status",
