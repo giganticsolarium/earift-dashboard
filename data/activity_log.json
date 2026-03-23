@@ -1,6 +1,24 @@
 {
-  "last_updated": "2026-03-23T09:00:32.253600+09:00",
+  "last_updated": "2026-03-23T10:45:08.476941+09:00",
   "events": [
+    {
+      "event_time": "2026-03-23T01:28:12+0000",
+      "event_type": "update_ad_set_run_status",
+      "category": "status_off",
+      "object_id": "120244274243170020",
+      "object_name": "260321 KTX_에디티",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": "활성",
+        "new_value": "비활성",
+        "run_status": {
+          "old_value": 1,
+          "new_value": 7
+        },
+        "type": "run_status"
+      }
+    },
     {
       "event_time": "2026-03-22T23:23:23+0000",
       "event_type": "ad_account_billing_charge",
