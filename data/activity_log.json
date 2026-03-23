@@ -1,6 +1,21 @@
 {
-  "last_updated": "2026-03-23T17:00:30.722778+09:00",
+  "last_updated": "2026-03-23T17:59:38.508277+09:00",
   "events": [
+    {
+      "event_time": "2026-03-23T08:13:53+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244304373540020",
+      "object_name": "운전1차_릴스2 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120242695180080020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-23T05:52:20+0000",
       "event_type": "first_delivery_event",
