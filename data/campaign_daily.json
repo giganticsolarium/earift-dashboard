@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-03-23T17:59:38.508277+09:00",
+  "last_updated": "2026-03-23T18:00:31.173502+09:00",
   "data": [
     {
       "spend": 259346.0,
@@ -1346,17 +1346,17 @@
       "date": "2026-03-22"
     },
     {
-      "spend": 91250.0,
-      "impressions": 1993,
+      "spend": 91680.0,
+      "impressions": 1998,
       "clicks": 39,
       "reach": 1925,
-      "ctr": 1.96,
-      "cpc": 2340.0,
-      "cpm": 45785.0,
+      "ctr": 1.95,
+      "cpc": 2351.0,
+      "cpm": 45886.0,
       "purchases": 3,
       "purchase_value": 262900.0,
-      "roas": 2.88,
-      "cpa": 30417.0,
+      "roas": 2.87,
+      "cpa": 30560.0,
       "campaign_id": "120242695180060020",
       "campaign_name": "260216_ASC_1차광고",
       "date": "2026-03-23"
@@ -1378,13 +1378,13 @@
       "date": "2026-03-23"
     },
     {
-      "spend": 30819.0,
-      "impressions": 1011,
-      "clicks": 84,
+      "spend": 30861.0,
+      "impressions": 1015,
+      "clicks": 85,
       "reach": 786,
-      "ctr": 8.31,
-      "cpc": 367.0,
-      "cpm": 30484.0,
+      "ctr": 8.37,
+      "cpc": 363.0,
+      "cpm": 30405.0,
       "purchases": 0,
       "purchase_value": 0.0,
       "roas": 0.0,
