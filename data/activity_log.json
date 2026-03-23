@@ -1,6 +1,36 @@
 {
-  "last_updated": "2026-03-23T20:00:31.431104+09:00",
+  "last_updated": "2026-03-23T20:39:28.425075+09:00",
   "events": [
+    {
+      "event_time": "2026-03-23T11:18:41+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244304373560020",
+      "object_name": "운전1차_롱 - 사본",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120242695180080020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
+    {
+      "event_time": "2026-03-23T11:12:54+0000",
+      "event_type": "first_delivery_event",
+      "category": "edit",
+      "object_id": "120244351776710020",
+      "object_name": "주차별_서정민",
+      "object_type": "ADGROUP",
+      "actor_name": "Meta",
+      "extra": {
+        "campaign_id": 120244351776700020,
+        "old_value": null,
+        "new_value": "게재하기 시작했습니다",
+        "type": "delivery_event"
+      }
+    },
     {
       "event_time": "2026-03-23T10:39:09+0000",
       "event_type": "update_ad_run_status",
