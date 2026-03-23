@@ -1,6 +1,68 @@
 {
-  "last_updated": "2026-03-24T08:00:33.612602+09:00",
+  "last_updated": "2026-03-24T08:26:31.596381+09:00",
   "events": [
+    {
+      "event_time": "2026-03-23T23:04:46+0000",
+      "event_type": "update_campaign_run_status",
+      "category": "status_on",
+      "object_id": "120242695180060020",
+      "object_name": "260216_ASC_1차광고",
+      "object_type": "CAMPAIGN_GROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "run_status": {
+          "old_value": 17,
+          "new_value": 1
+        },
+        "old_value": "처리 대기 중",
+        "new_value": "활성",
+        "type": "run_status"
+      }
+    },
+    {
+      "event_time": "2026-03-23T23:04:37+0000",
+      "event_type": "update_campaign_budget",
+      "category": "budget_up",
+      "object_id": "120242695180060020",
+      "object_name": "260216_ASC_1차광고",
+      "object_type": "CAMPAIGN_GROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 150000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 220000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-23T23:04:37+0000",
+      "event_type": "update_campaign_run_status",
+      "category": "status_off",
+      "object_id": "120242695180060020",
+      "object_name": "260216_ASC_1차광고",
+      "object_type": "CAMPAIGN_GROUP",
+      "actor_name": "두영재",
+      "extra": {
+        "run_status": {
+          "old_value": 1,
+          "new_value": 17
+        },
+        "old_value": "활성",
+        "new_value": "처리 대기 중",
+        "type": "run_status"
+      }
+    },
     {
       "event_time": "2026-03-23T12:30:42+0000",
       "event_type": "first_delivery_event",
