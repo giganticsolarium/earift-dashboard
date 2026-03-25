@@ -1,6 +1,58 @@
 {
-  "last_updated": "2026-03-25T09:00:29.717483+09:00",
+  "last_updated": "2026-03-25T10:43:20.274504+09:00",
   "events": [
+    {
+      "event_time": "2026-03-25T00:25:42+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120244225255310020",
+      "object_name": "260320_운전1차",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 90000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 70000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
+    {
+      "event_time": "2026-03-25T00:25:34+0000",
+      "event_type": "update_ad_set_budget",
+      "category": "budget_down",
+      "object_id": "120244101900510020",
+      "object_name": "260318_백지연_2차",
+      "object_type": "CAMPAIGN",
+      "actor_name": "두영재",
+      "extra": {
+        "old_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "old_value": 75000,
+          "additional_type": "status_string",
+          "additional_value": ""
+        },
+        "new_value": {
+          "type": "payment_amount",
+          "currency": "KRW",
+          "new_value": 50000,
+          "additional_type": "status_string",
+          "additional_value": "(일일 기준)"
+        },
+        "type": "composite_data"
+      }
+    },
     {
       "event_time": "2026-03-24T12:37:20+0000",
       "event_type": "update_ad_set_budget",
